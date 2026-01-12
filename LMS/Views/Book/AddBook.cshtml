@@ -1,6 +1,71 @@
-﻿
+﻿@{
+    ViewData["Title"] = "Add Book";
+}
 
-<form>
-    <label>Title</label>
-    <input type="type" name="name" value="" />
-</form>
+@model LMS.Models.Book
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+    <div class="form-group">
+        @Html.HiddenFor(m => m.Id)
+    </div>
+
+    <!-- Book Title -->
+    <div class="form-group p-3">
+        @Html.LabelFor(m => m.Title, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.Title, new { @class = "form-control", @placeholder = "Enter Book Title" })
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <!-- Genre -->
+    <div class="form-group p-3">
+        @Html.LabelFor(m => m.Genre, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.Genre, new { @class = "form-control", @placeholder = "Enter Genre" })
+        <span asp-validation-for="Genre" class="text-danger"></span>
+    </div>
+
+    <!-- Publisher -->
+    <div class="form-group p-3">
+        @Html.LabelFor(m => m.PublisherID, new { @class = "form-label" })
+        @Html.DropDownListFor(
+        m => m.PublisherID,
+        Model.PublisherList,
+        "-- Select Publisher --",
+        new { @class = "form-control" }
+        )
+    <span asp-validation-for="PublisherID" class="text-danger"></span>
+</div>
+
+<!-- Price -->
+<div class="form-group p-3">
+    @Html.LabelFor(m => m.Price, new { @class = "form-label" })
+    @Html.TextBoxFor(m => m.Price, new { @class = "form-control", @placeholder = "Enter Price" })
+    <span asp-validation-for="Price" class="text-danger"></span>
+</div>
+
+<!-- Publication Year -->
+<div class="form-group p-3">
+    @Html.LabelFor(m => m.Year, new { @class = "form-label" })
+    @Html.TextBoxFor(m => m.Year, new { @class = "form-control", @placeholder = "Enter Publication Year" })
+    <span asp-validation-for="Year" class="text-danger"></span>
+</div>
+
+<!-- Quantity -->
+<div class="form-group p-3">
+    @Html.LabelFor(m => m.Quantity, new { @class = "form-label" })
+    @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control", @placeholder = "Enter Quantity" })
+    <span asp-validation-for="Quantity" class="text-danger"></span>
+</div>
+
+<!-- Buttons -->
+<div class="form-check btn-group p-3">
+    <button type="submit" class="btn btn-primary m-2">Submit</button>
+    <button type="reset" class="btn btn-danger m-2">Clear</button>
+</div>
+}
+
+@section scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

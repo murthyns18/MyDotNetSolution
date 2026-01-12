@@ -1,16 +1,14 @@
-﻿@model IList<Book>
+﻿
+
+@model IList<Book>
 
 <div class="container mt-4">
 
     <div class="d-flex align-items-center mb-3 justify-content-between">
-        <h4>User List</h4>
+        <h4>Book List</h4>
         <div>
-            <a href="@Url.Content("~/Book/AddBook")" class="btn btn-primary">
-                Add Book
-            </a>
-            <a href="@Url.Content("~/Book/ClearAll")" class="btn btn-danger text-white">
-                Clear All
-            </a>
+            <a href="@Url.Content("~/Book/AddBook")" class="btn btn-primary">Add Book</a>
+            <a href="@Url.Content("~/Book/ClearAll")" class="btn btn-danger text-white"> Clear All</a>
         </div>
     </div>
 
@@ -20,41 +18,39 @@
                 <tr>
                     <th>Sl.No</th>
                     <th>Title</th>
-                    <th>Author</th>
                     <th>Genre</th>
                     <th>Price</th>
-                    <th>PublicationYear</th>
-                    <th>ISBN</th>
+                    <th>Publication Year</th>
                     <th>Quantity</th>
                     <th>Publisher</th>
                     <th style="width:180px">Action</th>
                 </tr>
             </thead>
             <tbody>
-                @* @foreach (var book in Model)
+                @foreach (var book in Model)
                 {
                     <tr>
-                        <td>@user.UserID</td>
-                        <td>@user.UserName</td>
-                        <td>@user.Email</td>
-                        <td>@user.MobileNumber</td>
-                        <td>@user.RoleName</td>
-                        <td>@user.Address</td>
+                        <td>@book.Id</td>
+                        <td>@book.Title</td>
+                        <td>@book.Genre</td>
+                        <td>@book.Price</td>
+                        <td>@book.Year</td>
+                        <td>@book.Quantity</td>
+                        <td>@book.PublisherName</td>
                         <td class="text-center">
-                            <span class="badge @(user.Status ? "bg-success" : "bg-danger")">
-                                @(user.Status ? "Active" : "Inactive")
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <a href="@Url.Action("EditUser", "User", new { id = user.UserID })" class="btn btn-sm btn-info text-light me-1">Edit</a>
+                            <a href="@Url.Action("EditBook", "Book", new { id = book.Id })" class="btn btn-sm btn-info text-light me-1">
+                                Edit
+                            </a>
 
-                            <form asp-action="DeleteUser" method="post" class="d-inline">
-                                <input type="hidden" name="id" value="@user.UserID" />
-                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            <form asp-action="DeleteBook" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@book.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Delete
+                                </button>
                             </form>
                         </td>
                     </tr>
-                } *@
+                }
             </tbody>
         </table>
     </div>
