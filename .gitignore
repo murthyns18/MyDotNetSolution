@@ -1,0 +1,24 @@
+# Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+*.pdb
+*.dbmdl
+*.bak
+
+# Rider IDE
+.idea/
+
+# Node / npm (if using frontend)
+node_modules/
+
+# Others
+*.DS_Store
+*.vsix
+*.nupkg
+*.snk
+*.vscode/

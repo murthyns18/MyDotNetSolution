@@ -1,0 +1,60 @@
+﻿@model IList<User>
+
+<div class="container mt-4">
+
+    <div class="d-flex align-items-center mb-3 justify-content-between">
+        <h4>User List</h4>
+        <div>
+            <a href="@Url.Content("~/User/AddUser")" class="btn btn-primary">
+                Add User
+            </a>
+            <a href="@Url.Content("~/User/ClearAll")" class="btn btn-danger text-white">
+                Clear All
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-secondary text-left">
+                <tr>
+                    <th>Sl.No</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Role</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th style="width:180px">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.UserID</td>
+                        <td>@user.UserName</td>
+                        <td>@user.Email</td>
+                        <td>@user.MobileNumber</td>
+                        <td>@user.RoleName</td>
+                        <td>@user.Address</td>
+                        <td class="text-center">
+                            <span class="badge @(user.Status ? "bg-success" : "bg-danger")">
+                                @(user.Status ? "Active" : "Inactive")
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a href="@Url.Action("EditUser", "User", new { id = user.UserID })" class="btn btn-sm btn-info text-light me-1">Edit</a>
+
+                            <form asp-action="DeleteUser" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@user.UserID" />
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>

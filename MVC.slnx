@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="LMS/LMS.csproj" />
+  <Project Path="WEBAPI/WEBAPI.csproj" Id="a3b81acf-2e71-46cb-888a-f52297d91789" />
+</Solution>
