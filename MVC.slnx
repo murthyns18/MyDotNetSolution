@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+  </Folder>
   <Project Path="LMS/LMS.csproj" />
-  <Project Path="WEBAPI/WEBAPI.csproj" Id="a3b81acf-2e71-46cb-888a-f52297d91789" />
+  <Project Path="PRACTICE/PRACTICE.csproj" Id="fd4c8951-1532-4464-a5f0-16e502cf989b" />
+  <Project Path="WEBAPI/WEBAPI.csproj" />
 </Solution>

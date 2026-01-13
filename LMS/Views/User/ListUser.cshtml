@@ -16,7 +16,7 @@
 
     <div class="table-responsive">
         <table class="table table-bordered table-striped table-hover">
-            <thead class="table-secondary text-left">
+            <thead class="table-primary text-left">
                 <tr>
                     <th>Sl.No</th>
                     <th>Name</th>
@@ -29,28 +29,37 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var user in Model)
+                @if(Model != null && Model.Any())
+                {
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.UserID</td>
+                            <td>@user.UserName</td>
+                            <td>@user.Email</td>
+                            <td>@user.MobileNumber</td>
+                            <td>@user.RoleName</td>
+                            <td>@user.Address</td>
+                            <td class="text-center">
+                                <span class="badge @(user.Status ? "bg-success" : "bg-danger")">
+                                    @(user.Status ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <a href="@Url.Action("EditUser", "User", new { id = user.UserID })" class="btn btn-sm btn-info text-light me-1">Edit</a>
+
+                                <form asp-action="DeleteUser" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@user.UserID" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
                 {
                     <tr>
-                        <td>@user.UserID</td>
-                        <td>@user.UserName</td>
-                        <td>@user.Email</td>
-                        <td>@user.MobileNumber</td>
-                        <td>@user.RoleName</td>
-                        <td>@user.Address</td>
-                        <td class="text-center">
-                            <span class="badge @(user.Status ? "bg-success" : "bg-danger")">
-                                @(user.Status ? "Active" : "Inactive")
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <a href="@Url.Action("EditUser", "User", new { id = user.UserID })" class="btn btn-sm btn-info text-light me-1">Edit</a>
-
-                            <form asp-action="DeleteUser" method="post" class="d-inline">
-                                <input type="hidden" name="id" value="@user.UserID" />
-                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                            </form>
-                        </td>
+                        <td colspan="9" class="text-center text-danger">No users available</td>
                     </tr>
                 }
             </tbody>

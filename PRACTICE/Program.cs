@@ -1,4 +1,6 @@
-namespace WebApplication1
+﻿using PRACTICE.Filters;
+
+namespace PRACTICE
 {
     public class Program
     {
@@ -8,7 +10,14 @@ namespace WebApplication1
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<ActionFilters>();
 
+            //Register auth filter 
+            builder.Services.AddScoped<AuthFilter>();
+
+
+            // ✅ Add session for AuthFilter
+            builder.Services.AddSession();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -21,6 +30,7 @@ namespace WebApplication1
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthorization();
 

@@ -6,25 +6,29 @@ namespace LMS.Models
 {
     public class Book
     {
-        [Key]
+        
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Book title is required")]
         [StringLength(10, MinimumLength = 3, ErrorMessage = "Book title must be 3–10 characters")]
-        public string Title { get; set; }
+        public string Title { get; set; } = "";
 
         [Required(ErrorMessage = "Genre is required")]
-        [StringLength(10, MinimumLength = 3, ErrorMessage = "Genre must be 3–10 characters")]
-        public string Genre { get; set; }
+        [StringLength(10, MinimumLength = 3, ErrorMessage = "Genre name must be 3–10 characters")]
+        public string Genre { get; set; } = "";
+
+        [Required(ErrorMessage = "Category is required")]
+        [StringLength(10, MinimumLength = 3, ErrorMessage = "Category name must be 3–10 characters")]
+        public string Category { get; set; } = "";
 
         [Display (Name ="Publisher Name")]
         [Required (ErrorMessage ="Publisher Name is required")]
         public int PublisherID { get; set; }
 
-        public string PublisherName { get; set; }
+        public string PublisherName { get; set; } = "";
 
         [ValidateNever]
-        public IEnumerable<SelectListItem> PublisherList { get; set; }
+        public IEnumerable<SelectListItem> PublisherList { get; set; } 
 
         [Required(ErrorMessage = "Price is required")]
         [Range(0.1, 1000, ErrorMessage = "Enter valid price")]

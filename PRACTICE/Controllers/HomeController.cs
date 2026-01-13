@@ -1,9 +1,12 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.Models;
+using Microsoft.AspNetCore.Mvc.Filters;
+using PRACTICE.Filters;
+using PRACTICE.Models;
+using System.Diagnostics;
 
-namespace WebApplication1.Controllers
+namespace PRACTICE.Controllers
 {
+    [ServiceFilter(typeof(ActionFilters))]
     public class HomeController : Controller
     {
         public IActionResult Index()

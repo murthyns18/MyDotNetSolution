@@ -37,6 +37,12 @@
         )
     <span asp-validation-for="PublisherID" class="text-danger"></span>
 </div>
+<!-- Category -->
+<div class="form-group p-3">
+    @Html.LabelFor(m => m.Category, new { @class = "form-label" })
+    @Html.TextBoxFor(m => m.Category, new { @class = "form-control", @placeholder = "Enter Category" })
+    <span asp-validation-for="Category" class="text-danger"></span>
+</div>
 
 <!-- Price -->
 <div class="form-group p-3">
@@ -44,6 +50,7 @@
     @Html.TextBoxFor(m => m.Price, new { @class = "form-control", @placeholder = "Enter Price" })
     <span asp-validation-for="Price" class="text-danger"></span>
 </div>
+
 
 <!-- Publication Year -->
 <div class="form-group p-3">

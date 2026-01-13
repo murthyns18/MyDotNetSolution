@@ -44,11 +44,11 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddBook(Book model)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    model.PublisherList = GetPublishers();
-            //    return View(model);
-            //}
+            if (!ModelState.IsValid)
+            {
+                model.PublisherList = GetPublishers();
+                return View(model);
+            }
 
             model.Id = books.Count == 0 ? 1 : books.Max(b => b.Id) + 1;
             model.PublisherName = GetPublisherNameById(model.PublisherID);
@@ -82,11 +82,11 @@ namespace LMS.Controllers
         [HttpPost]
         public IActionResult EditBook(Book model)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    model.PublisherList = GetPublishers();
-            //    return View("AddBook", model);
-            //}
+            if (!ModelState.IsValid)
+            {
+                model.PublisherList = GetPublishers();
+                return View("AddBook", model);
+            }
 
             var book = books.FirstOrDefault(b => b.Id == model.Id);
             if (book != null)
@@ -94,6 +94,7 @@ namespace LMS.Controllers
                 book.Title = model.Title;
                 book.Genre = model.Genre;
                 book.PublisherID = model.PublisherID;
+                book.Category = model.Category;
                 book.PublisherName = GetPublisherNameById(model.PublisherID);
                 book.Price = model.Price;
                 book.Year = model.Year;
