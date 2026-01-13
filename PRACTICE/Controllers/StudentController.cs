@@ -22,6 +22,8 @@ namespace PRACTICE.Controllers
         public IActionResult Add(Student std)
         {
             _repo.AddStudent(std);
+            TempData["Message"] = "Student Added successfully!";
+
             return RedirectToAction("List");
         }
 
@@ -44,6 +46,7 @@ namespace PRACTICE.Controllers
         public IActionResult Edit(Student std)
         {
             _repo.UpdateStudent(std);
+            TempData["Message"] = "Student Updated successfully!";
 
             return RedirectToAction("List");
         }
@@ -52,7 +55,9 @@ namespace PRACTICE.Controllers
         public IActionResult Delete(int id)
         {
             _repo.DeleteStudentByID(id);
-            TempData["SuccessMessage"] = "Student deleted successfully!";
+            TempData["Message"] = "Student deleted successfully!";
+            TempData["Type"] = "danger";
+           
             return RedirectToAction("List");
         }
 

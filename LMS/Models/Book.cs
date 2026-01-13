@@ -6,7 +6,6 @@ namespace LMS.Models
 {
     public class Book
     {
-        
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Book title is required")]

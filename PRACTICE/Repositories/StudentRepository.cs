@@ -7,21 +7,17 @@ namespace PRACTICE.Repositories
     public class StudentRepository
     {
         private readonly string _cs =
-        "Server=.;Database=STUDENT;Trusted_Connection=True;TrustServerCertificate=True;";
-
+        "Server=.;Database=student;Trusted_Connection=True;TrustServerCertificate=True;";
 
         public void AddStudent(Student student)
         {
             using var con = new SqlConnection(_cs);
 
             string insertQuery = 
-                @"INSERT INTO student_details
-                (
-                    student_id, 
-                    student_name, 
-                    student_course
-                )
-                 VALUES (@StudentID, @StudentName, @StudentCourse)";
+                @"INSERT INTO Student
+                ( ID, Name, Course )
+                 VALUES 
+                (@StudentID, @StudentName, @StudentCourse)";
 
             con.Execute(insertQuery, student);
         }
@@ -32,10 +28,10 @@ namespace PRACTICE.Repositories
 
             string selectAllQuery = @"
                                     SELECT 
-                                        student_id     AS StudentID,
-                                        student_name   AS StudentName,
-                                        student_course AS StudentCourse
-                                    FROM student_details";
+                                        ID     AS StudentID,
+                                        Name   AS StudentName,
+                                        Course AS StudentCourse
+                                    FROM Student";
 
             return con.Query<Student>(selectAllQuery);
         }
@@ -46,11 +42,11 @@ namespace PRACTICE.Repositories
 
             string selectQuery = @"
                                     SELECT 
-                                        student_id     AS StudentID,
-                                        student_name   AS StudentName,
-                                        student_course AS StudentCourse
-                                    FROM student_details
-                                    WHERE student_id = @id;";
+                                        ID     AS StudentID,
+                                        Name   AS StudentName,
+                                        Course AS StudentCourse
+                                    FROM Student
+                                    WHERE ID = @id;";
 
             return con.QueryFirstOrDefault<Student>(selectQuery, new { Id = @id });
         }
@@ -61,22 +57,22 @@ namespace PRACTICE.Repositories
             using var con = new SqlConnection(_cs);
 
             string query = @"
-                            UPDATE student_details
+                            UPDATE Student
                             SET 
-                                student_name = @StudentName,
-                                student_course = @StudentCourse
-                            WHERE student_id = @StudentID";
+                                Name = @StudentName,
+                                Course = @StudentCourse
+                            WHERE ID = @StudentID";
 
             con.Execute(query, std);
         }
 
-        internal void DeleteStudentByID(int id)
+        public void DeleteStudentByID(int id)
         {
             using var con = new SqlConnection(_cs);
 
             string query = @"DELETE 
-                            FROM student_details
-                            WHERE student_id = @id";
+                            FROM Student
+                            WHERE ID = @id";
             con.Execute(query, new { Id = id });
         }
     }
