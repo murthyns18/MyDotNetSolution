@@ -1,5 +1,13 @@
-﻿*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+﻿.nav-link:hover{
+    color:dodgerblue !important;
 }
+
+.nav-link {
+    color: white !important;
+}
+
+th {
+    background-color: seagreen !important;
+    color: white !important;
+}
+

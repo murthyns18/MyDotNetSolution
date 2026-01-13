@@ -1,5 +1,5 @@
 ﻿using PRACTICE.Filters;
-
+using PRACTICE.Repositories;
 namespace PRACTICE
 {
     public class Program
@@ -14,6 +14,9 @@ namespace PRACTICE
 
             //Register auth filter 
             builder.Services.AddScoped<AuthFilter>();
+
+            //DI
+            builder.Services.AddScoped<StudentRepository>();
 
 
             // ✅ Add session for AuthFilter

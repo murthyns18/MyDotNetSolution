@@ -1,0 +1,58 @@
+﻿@model IEnumerable<PRACTICE.Models.Student>
+
+@{
+    ViewData["Title"] = "Student List";
+}
+
+<h3 class="mb-3">Student List</h3>
+
+<a asp-action="Add" class="btn btn-primary mb-3">
+    Add Student
+</a>
+
+<!-- Notification Message -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="notification" class="alert alert-success text-center mx-auto" style="width:50%; margin-bottom:20px;">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Course</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.StudentID</td>
+                <td>@student.StudentName</td>
+                <td>@student.StudentCourse</td>
+                <td class="text-center">
+                    <a href="@Url.Action("Edit", "Student", new { id = student.StudentID })" class="btn btn-sm btn-info text-light me-1">Edit</a>
+
+                    <form asp-action="Delete" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@student.StudentID" />
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Script to hide notification after 3 seconds -->
+<script>
+    setTimeout(function() {
+        var notif = document.getElementById('notification');
+        if (notif) {
+            notif.style.display = 'none';
+        }
+    }, 3000); // 3 seconds
+</script>

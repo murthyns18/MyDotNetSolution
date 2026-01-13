@@ -4,54 +4,76 @@
 
 @model User
 
-@using (Html.BeginForm())
-{
-    <div class="form-group">
-        @Html.HiddenFor(m => m.UserID)
-    </div>
-    <div class="form-group  p-3">
-        @Html.LabelFor(m => m.UserName, new { @class = "form-label m-t-3" })
-        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @placeholder = "Enter Name" })
-        <span asp-validation-for="UserName" class="text-danger"></span>
-    </div>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <!-- Control width here -->
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h5>Add User</h5>
+                </div>
 
-    <div class="form-group p-3">
-        @Html.LabelFor(m => m.Email, new { @class = "form-label" })
-        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Enter Email" })
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
+                <div class="card-body">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
 
-    <div class="form-group p-3">
-        @Html.LabelFor(m => m.MobileNumber, new { @class = "form-label" })
-        @Html.TextBoxFor(m => m.MobileNumber, new { @class = "form-control", @placeholder = "Enter Mobile Number" })
-        <span asp-validation-for="MobileNumber" class="text-danger"></span>
-    </div>
+                        @Html.HiddenFor(m => m.UserID)
 
-    <div class="form-group p-3">
-        @Html.LabelFor(m => m.Address, new { @class = "form-label" })
-        @Html.TextAreaFor(m => m.Address, new { @class = "form-control", @placeholder = "Enter Address" })
-        <span asp-validation-for="Address" class="text-danger"></span>
-    </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.UserName, new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = "Enter Name" })
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
 
-    <div class="form-group p-3">
-        @Html.LabelFor(m => m.RoleID, new { @class = "m-2" })
-        @Html.DropDownListFor(m => m.RoleID, Model.RoleList, "--Select--", new { @class = "form-control" })
-        <span asp-validation-for="RoleID" class="text-danger"></span>
-    </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Email, new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Enter Email" })
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
 
-    <div class="form-group p-3">
-        @Html.LabelFor(m => m.Status) <br />
-        @Html.RadioButtonFor(m => m.Status, true)Active<br />
-        @Html.RadioButtonFor(m => m.Status, false)InActive
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.MobileNumber, new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.MobileNumber, new { @class = "form-control", placeholder = "Enter Mobile Number" })
+                            <span asp-validation-for="MobileNumber" class="text-danger"></span>
+                        </div>
 
-    <div class="form-check btn-group p-3">
-        <button type="submit" class="btn btn-primary m-2">Submit</button>
-        <button type="reset" class="btn btn-danger m-2">Clear</button>
-    </div>
-}
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Address, new { @class = "form-label" })
+                            @Html.TextAreaFor(m => m.Address, new { @class = "form-control", placeholder = "Enter Address", rows = "3" })
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
 
-@section scripts {
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.RoleID, new { @class = "form-label" })
+                            @Html.DropDownListFor(m => m.RoleID, Model.RoleList, "-- Select --", new { @class = "form-control" })
+                            <span asp-validation-for="RoleID" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Status</label><br />
+                            <div class="form-check form-check-inline">
+                                @Html.RadioButtonFor(m => m.Status, true, new { @class = "form-check-input" })
+                                <label class="form-check-label">Active</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                @Html.RadioButtonFor(m => m.Status, false, new { @class = "form-check-input" })
+                                <label class="form-check-label">Inactive</label>
+                            </div>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary me-2">Submit</button>
+                            <button type="reset" class="btn btn-secondary">Clear</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

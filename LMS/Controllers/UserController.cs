@@ -34,6 +34,7 @@ namespace LMS.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult AddUser(User model)
         {
             if (!ModelState.IsValid)
@@ -43,6 +44,8 @@ namespace LMS.Controllers
             }
 
             model.UserID = users.Count == 0 ? 1 : users.Max(u => u.UserID) + 1;
+
+
             users.Add(model);
             return RedirectToAction("ListUser");
         }
