@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    @inject IConfiguration configuration
+    var apiURL = Convert.ToString(configuration.GetSection("API")["URL"]);
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,6 +13,11 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LMS.styles.css" asp-append-version="true" />
+    <script>
+        var ROOT='@Url.Content("~/")';
+        var APIURL='@apiURL';
+    </script>
+    <script src="@Url.Content("~/lib/jquery/dist/jquery.min.js")"></script>
 </head>
 <body>
     <header>
@@ -49,6 +58,14 @@
 
     </header>
     <div class="container">
+        <!-- Notification Message -->
+        @if (TempData["Message"] != null)
+        {
+            var type = TempData["Type"] ?? "success";
+            <div id="notification" class="alert alert-@type text-center mx-auto" style="width:300px; margin-bottom:10px;">
+                @Convert.ToString(TempData["Message"])
+            </div>
+        }
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -59,9 +76,15 @@
             &copy; 2026 - LMS-NS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+   
+    <script src="@Url.Content("~/lib/jquery/dist/jquery.min.js")"></script>
+    <script src="@Url.Content("~/lib/bootstrap/dist/js/bootstrap.bundle.min.js")"></script>
+    <script src="@Url.Content("~/js/site.js")" asp-append-version="true"></script>
+
+    
+    <script src="@Url.Content("~/js/book.min.js")" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

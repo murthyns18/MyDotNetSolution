@@ -17,15 +17,6 @@
            placeholder="Search student..." />
 </div>
 
-<!-- Notification Message -->
-@if (TempData["Message"] != null)
-{
-    var type = TempData["Type"] ?? "success";
-    <div id="notification" class="alert alert-@type text-center mx-auto" style="width:300px; margin-bottom:10px;">
-        @TempData["Message"]
-    </div>
-}
-
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>

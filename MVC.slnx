@@ -4,5 +4,5 @@
   </Folder>
   <Project Path="LMS/LMS.csproj" />
   <Project Path="PRACTICE/PRACTICE.csproj" Id="fd4c8951-1532-4464-a5f0-16e502cf989b" />
-  <Project Path="WEBAPI/WEBAPI.csproj" />
+  <Project Path="WEBAPI/LMS_API.csproj" />
 </Solution>

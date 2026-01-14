@@ -47,6 +47,7 @@ namespace LMS.Controllers
 
 
             users.Add(model);
+            TempData["Message"] = "User added successfully!";
             return RedirectToAction("ListUser");
         }
 
@@ -88,6 +89,7 @@ namespace LMS.Controllers
                 user.Address = model.Address;
                 user.RoleID = model.RoleID;
                 user.Status = model.Status;
+                TempData["Message"] = "User updated successfully!";
             }
 
             return RedirectToAction("ListUser");
@@ -98,6 +100,7 @@ namespace LMS.Controllers
         {
             users.Clear();
 
+            TempData["Message"] = "Users cleared successfully!";
             return RedirectToAction("ListUser");
 
         }
@@ -109,6 +112,8 @@ namespace LMS.Controllers
             if (user != null)
                 users.Remove(user);
 
+            TempData["Message"] = "User deleted successfully!";
+            TempData["Type"] = "danger";
             return RedirectToAction("ListUser");
 
         }

@@ -1,0 +1,13 @@
+[
+  {
+    "outputFileName": "wwwroot/js/book.min.js",
+    "inputFiles": [
+      "wwwroot/js/book.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": true
+  }
+]

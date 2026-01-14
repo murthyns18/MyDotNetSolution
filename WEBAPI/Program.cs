@@ -1,4 +1,7 @@
 
+using LMS_API.Interfaces;
+using LMS_API.Repositories;
+
 namespace WEBAPI
 {
     public class Program
@@ -24,11 +27,21 @@ namespace WEBAPI
                 options.AddPolicy("DefaultCorsPolicy", policy =>
                 {
                     policy
-                        .WithOrigins("http://localhost:3000", "https://localhost:5173")
+                        .AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
             });
+
+            //DB connection 
+            string connectionString = builder
+                                     .Configuration
+                                     .GetConnectionString("DefaultConnection");
+
+            //DI
+            builder.Services.AddScoped<IBookRepository>(
+                m => new BookRepository(connectionString)
+            );
 
             var app = builder.Build();
 
