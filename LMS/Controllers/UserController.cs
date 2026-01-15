@@ -1,121 +1,105 @@
 ﻿using LMS.Models;
+using LMS.Services;
+using LMS_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq;
-
+using Newtonsoft.Json;
 
 namespace LMS.Controllers
 {
     public class UserController : Controller
     {
-        private static IList<User> users = new List<User>();
-
-        private List<SelectListItem> GetRoles()
+        private List<Role> LoadRoles()
         {
-            return new List<SelectListItem>
-            {
-                new SelectListItem { Text = "Admin", Value = "1" },
-                new SelectListItem { Text = "Staff", Value = "2" },
-                new SelectListItem { Text = "GeneralUser", Value = "3" }
-            };
+            return JsonConvert.DeserializeObject<List<Role>>(
+                API.Get("Role/GetRoles", null, "roleId=-1")
+            ) ?? new List<Role>();
         }
 
+        private IEnumerable<SelectListItem> GetRoleSelectList()
+        {
+            return LoadRoles().Select(r => new SelectListItem
+            {
+                Text = r.RoleName,
+                Value = r.RoleID.ToString()
+            });
+        }
 
         [HttpGet]
         public IActionResult AddUser()
         {
-            User user = new User
+            var model = new User
             {
-                RoleList = GetRoles()
+                RoleList = GetRoleSelectList()
             };
-
-            return View(user);
+            return View(model);
         }
 
-
+        /* ---------------- ADD / UPDATE USER (POST) ---------------- */
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddUser(User model)
         {
+            model.RoleList = GetRoleSelectList();
+
             if (!ModelState.IsValid)
-            {
-               model.RoleList = GetRoles(); 
                 return View(model);
-            }
 
-            model.UserID = users.Count == 0 ? 1 : users.Max(u => u.UserID) + 1;
+            API.Post("User/SaveUser", null, model);
 
+            TempData["Message"] = model.UserID == 0
+                ? "User added successfully"
+                : "User updated successfully";
 
-            users.Add(model);
-            TempData["Message"] = "User added successfully!";
             return RedirectToAction("ListUser");
         }
 
-
+        
         [HttpGet]
         public IActionResult ListUser()
         {
+            var users = JsonConvert.DeserializeObject<List<User>>(
+                API.Get("User/UserList", null, "userId=0")
+            ) ?? new List<User>();
+
+            var roles = LoadRoles();
+
+            // Map RoleName
+            foreach (var user in users)
+            {
+                user.RoleName = roles
+                    .FirstOrDefault(r => r.RoleID == user.RoleID)
+                    ?.RoleName;
+            }
+
             return View(users);
         }
+
 
         [HttpGet]
         public IActionResult EditUser(int id)
         {
-            var user = users.FirstOrDefault(u => u.UserID == id);
+            var user = JsonConvert.DeserializeObject<List<User>>(
+                API.Get("User/UserList", null, $"userId={id}")
+            )?.FirstOrDefault();
+
             if (user == null)
                 return RedirectToAction("ListUser");
 
-            user.RoleList = GetRoles();
-
+            user.RoleList = GetRoleSelectList();
             return View("AddUser", user);
         }
 
+        /* ---------------- DELETE USER ---------------- */
         [HttpPost]
-        public IActionResult EditUser(User model)
-        {
-            if (!ModelState.IsValid)
-            {
-                model.RoleList = GetRoles();
-                return View("AddUser", model);
-            }
-
-            var user = users.FirstOrDefault(u => u.UserID == model.UserID);
-
-            if (user != null)
-            {
-                user.UserName = model.UserName;
-                user.MobileNumber = model.MobileNumber;
-                user.Email = model.Email;
-                user.Address = model.Address;
-                user.RoleID = model.RoleID;
-                user.Status = model.Status;
-                TempData["Message"] = "User updated successfully!";
-            }
-
-            return RedirectToAction("ListUser");
-        }
-
-        [HttpGet]
-        public IActionResult ClearAll()
-        {
-            users.Clear();
-
-            TempData["Message"] = "Users cleared successfully!";
-            return RedirectToAction("ListUser");
-
-        }
-
-        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult DeleteUser(int id)
         {
-            var user = users.FirstOrDefault(u => u.UserID == id);
-            if (user != null)
-                users.Remove(user);
-
-            TempData["Message"] = "User deleted successfully!";
-            TempData["Type"] = "danger";
+            var result = API.Post($"User/DeleteUser?userID={id}", null, null);
+            TempData["Message"] = "User deleted successfully";
             return RedirectToAction("ListUser");
-
         }
+
+
     }
 }

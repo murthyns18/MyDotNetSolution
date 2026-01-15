@@ -1,3 +1,4 @@
+using LMS.Models;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
 
@@ -6,6 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Bind API URL
+builder.Configuration
+       .GetSection("API")
+       .Bind(AppSettings.APIDetails);
 
 //Compression Configuration
 builder.Services.AddResponseCompression(options =>

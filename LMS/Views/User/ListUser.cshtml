@@ -18,6 +18,7 @@
         <table class="table table-bordered table-striped table-hover">
             <thead class="table-primary text-left header">
                 <tr>
+                    <th>Action</th>
                     <th>Sl.No</th>
                     <th>Name</th>
                     <th>Email</th>
@@ -25,7 +26,6 @@
                     <th>Role</th>
                     <th>Address</th>
                     <th>Status</th>
-                    <th style="width:180px">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,6 +34,14 @@
                     @foreach (var user in Model)
                     {
                         <tr>
+                            <td class="text-center">
+                                <a href="@Url.Action("EditUser", "User", new { id = user.UserID })" class="btn btn-sm btn-info text-light me-1">Edit</a>
+
+                                <form asp-action="DeleteUser" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@user.UserID" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
                             <td>@user.UserID</td>
                             <td>@user.UserName</td>
                             <td>@user.Email</td>
@@ -45,14 +53,7 @@
                                     @(user.Status ? "Active" : "Inactive")
                                 </span>
                             </td>
-                            <td class="text-center">
-                                <a href="@Url.Action("EditUser", "User", new { id = user.UserID })" class="btn btn-sm btn-info text-light me-1">Edit</a>
-
-                                <form asp-action="DeleteUser" method="post" class="d-inline">
-                                    <input type="hidden" name="id" value="@user.UserID" />
-                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                </form>
-                            </td>
+                            
                         </tr>
                     }
                 }

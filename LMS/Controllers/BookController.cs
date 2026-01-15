@@ -1,140 +1,133 @@
 ﻿using LMS.Models;
+using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq;
+using Newtonsoft.Json;
 
 namespace LMS.Controllers
 {
     public class BookController : Controller
-    { 
-        private readonly string _cs;
-
-        public BookController(IConfiguration config) 
+    {
+        /* ---------------- LOAD PUBLISHERS ---------------- */
+        private List<Publisher> LoadPublishers()
         {
-            _cs = config.GetConnectionString("DefaultConnection");
+            return JsonConvert.DeserializeObject<List<Publisher>>(
+                API.Get("Publisher/PublisherList", null)
+            ) ?? new List<Publisher>();
         }
 
-        private static IList<Book> books = new List<Book>();
-
-        private List<SelectListItem> GetPublishers()
+        private IEnumerable<SelectListItem> GetPublisherSelectList()
         {
-            return new List<SelectListItem>
+            return LoadPublishers().Select(p => new SelectListItem
             {
-                new SelectListItem { Text = "Penguin India",       Value = "1" },
-                new SelectListItem { Text = "Rupa Publications",   Value = "2" },
-                new SelectListItem { Text = "S. Chand Publishing", Value = "3" },
-                new SelectListItem { Text = "Oxford India",        Value = "4" },
-                new SelectListItem { Text = "Jaico Publishing",    Value = "5" }
-            };
+                Text = p.PublisherName,
+                Value = p.PublisherID.ToString()
+            });
         }
 
-        private string GetPublisherNameById(int id)
+        /* ---------------- LOAD CATEGORIES ---------------- */
+        private List<Category> LoadCategories()
         {
-            return GetPublishers().FirstOrDefault(p => p.Value == id.ToString())?.Text ?? "Unknown";
+            return JsonConvert.DeserializeObject<List<Category>>(
+                API.Get("Category/CategoryList", null)
+            ) ?? new List<Category>();
         }
 
+        private IEnumerable<SelectListItem> GetCategorySelectList()
+        {
+            return LoadCategories().Select(c => new SelectListItem
+            {
+                Text = c.CategoryName,
+                Value = c.CategoryID.ToString()
+            });
+        }
 
-        //Add book get
+        /* ---------------- ADD BOOK (GET) ---------------- */
         [HttpGet]
         public IActionResult AddBook()
         {
-            Book book = new Book
+            var model = new Book
             {
-                PublisherList = GetPublishers()
+                PublisherList = GetPublisherSelectList(),
+                CategoryList = GetCategorySelectList()
             };
 
-            return View(book);
+            return View(model);
         }
 
-        //Add book post
+        /* ---------------- ADD / UPDATE BOOK (POST) ---------------- */
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddBook(Book model)
         {
-            if (!ModelState.IsValid)
-            {
-                model.PublisherList = GetPublishers();
-                return View(model);
-            }
+            model.PublisherList = GetPublisherSelectList();
+            model.CategoryList = GetCategorySelectList();
 
-            model.Id = books.Count == 0 ? 1 : books.Max(b => b.Id) + 1;
-            model.PublisherName = GetPublisherNameById(model.PublisherID);
-            books.Add(model);
-            TempData["Message"] = "Book added successfully!";
+            if (!ModelState.IsValid)
+                return View(model);
+
+            API.Post("Book/SaveBook", null, model);
+
+            TempData["Message"] = model.BookId == 0
+                ? "Book added successfully"
+                : "Book updated successfully";
 
             return RedirectToAction("BookList");
         }
 
-        //ListBook
+        /* ---------------- BOOK LIST ---------------- */
         [HttpGet]
         public IActionResult BookList()
         {
+            var books = JsonConvert.DeserializeObject<List<Book>>(
+                API.Get("Book/BookList", null)
+            ) ?? new List<Book>();
+
+            var categories = LoadCategories();
+            var publishers = LoadPublishers();
+
+            // 🔥 MAP CATEGORY & PUBLISHER NAMES
+            foreach (var book in books)
+            {
+                book.CategoryName = categories
+                    .FirstOrDefault(c => c.CategoryID == book.CategoryID)
+                    ?.CategoryName;
+
+                book.PublisherName = publishers
+                    .FirstOrDefault(p => p.PublisherID == book.PublisherID)
+                    ?.PublisherName;
+            }
+
             return View(books);
         }
 
 
-        //Edit Book
+        /* ---------------- EDIT BOOK ---------------- */
         [HttpGet]
         public IActionResult EditBook(int id)
         {
-            var book = books.FirstOrDefault(b => b.Id == id);
+            var book = JsonConvert.DeserializeObject<List<Book>>(
+                API.Get("Book/BookList", null, $"bookId={id}")
+            )?.FirstOrDefault();
+
             if (book == null)
                 return RedirectToAction("BookList");
 
-            book.PublisherList = GetPublishers();
+            book.PublisherList = GetPublisherSelectList();
+            book.CategoryList = GetCategorySelectList();
 
             return View("AddBook", book);
         }
 
-        //Edit Book Post
         [HttpPost]
-        public IActionResult EditBook(Book model)
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteBook(int bookID)
         {
-            if (!ModelState.IsValid)
-            {
-                model.PublisherList = GetPublishers();
-                return View("AddBook", model);
-            }
+            API.Post("Book/DeleteBook", null, new { bookID = bookID });
 
-            var book = books.FirstOrDefault(b => b.Id == model.Id);
-            if (book != null)
-            {
-                book.Title = model.Title;
-                book.Genre = model.Genre;
-                book.PublisherID = model.PublisherID;
-                book.Category = model.Category;
-                book.PublisherName = GetPublisherNameById(model.PublisherID);
-                book.Price = model.Price;
-                book.Year = model.Year;
-                book.Quantity = model.Quantity;
-
-                TempData["Message"] = "Book updated successfully!";
-            }
-
+            TempData["Message"] = "Book deleted successfully";
             return RedirectToAction("BookList");
         }
 
-        //Clear all
-        [HttpGet]
-        public IActionResult ClearAll()
-        {
-            books.Clear();
-            TempData["Message"] = "Books cleared successfully!";
-            return RedirectToAction("BookList");
-        }
-
-        
-        //Delete book
-        [HttpPost]
-        public IActionResult DeleteBook(int id)
-        {
-            var book = books.FirstOrDefault(b => b.Id == id);
-            if (book != null)
-                books.Remove(book);
-
-            TempData["Message"] = "Book deleted successfully!";
-            TempData["Type"] = "danger";
-            return RedirectToAction("BookList");
-        }
     }
 }

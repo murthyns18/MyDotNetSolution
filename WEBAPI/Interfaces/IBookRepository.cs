@@ -12,7 +12,7 @@ namespace LMS_API.Interfaces
 
         public IEnumerable<Book> GetList(int bookId=0);
 
-
+        string DeleteBook(int bookID);
         public string SaveBook(Book book);
     }
 }

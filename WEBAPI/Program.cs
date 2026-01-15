@@ -1,6 +1,7 @@
 
 using LMS_API.Interfaces;
 using LMS_API.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WEBAPI
 {
@@ -34,14 +35,21 @@ namespace WEBAPI
             });
 
             //DB connection 
-            string connectionString = builder
-                                     .Configuration
-                                     .GetConnectionString("DefaultConnection");
+            string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
             //DI
-            builder.Services.AddScoped<IBookRepository>(
-                m => new BookRepository(connectionString)
-            );
+
+            //Book
+            builder.Services.AddScoped<IBookRepository>( m => new BookRepository(connectionString));
+            //Category
+            builder.Services.AddScoped<ICategoryRepository>(m => new CategoryRepository(connectionString));
+            //Publisher
+            builder.Services.AddScoped<IPublisherRepository>(m => new PublisherRepository(connectionString));
+            //User
+            builder.Services.AddScoped<IUserRepository>(m => new UserRepository(connectionString));
+            //Role
+            builder.Services.AddScoped<IRoleRepository>(m => new RoleRepository(connectionString));
+
 
             var app = builder.Build();
 

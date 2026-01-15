@@ -16,15 +16,13 @@
         <table class="table table-bordered table-striped table-hover">
             <thead class="table-primary text-left">
                 <tr>
+                    <th>Action</th>
                     <th>Sl.No</th>
                     <th>Title</th>
-                    <th>Genre</th>
                     <th>Price</th>
                     <th>Category</th>
-                    <th>Publication Year</th>
                     <th>Quantity</th>
                     <th>Publisher</th>
-                    <th style="width:180px">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,26 +31,25 @@
                     @foreach (var book in Model)
                     {
                         <tr>
-                            <td>@book.Id</td>
-                            <td>@book.Title</td>
-                            <td>@book.Genre</td>
-                            <td>@book.Price</td>
-                            <td>@book.Category</td>
-                            <td>@book.Year</td>
-                            <td>@book.Quantity</td>
-                            <td>@book.PublisherName</td>
                             <td class="text-center">
-                                <a href="@Url.Action("EditBook", "Book", new { id = book.Id })" class="btn btn-sm btn-info text-light me-1">
+                                <a href="@Url.Action("EditBook", "Book", new { id = book.BookId })" class="btn btn-sm btn-info text-light me-1">
                                     Edit
                                 </a>
 
                                 <form asp-action="DeleteBook" method="post" class="d-inline">
-                                    <input type="hidden" name="id" value="@book.Id" />
+                                    <input type="hidden" name="bookID" value="@book.BookId" />
                                     <button type="submit" class="btn btn-sm btn-danger">
                                         Delete
                                     </button>
                                 </form>
+
                             </td>
+                            <td>@book.BookId</td>
+                            <td>@book.Title</td>
+                            <td>@book.Price</td>
+                            <td>@book.CategoryName</td>
+                            <td>@book.Quantity</td>
+                            <td>@book.PublisherName</td>
                         </tr>
                     }
                 }
