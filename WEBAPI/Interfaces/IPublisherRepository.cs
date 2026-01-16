@@ -5,6 +5,8 @@ namespace LMS_API.Interfaces
 {
     public interface IPublisherRepository
     {
+        string DeletePublisher(int publisherID);
+
         /// <summary>
         /// To get the Publishers
         /// </summary>

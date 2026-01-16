@@ -3,6 +3,7 @@ using LMS_API.Interfaces;
 using LMS_API.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Data.Common;
 
 namespace LMS_API.Repositories
 {
@@ -42,6 +43,19 @@ namespace LMS_API.Repositories
             );
 
             return param.Get<string>("@Result");
+        }
+
+        public string DeleteRole(int roleID)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@roleID", roleID);
+
+            return _db.QuerySingle<string>(
+                "Role_Delete",
+                parameters,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 600
+            );
         }
     }
 }

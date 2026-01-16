@@ -18,6 +18,20 @@ namespace LMS_API.Repositories
             dbConnection = new SqlConnection(connectionString);
         }
 
+
+        public string DeletePublisher(int publisherID)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@PublisherId", publisherID);
+
+            return dbConnection.QuerySingle<string>(
+                "Publisher_Delete",
+                parameters,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 600
+            );
+        }
+
         public IEnumerable<Publisher> GetList(int publisherId = 0)
         {
             var parameters = new DynamicParameters();

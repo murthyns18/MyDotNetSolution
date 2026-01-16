@@ -2,6 +2,7 @@
 using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace LMS.Controllers
 {
@@ -56,20 +57,12 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePublisher(int publisherID)
         {
-            API.Post("Publisher/DeletePublisher", null, new { publisherID });
+            API.Post($"Book/DeletePublisher?publisherID={publisherID}", null, new { });
 
             TempData["Message"] = "Publisher deleted successfully";
             return RedirectToAction("PublisherList");
         }
 
 
-        [HttpGet]
-        public IActionResult ClearAll()
-        {
-            API.Post("Publisher/ClearAll", null, null);
-
-            TempData["Message"] = "All publishers cleared successfully";
-            return RedirectToAction("PublisherList");
-        }
     }
 }

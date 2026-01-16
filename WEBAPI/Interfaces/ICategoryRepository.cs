@@ -19,5 +19,7 @@ namespace LMS_API.Interfaces
         /// <returns>Return msg Category added successfully</returns>
         string SaveCategory(Category category);
 
+        string DeleteCategory(int categoryId);
+
     }
 }

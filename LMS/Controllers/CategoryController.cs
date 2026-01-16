@@ -2,6 +2,7 @@
 using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace LMS.Controllers
 {
@@ -58,19 +59,14 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteCategory(int categoryID)
         {
-            API.Post("Category/DeleteCategory", null, new { categoryID });
+            //API.Post("Category/DeleteCategory", null, new { categoryID });
+            API.Post($"Category/DeleteCategory?categoryID={categoryID}", null, new { });
+       
 
             TempData["Message"] = "Category deleted successfully";
             return RedirectToAction("CategoryList");
         }
 
-        [HttpGet]
-        public IActionResult ClearAll()
-        {
-            API.Post("Category/ClearAll", null, null);
-
-            TempData["Message"] = "All categories cleared successfully";
-            return RedirectToAction("CategoryList");
-        }
+     
     }
 }

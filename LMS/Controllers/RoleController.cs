@@ -56,18 +56,9 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteRole(short roleID)
         {
-            API.Post("Role/DeleteRole", null, new { roleID });
+            API.Post($"Role/DeleteRole?RoleID={roleID}", null, new { });
 
             TempData["Message"] = "Role deleted successfully";
-            return RedirectToAction("RoleList");
-        }
-
-        [HttpGet]
-        public IActionResult ClearAll()
-        {
-            API.Post("Role/ClearAll", null, null);
-
-            TempData["Message"] = "All roles cleared successfully";
             return RedirectToAction("RoleList");
         }
     }

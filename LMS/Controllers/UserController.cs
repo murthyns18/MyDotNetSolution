@@ -95,7 +95,7 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteUser(int id)
         {
-            var result = API.Post($"User/DeleteUser?userID={id}", null, null);
+            var result = API.Post($"User/DeleteUser?userID={id}", null, new { });
             TempData["Message"] = "User deleted successfully";
             return RedirectToAction("ListUser");
         }

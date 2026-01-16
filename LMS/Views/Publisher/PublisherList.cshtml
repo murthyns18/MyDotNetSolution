@@ -5,9 +5,7 @@
     <div class="d-flex align-items-center mb-3 justify-content-between">
         <h4>Publisher List</h4>
         <div>
-            <a href="@Url.Content("~/Publisher/ClearAll")" class="btn btn-danger text-white">
-                Clear All
-            </a>
+           
             <a href="@Url.Content("~/Publisher/AddPublisher")" class="btn btn-primary">
                 Add Publisher
             </a>
@@ -31,7 +29,7 @@
                     {
                         <tr>
                             <td class="text-center">
-                                <a href="@Url.Action("EditPublisher", "Publisher", new { id = publisher.PublisherID })"
+                                <a href="@Url.Action("EditPublisher", "Publisher", new { id = publisher.PublisherID})"
                                    class="btn btn-sm btn-info text-light me-1">Edit</a>
 
                                 <form asp-action="DeletePublisher" method="post" class="d-inline">

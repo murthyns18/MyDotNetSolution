@@ -31,7 +31,7 @@ namespace LMS_API.Controllers
             return Ok(new { message });
         }
 
-        [HttpPost]
+        [HttpPost]  
         public IActionResult DeleteBook(int bookID)
         {
             var message = _bookRepository.DeleteBook(bookID);

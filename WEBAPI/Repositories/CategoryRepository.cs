@@ -47,5 +47,18 @@ namespace LMS_API.Repositories
 
             return dynamicParameters.Get<string>("Result");
         }
+
+        public string DeleteCategory(int categoryID)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@CategoryID", categoryID);
+
+            return dbConnection.QuerySingle<string>(
+                "Category_Delete",
+                parameters,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 600
+            );
+        }
     }
 }

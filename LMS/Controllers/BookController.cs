@@ -131,7 +131,7 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteBook(int bookID)
         {
-            API.Post($"Book/DeleteBook?bookID={bookID}", null, null);
+            API.Post($"Book/DeleteBook?bookID={bookID}", null, new {});
 
             TempData["Message"] = "Book deleted successfully";
             return RedirectToAction("BookList");

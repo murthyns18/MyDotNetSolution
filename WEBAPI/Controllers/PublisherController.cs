@@ -1,5 +1,6 @@
 ﻿using LMS_API.Interfaces;
 using LMS_API.Models;
+using LMS_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LMS_API.Controllers
@@ -41,6 +42,14 @@ namespace LMS_API.Controllers
             {
                 return StatusCode(500, new { error = ex.Message });
             }
+        }
+
+
+        [HttpPost]
+        public IActionResult DeletePublisher(int publisherID)
+        {
+            var message = _publisherRepository.DeletePublisher(publisherID);
+            return Ok(new { message });
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using LMS_API.Interfaces;
 using LMS_API.Models;
+using LMS_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LMS_API.Controllers
@@ -41,6 +42,15 @@ namespace LMS_API.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+
+
+        [HttpPost]
+        public IActionResult DeleteCategory(int categoryID)
+        {
+            var message = _categoryRepository.DeleteCategory(categoryID);
+            return Ok(new { message });
         }
     }
 }

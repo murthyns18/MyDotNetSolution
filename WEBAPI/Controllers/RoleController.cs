@@ -1,5 +1,6 @@
 ﻿using LMS_API.Interfaces;
 using LMS_API.Models;
+using LMS_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LMS_API.Controllers
@@ -40,6 +41,14 @@ namespace LMS_API.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+
+        [HttpPost]
+        public IActionResult DeleteRole(int roleID)
+        {
+            var message = _roleRepository.DeleteRole(roleID);
+            return Ok(new { message });
         }
     }
 }
