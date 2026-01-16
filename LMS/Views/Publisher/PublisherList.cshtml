@@ -1,0 +1,63 @@
+﻿@model IList<LMS.Models.Publisher>
+
+<div class="container mt-4">
+
+    <div class="d-flex align-items-center mb-3 justify-content-between">
+        <h4>Publisher List</h4>
+        <div>
+            <a href="@Url.Content("~/Publisher/ClearAll")" class="btn btn-danger text-white">
+                Clear All
+            </a>
+            <a href="@Url.Content("~/Publisher/AddPublisher")" class="btn btn-primary">
+                Add Publisher
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover">
+            <thead class="table-primary text-left header">
+                <tr>
+                    <th>Action</th>
+                    <th>Sl.No</th>
+                    <th>Publisher Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var publisher in Model)
+                    {
+                        <tr>
+                            <td class="text-center">
+                                <a href="@Url.Action("EditPublisher", "Publisher", new { id = publisher.PublisherID })"
+                                   class="btn btn-sm btn-info text-light me-1">Edit</a>
+
+                                <form asp-action="DeletePublisher" method="post" class="d-inline">
+                                    <input type="hidden" name="publisherID" value="@publisher.PublisherID" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+
+                            <td>@publisher.PublisherID</td>
+                            <td>@publisher.PublisherName</td>
+                            <td class="text-center">
+                                <span class="badge @(publisher.IsActive ? "bg-success" : "bg-danger")">
+                                    @(publisher.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-danger">No publishers available</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>

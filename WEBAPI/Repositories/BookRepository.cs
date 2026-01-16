@@ -49,7 +49,7 @@ namespace LMS_API.Repositories
                 size: 500
             );
 
-            dbConnection.Execute(
+            dbConnection.QuerySingle(
                 "Book_InsertUpdate",
                 parameters,
                 commandType: CommandType.StoredProcedure,
@@ -59,15 +59,19 @@ namespace LMS_API.Repositories
             return parameters.Get<string>("@Result");
         }
 
-       
+
         public string DeleteBook(int bookID)
         {
-            dbConnection.Execute(
-                "DELETE FROM Books WHERE BookId = @BookId",
-                new { BookId = bookID }
-            );
+            var parameters = new DynamicParameters();
+            parameters.Add("@BookId", bookID);
 
-            return "Book deleted successfully";
+            return dbConnection.QuerySingle<string>(
+                "Book_Delete",
+                parameters,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 600
+            );
         }
+
     }
 }

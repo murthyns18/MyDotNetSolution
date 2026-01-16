@@ -15,5 +15,6 @@
         public short? RoleID { get; set; }
 
         public bool Status { get; set; }
+        public string? Password { get; set; } = "";
     }
 }

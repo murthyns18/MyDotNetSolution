@@ -35,7 +35,7 @@ namespace LMS.Controllers
             return View(model);
         }
 
-        /* ---------------- ADD / UPDATE USER (POST) ---------------- */
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddUser(User model)
@@ -90,7 +90,7 @@ namespace LMS.Controllers
             return View("AddUser", user);
         }
 
-        /* ---------------- DELETE USER ---------------- */
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteUser(int id)

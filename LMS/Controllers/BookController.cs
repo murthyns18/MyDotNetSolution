@@ -8,14 +8,15 @@ namespace LMS.Controllers
 {
     public class BookController : Controller
     {
-        /* ---------------- LOAD PUBLISHERS ---------------- */
+
+        //To load publishers from the api
         private List<Publisher> LoadPublishers()
         {
             return JsonConvert.DeserializeObject<List<Publisher>>(
-                API.Get("Publisher/PublisherList", null)
-            ) ?? new List<Publisher>();
+                API.Get("Publisher/PublisherList", null)) ?? new List<Publisher>();
         }
 
+        //using Loadpublishsers selecting SelectListItem
         private IEnumerable<SelectListItem> GetPublisherSelectList()
         {
             return LoadPublishers().Select(p => new SelectListItem
@@ -25,14 +26,16 @@ namespace LMS.Controllers
             });
         }
 
-        /* ---------------- LOAD CATEGORIES ---------------- */
+
+        //Loading categories from the api
         private List<Category> LoadCategories()
         {
             return JsonConvert.DeserializeObject<List<Category>>(
-                API.Get("Category/CategoryList", null)
-            ) ?? new List<Category>();
+                API.Get("Category/CategoryList", null)) ?? new List<Category>();
         }
 
+
+        //using loadcategories selecting SelectListItem
         private IEnumerable<SelectListItem> GetCategorySelectList()
         {
             return LoadCategories().Select(c => new SelectListItem
@@ -42,7 +45,9 @@ namespace LMS.Controllers
             });
         }
 
-        /* ---------------- ADD BOOK (GET) ---------------- */
+
+
+        //Add book GET
         [HttpGet]
         public IActionResult AddBook()
         {
@@ -55,7 +60,8 @@ namespace LMS.Controllers
             return View(model);
         }
 
-        /* ---------------- ADD / UPDATE BOOK (POST) ---------------- */
+
+        //Add book POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddBook(Book model)
@@ -75,18 +81,18 @@ namespace LMS.Controllers
             return RedirectToAction("BookList");
         }
 
-        /* ---------------- BOOK LIST ---------------- */
+
+        //Book list GET
         [HttpGet]
         public IActionResult BookList()
         {
             var books = JsonConvert.DeserializeObject<List<Book>>(
-                API.Get("Book/BookList", null)
-            ) ?? new List<Book>();
+                API.Get("Book/BookList", null)) ?? new List<Book>();
 
             var categories = LoadCategories();
             var publishers = LoadPublishers();
 
-            // 🔥 MAP CATEGORY & PUBLISHER NAMES
+
             foreach (var book in books)
             {
                 book.CategoryName = categories
@@ -102,7 +108,7 @@ namespace LMS.Controllers
         }
 
 
-        /* ---------------- EDIT BOOK ---------------- */
+        //Edit book
         [HttpGet]
         public IActionResult EditBook(int id)
         {
@@ -119,11 +125,13 @@ namespace LMS.Controllers
             return View("AddBook", book);
         }
 
+
+        //Delete Book
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteBook(int bookID)
         {
-            API.Post("Book/DeleteBook", null, new { bookID = bookID });
+            API.Post($"Book/DeleteBook?bookID={bookID}", null, null);
 
             TempData["Message"] = "Book deleted successfully";
             return RedirectToAction("BookList");

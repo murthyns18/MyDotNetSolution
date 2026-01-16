@@ -31,14 +31,12 @@ namespace LMS_API.Controllers
             return Ok(new { message });
         }
 
-
         [HttpPost]
         public IActionResult DeleteBook(int bookID)
         {
             var message = _bookRepository.DeleteBook(bookID);
             return Ok(new { message });
         }
-
 
     }
 }

@@ -37,6 +37,7 @@ namespace LMS_API.Repositories
             parameters.Add("Address", user.Address);
             parameters.Add("RoleID", user.RoleID);
             parameters.Add("Status", user.Status);
+            parameters.Add("Password", user.Password);
             parameters.Add("Result", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
             dbConnection.Execute(
