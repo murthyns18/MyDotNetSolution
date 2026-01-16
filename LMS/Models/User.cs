@@ -9,50 +9,55 @@ namespace LMS.Models
         [Key]
         public int UserID { get; set; }
 
+        // Name
         [Display(Name = "Name")]
-        [Required(ErrorMessage = "Name is required.")]
-        [MinLength(3, ErrorMessage = "Name length should be at least 3 characters.")]
-        [MaxLength(10, ErrorMessage = "Name length should not exceed 10 characters.")]
+        [Required(ErrorMessage = "Please enter name.")]
+        [MinLength(3, ErrorMessage = "Name must be at least 3 characters long.")]
+        [MaxLength(10, ErrorMessage = "Name must not exceed 10 characters.")]
         public string UserName { get; set; } = string.Empty;
 
-
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Enter a valid email address.")]
+        // Email
+        [Required(ErrorMessage = "Please enter email address.")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
         public string Email { get; set; } = string.Empty;
 
-
-        [Required(ErrorMessage = "Mobile Number is required.")]
-        [RegularExpression(@"^[6-9]\d{9}$", ErrorMessage = "Enter a valid 10-digit mobile number.")]
+        // Mobile Number
+        [Display(Name = "Mobile Number")]
+        [Required(ErrorMessage = "Please enter mobile number.")]
+        [RegularExpression(@"^[6-9]\d{9}$",
+            ErrorMessage = "Please enter a valid 10-digit mobile number.")]
         public string MobileNumber { get; set; } = string.Empty;
 
-
-        [Required(ErrorMessage = "Address is required.")]
+        // Address
+        [Required(ErrorMessage = "Please enter address.")]
         public string Address { get; set; } = string.Empty;
 
-
+        // Role
         [Display(Name = "Role")]
-        [Required(ErrorMessage = "Role is required.")]
+        [Required(ErrorMessage = "Please select role.")]
         public short? RoleID { get; set; }
 
         public string? RoleName { get; set; }
 
-
         [ValidateNever]
-        public IEnumerable<SelectListItem> RoleList { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> RoleList { get; set; }
+            = new List<SelectListItem>();
 
+        // Status
         public bool Status { get; set; } = true;
 
-        
-        [Required(ErrorMessage = "Please enter a password")]
-        [StringLength(20, MinimumLength = 6, ErrorMessage = "Password must be 6–20 characters")]
+        // Password
+        [Required(ErrorMessage = "Please enter password.")]
+        [StringLength(20, MinimumLength = 6,
+            ErrorMessage = "Password must be between 6 and 20 characters.")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 
-
-        [Required(ErrorMessage = "Please confirm your password")]
+        // Confirm Password
+        [Required(ErrorMessage = "Please confirm password.")]
         [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Passwords do not match")]
+        [Compare("Password",
+            ErrorMessage = "Password and confirm password do not match.")]
         public string ConfirmPassword { get; set; } = string.Empty;
-
     }
 }

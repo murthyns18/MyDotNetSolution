@@ -8,60 +8,59 @@ namespace LMS.Controllers
 {
     public class BookController : Controller
     {
-
-        //To load publishers from the api
         private List<Publisher> LoadPublishers()
         {
-            return JsonConvert.DeserializeObject<List<Publisher>>(
-                API.Get("Publisher/PublisherList", null)) ?? new List<Publisher>();
+            try
+            {
+                var response = API.Get("Publisher/PublisherList", null);
+                return JsonConvert.DeserializeObject<List<Publisher>>(response) ?? new List<Publisher>();
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load publishers.";
+                return new List<Publisher>();
+            }
         }
 
-        //using Loadpublishsers selecting SelectListItem
         private IEnumerable<SelectListItem> GetPublisherSelectList()
         {
-            return LoadPublishers().Select(p => new SelectListItem
-            {
-                Text = p.PublisherName,
-                Value = p.PublisherID.ToString()
-            });
+            return LoadPublishers().Select(p => new SelectListItem { Text = p.PublisherName, Value = p.PublisherID.ToString() });
         }
 
-
-        //Loading categories from the api
         private List<Category> LoadCategories()
         {
-            return JsonConvert.DeserializeObject<List<Category>>(
-                API.Get("Category/CategoryList", null)) ?? new List<Category>();
+            try
+            {
+                var response = API.Get("Category/CategoryList", null);
+                return JsonConvert.DeserializeObject<List<Category>>(response) ?? new List<Category>();
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load categories.";
+                return new List<Category>();
+            }
         }
 
-
-        //using loadcategories selecting SelectListItem
         private IEnumerable<SelectListItem> GetCategorySelectList()
         {
-            return LoadCategories().Select(c => new SelectListItem
-            {
-                Text = c.CategoryName,
-                Value = c.CategoryID.ToString()
-            });
+            return LoadCategories().Select(c => new SelectListItem { Text = c.CategoryName, Value = c.CategoryID.ToString() });
         }
 
-
-
-        //Add book GET
         [HttpGet]
         public IActionResult AddBook()
         {
-            var model = new Book
+            try
             {
-                PublisherList = GetPublisherSelectList(),
-                CategoryList = GetCategorySelectList()
-            };
-
-            return View(model);
+                var model = new Book { PublisherList = GetPublisherSelectList(), CategoryList = GetCategorySelectList() };
+                return View(model);
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load Add Book page.";
+                return RedirectToAction("BookList");
+            }
         }
 
-
-        //Add book POST
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddBook(Book model)
@@ -72,70 +71,80 @@ namespace LMS.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            API.Post("Book/SaveBook", null, model);
-
-            TempData["Message"] = model.BookId == 0
-                ? "Book added successfully"
-                : "Book updated successfully";
-
-            return RedirectToAction("BookList");
+            try
+            {
+                API.Post("Book/SaveBook", null, model);
+                TempData["Message"] = model.BookId == 0 ? "Book added successfully." : "Book updated successfully.";
+                return RedirectToAction("BookList");
+            }
+            catch
+            {
+                ModelState.AddModelError(string.Empty, "An error occurred while saving the book. Please try again.");
+                return View(model);
+            }
         }
 
-
-        //Book list GET
         [HttpGet]
         public IActionResult BookList()
         {
-            var books = JsonConvert.DeserializeObject<List<Book>>(
-                API.Get("Book/BookList", null)) ?? new List<Book>();
-
-            var categories = LoadCategories();
-            var publishers = LoadPublishers();
-
-
-            foreach (var book in books)
+            try
             {
-                book.CategoryName = categories
-                    .FirstOrDefault(c => c.CategoryID == book.CategoryID)
-                    ?.CategoryName;
+                var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", null)) ?? new List<Book>();
+                var categories = LoadCategories();
+                var publishers = LoadPublishers();
 
-                book.PublisherName = publishers
-                    .FirstOrDefault(p => p.PublisherID == book.PublisherID)
-                    ?.PublisherName;
+                foreach (var book in books)
+                {
+                    book.CategoryName = categories.FirstOrDefault(c => c.CategoryID == book.CategoryID)?.CategoryName;
+                    book.PublisherName = publishers.FirstOrDefault(p => p.PublisherID == book.PublisherID)?.PublisherName;
+                }
+
+                return View(books);
             }
-
-            return View(books);
+            catch
+            {
+                TempData["Error"] = "Unable to load book list.";
+                return View(new List<Book>());
+            }
         }
 
-
-        //Edit book
         [HttpGet]
         public IActionResult EditBook(int id)
         {
-            var book = JsonConvert.DeserializeObject<List<Book>>(
-                API.Get("Book/BookList", null, $"bookId={id}")
-            )?.FirstOrDefault();
-
-            if (book == null)
+            try
+            {
+                var book = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", null, $"bookId={id}"))?.FirstOrDefault();
+                if (book == null)
+                {
+                    TempData["Error"] = "Book not found.";
+                    return RedirectToAction("BookList");
+                }
+                book.PublisherList = GetPublisherSelectList();
+                book.CategoryList = GetCategorySelectList();
+                return View("AddBook", book);
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load book details.";
                 return RedirectToAction("BookList");
-
-            book.PublisherList = GetPublisherSelectList();
-            book.CategoryList = GetCategorySelectList();
-
-            return View("AddBook", book);
+            }
         }
 
-
-        //Delete Book
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteBook(int bookID)
         {
-            API.Post($"Book/DeleteBook?bookID={bookID}", null, new {});
+            try
+            {
+                API.Post($"Book/DeleteBook?bookID={bookID}", null, new { });
+                TempData["Message"] = "Book deleted successfully.";
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to delete book.";
+            }
 
-            TempData["Message"] = "Book deleted successfully";
             return RedirectToAction("BookList");
         }
-
     }
 }

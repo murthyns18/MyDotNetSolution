@@ -1,7 +1,8 @@
-﻿using LMS_API.Models;
-using LMS.Services;
+﻿using LMS.Services;
+using LMS_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LMS.Controllers
 {
@@ -10,7 +11,15 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult AddRole()
         {
-            return View(new Role());
+            try
+            {
+                return View(new Role());
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load Add Role page.";
+                return RedirectToAction("RoleList");
+            }
         }
 
         [HttpPost]
@@ -20,45 +29,68 @@ namespace LMS.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            API.Post("Role/SaveRole", null, model);
-
-            TempData["Message"] = model.RoleID == 0
-                ? "Role added successfully"
-                : "Role updated successfully";
-
-            return RedirectToAction("RoleList");
+            try
+            {
+                API.Post("Role/SaveRole", null, model);
+                TempData["Message"] = model.RoleID == 0 ? "Role added successfully" : "Role updated successfully";
+                return RedirectToAction("RoleList");
+            }
+            catch
+            {
+                ModelState.AddModelError(string.Empty, "An error occurred while saving the role. Please try again.");
+                return View(model);
+            }
         }
 
         [HttpGet]
         public IActionResult RoleList()
         {
-            var roles = JsonConvert.DeserializeObject<List<Role>>(
-                API.Get("Role/GetRoles", null)
-            ) ?? new List<Role>();
-
-            return View(roles);
+            try
+            {
+                var roles = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", null)) ?? new List<Role>();
+                return View(roles);
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load roles list.";
+                return View(new List<Role>());
+            }
         }
 
         [HttpGet]
         public IActionResult EditRole(short id)
         {
-            var role = JsonConvert.DeserializeObject<List<Role>>(
-                API.Get("Role/GetRoles", null, $"roleId={id}")
-            )?.FirstOrDefault();
-
-            if (role == null)
+            try
+            {
+                var role = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", null, $"roleId={id}"))?.FirstOrDefault();
+                if (role == null)
+                {
+                    TempData["Error"] = "Role not found.";
+                    return RedirectToAction("RoleList");
+                }
+                return View("AddRole", role);
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load role details.";
                 return RedirectToAction("RoleList");
-
-            return View("AddRole", role);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteRole(short roleID)
         {
-            API.Post($"Role/DeleteRole?RoleID={roleID}", null, new { });
-
-            TempData["Message"] = "Role deleted successfully";
+            try
+            {
+                var result = API.Post($"Role/DeleteRole?RoleID={roleID}", null, new { });
+                var message = JObject.Parse(result)["message"]?.ToString();
+                TempData["Message"] = message ?? "Role deleted successfully";
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to delete role.";
+            }
             return RedirectToAction("RoleList");
         }
     }

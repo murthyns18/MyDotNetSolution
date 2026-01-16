@@ -46,7 +46,7 @@ namespace LMS_API.Controllers
 
 
         [HttpPost]
-        public IActionResult DeletePublisher(int publisherID)
+        public IActionResult DeletePublisher([FromBody] int publisherID)
         {
             var message = _publisherRepository.DeletePublisher(publisherID);
             return Ok(new { message });

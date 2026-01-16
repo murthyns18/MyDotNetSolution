@@ -6,7 +6,7 @@
 
 <div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-6">
+        <div class="col-lg-9">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white text-center">
                     <h5>@ViewData["Title"]</h5>
@@ -18,76 +18,83 @@
                         @Html.AntiForgeryToken()
                         @Html.HiddenFor(m => m.UserID)
 
-                        <div class="mb-3">
-                            @Html.LabelFor(m => m.UserName, new { @class = "form-label" })
-                            <span class="text-danger">*</span>
-                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger small" })
+                        <div class="row">
+                            <!-- LEFT COLUMN -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    @Html.LabelFor(m => m.UserName)
+                                    <span class="text-danger">*</span>
+                                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger small" })
+                                </div>
+
+                                <div class="mb-3">
+                                    @Html.LabelFor(m => m.Email)
+                                    <span class="text-danger">*</span>
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                                </div>
+
+                                <div class="mb-3">
+                                    @Html.LabelFor(m => m.MobileNumber)
+                                    <span class="text-danger">*</span>
+                                    @Html.TextBoxFor(m => m.MobileNumber, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.MobileNumber, "", new { @class = "text-danger small" })
+                                </div>
+
+                                <div class="mb-3">
+                                    @Html.LabelFor(m => m.Address)
+                                    <span class="text-danger">*</span>
+                                    @Html.TextAreaFor(m => m.Address, new { @class = "form-control", rows = 3 })
+                                    @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger small" })
+                                </div>
+                            </div>
+
+                            <!-- RIGHT COLUMN -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    @Html.LabelFor(m => m.Password)
+                                    <span class="text-danger">*</span>
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+                                </div>
+
+                                <div class="mb-3">
+                                    @Html.LabelFor(m => m.ConfirmPassword)
+                                    <span class="text-danger">*</span>
+                                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small" })
+                                </div>
+
+                                <div class="mb-3">
+                                    @Html.LabelFor(m => m.RoleID)
+                                    <span class="text-danger">*</span>
+                                    @Html.DropDownListFor(
+                                    m => m.RoleID,
+                                                                Model.RoleList,
+                                                                "-- Select Role --",
+                                                                new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.RoleID, "", new { @class = "text-danger small" })
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Status</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        @Html.RadioButtonFor(m => m.Status, true, new { @class = "form-check-input" })
+                                        <label class="form-check-label">Active</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        @Html.RadioButtonFor(m => m.Status, false, new { @class = "form-check-input" })
+                                        <label class="form-check-label">Inactive</label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
-                        <div class="mb-3">
-                            @Html.LabelFor(m => m.Email, new { @class = "form-label" })
-                            <span class="text-danger">*</span>
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
-                        </div>
-
-                        <div class="mb-3">
-                            @Html.LabelFor(m => m.MobileNumber, new { @class = "form-label" })
-                            <span class="text-danger">*</span>
-                            @Html.TextBoxFor(m => m.MobileNumber, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.MobileNumber, "", new { @class = "text-danger small" })
-                        </div>
-
-                        <div class="mb-3">
-                            @Html.LabelFor(m => m.Address, new { @class = "form-label" })
-                            <span class="text-danger">*</span>
-                            @Html.TextAreaFor(m => m.Address, new { @class = "form-control", rows = 3 })
-                            @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger small" })
-                        </div>
-
-                        <div class="mb-3">
-                            @Html.LabelFor(m => m.Password, new { @class = "form-label" })
-                            <span class="text-danger">*</span>
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
-                        </div>
-
-                        <div class="mb-3">
-                            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label" })
-                            <span class="text-danger">*</span>
-                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small" })
-                        </div>
-
-
-                        <div class="mb-3">
-                            @Html.LabelFor(m => m.RoleID, new { @class = "form-label" })
-                            <span class="text-danger">*</span>
-                            @Html.DropDownListFor(
-                            m => m.RoleID,
-                                                Model.RoleList,
-                                                "-- Select Role --",
-                                                new { @class = "form-control" }
-                                                )
-                        @Html.ValidationMessageFor(m => m.RoleID, "", new { @class = "text-danger small" })
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <div>
-                            <div class="form-check form-check-inline">
-                                @Html.RadioButtonFor(m => m.Status, true, new { @class = "form-check-input" })
-                                <label class="form-check-label">Active</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                @Html.RadioButtonFor(m => m.Status, false, new { @class = "form-check-input" })
-                                <label class="form-check-label">Inactive</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-end gap-2">
+                    <!-- BUTTONS -->
+                    <div class="d-flex justify-content-end gap-2 mt-3">
                         <a asp-action="ListUser" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">
                             @(Model.UserID == 0 ? "Save" : "Update")

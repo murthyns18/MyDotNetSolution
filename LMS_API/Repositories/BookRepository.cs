@@ -49,7 +49,7 @@ namespace LMS_API.Repositories
                 size: 500
             );
 
-            dbConnection.QuerySingle(
+            dbConnection.Execute(
                 "Book_InsertUpdate",
                 parameters,
                 commandType: CommandType.StoredProcedure,

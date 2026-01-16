@@ -1,13 +1,12 @@
-﻿@{
+﻿@model LMS.Models.Book
+
+@{
     ViewData["Title"] = "Add Book";
 }
 
-@model LMS.Models.Book
-
 <div class="container mt-4">
     <div class="row justify-content-center">
-       
-        <div class="col-md-7 col-lg-6">
+        <div class="col-lg-9">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white text-center">
                     <h5>Add Book</h5>
@@ -17,61 +16,67 @@
                     @using (Html.BeginForm("AddBook", "Book", FormMethod.Post))
                     {
                         @Html.AntiForgeryToken()
-
                         @Html.HiddenFor(m => m.BookId)
 
-                        <!-- Book Title -->
-                        <div class="mb-3">
-                            @Html.LabelFor(m => m.Title, new { @class = "form-label" })<span class="text-danger">*</span>
-                            @Html.TextBoxFor(m => m.Title, new { @class = "form-control"})
-                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        <div class="row">
+                            <!-- LEFT COLUMN -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    @Html.LabelFor(m => m.Title)
+                                    <span class="text-danger">*</span>
+                                    @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+                                    <span asp-validation-for="Title" class="text-danger small"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    @Html.LabelFor(m => m.PublisherID)
+                                    <span class="text-danger">*</span>
+                                    @Html.DropDownListFor(
+                                    m => m.PublisherID,
+                                                                Model.PublisherList,
+                                                                "-- Select Publisher --",
+                                                                new { @class = "form-control" })
+                                <span asp-validation-for="PublisherID" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                @Html.LabelFor(m => m.CategoryID)
+                                <span class="text-danger">*</span>
+                                @Html.DropDownListFor(
+                                                                m => m.CategoryID,
+                                                                Model.CategoryList,
+                                                                "-- Select Category --",
+                                                                new { @class = "form-control" })
+                                <span asp-validation-for="CategoryID" class="text-danger small"></span>
+                            </div>
                         </div>
 
-                        <!-- Publisher -->
-                        <div class="mb-3">
-                            @Html.LabelFor(m => m.PublisherID, new { @class = "form-label" })<span class="text-danger">*</span>
-                            @Html.DropDownListFor(
-                            m => m.PublisherID,
-                            Model.PublisherList,
-                            "-- Select Publisher --",
-                            new { @class = "form-control" }
-                            )
-                        <span asp-validation-for="PublisherID" class="text-danger small"></span>
+                        <!-- RIGHT COLUMN -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                @Html.LabelFor(m => m.Price)
+                                <span class="text-danger">*</span>
+                                @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+                                <span asp-validation-for="Price" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                @Html.LabelFor(m => m.Quantity)
+                                <span class="text-danger">*</span>
+                                @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control" })
+                                <span asp-validation-for="Quantity" class="text-danger small"></span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Category -->
-                    <div class="mb-3">
-                        @Html.LabelFor(m => m.CategoryID, new { @class = "form-label" })<span class="text-danger">*</span>
-                        @Html.DropDownListFor(
-                                                m => m.CategoryID,
-                                                Model.CategoryList,
-                                                "-- Select Category --",
-                                                new { @class = "form-control" }
-                                                )
-                        <span asp-validation-for="CategoryID" class="text-danger small"></span>
-                    </div>
-
-
-                    <!-- Price -->
-                    <div class="mb-3">
-                        @Html.LabelFor(m => m.Price, new { @class = "form-label" })<span class="text-danger">*</span>
-                        @Html.TextBoxFor(m => m.Price, new { @class = "form-control"})
-                        <span asp-validation-for="Price" class="text-danger small"></span>
-                    </div>
-
-                    <!-- Quantity -->
-                    <div class="mb-3">
-                        @Html.LabelFor(m => m.Quantity, new { @class = "form-label" })<span class="text-danger">*</span>
-                        @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control" })
-                        <span asp-validation-for="Quantity" class="text-danger small"></span>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="d-flex justify-content-end gap-2">
+                    <!-- BUTTONS -->
+                    <div class="d-flex justify-content-end gap-2 mt-3">
                         <button type="reset" class="btn btn-secondary">Clear</button>
-                        <button type="submit" class="btn btn-primary me-2">Submit</button>
+                        <button type="submit" class="btn btn-primary">
+                            Submit
+                        </button>
                     </div>
-                }
+                                        }
                 </div>
             </div>
         </div>

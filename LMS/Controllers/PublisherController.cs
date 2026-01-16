@@ -2,7 +2,7 @@
 using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Net;
+using Newtonsoft.Json.Linq;
 
 namespace LMS.Controllers
 {
@@ -11,7 +11,15 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult AddPublisher()
         {
-            return View(new Publisher());
+            try
+            {
+                return View(new Publisher());
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load Add Publisher page.";
+                return RedirectToAction("PublisherList");
+            }
         }
 
         [HttpPost]
@@ -21,48 +29,69 @@ namespace LMS.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            API.Post("Publisher/SavePublisher", null, model);
-
-            TempData["Message"] = model.PublisherID == 0
-                ? "Publisher added successfully"
-                : "Publisher updated successfully";
-
-            return RedirectToAction("PublisherList");
+            try
+            {
+                API.Post("Publisher/SavePublisher", null, model);
+                TempData["Message"] = model.PublisherID == 0 ? "Publisher added successfully" : "Publisher updated successfully";
+                return RedirectToAction("PublisherList");
+            }
+            catch
+            {
+                ModelState.AddModelError(string.Empty, "An error occurred while saving the publisher. Please try again.");
+                return View(model);
+            }
         }
 
         [HttpGet]
         public IActionResult PublisherList()
         {
-            var publishers = JsonConvert.DeserializeObject<List<Publisher>>(
-                API.Get("Publisher/PublisherList", null)
-            ) ?? new List<Publisher>();
-
-            return View(publishers);
+            try
+            {
+                var publishers = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", null)) ?? new List<Publisher>();
+                return View(publishers);
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load publisher list.";
+                return View(new List<Publisher>());
+            }
         }
 
         [HttpGet]
         public IActionResult EditPublisher(int id)
         {
-            var publisher = JsonConvert.DeserializeObject<List<Publisher>>(
-                API.Get("Publisher/PublisherList", null, $"publisherId={id}")
-            )?.FirstOrDefault();
-
-            if (publisher == null)
+            try
+            {
+                var publisher = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", null, $"publisherId={id}"))?.FirstOrDefault();
+                if (publisher == null)
+                {
+                    TempData["Error"] = "Publisher not found.";
+                    return RedirectToAction("PublisherList");
+                }
+                return View("AddPublisher", publisher);
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load publisher details.";
                 return RedirectToAction("PublisherList");
-
-            return View("AddPublisher", publisher);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeletePublisher(int publisherID)
         {
-            API.Post($"Book/DeletePublisher?publisherID={publisherID}", null, new { });
-
-            TempData["Message"] = "Publisher deleted successfully";
+            try
+            {
+                var result = API.Post("Publisher/DeletePublisher", null, publisherID );
+                var message = JObject.Parse(result)["message"]?.ToString();
+                TempData["Message"] = message;
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to delete publisher.";
+            }
             return RedirectToAction("PublisherList");
         }
-
-
     }
 }
