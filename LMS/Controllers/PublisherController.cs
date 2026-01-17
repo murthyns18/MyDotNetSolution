@@ -27,7 +27,7 @@ namespace LMS.Controllers
         public IActionResult AddPublisher(Publisher model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+                return View(model); 
 
             try
             {
@@ -47,7 +47,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var publishers = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", null)) ?? new List<Publisher>();
+                var publishers = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", null, "publisherID=0")) ?? new List<Publisher>();
                 return View(publishers);
             }
             catch

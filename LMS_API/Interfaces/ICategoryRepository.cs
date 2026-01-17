@@ -19,6 +19,12 @@ namespace LMS_API.Interfaces
         /// <returns>Return msg Category added successfully</returns>
         string SaveCategory(Category category);
 
+
+        /// <summary>
+        /// To delete a category
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns>Return msg category deleted successfully</returns>
         string DeleteCategory(int categoryId);
 
     }

@@ -5,14 +5,13 @@ namespace LMS_API.Interfaces
 {
     public interface IPublisherRepository
     {
-        string DeletePublisher(int publisherID);
 
         /// <summary>
         /// To get the Publishers
         /// </summary>
         /// <param name="publisherId">-1, 0, id</param>
         /// <returns>Return the list of publishers</returns>
-        IEnumerable<Publisher> GetList(int publisherId = 0);
+        IEnumerable<Publisher> GetList(int publisherID = 0);
 
         /// <summary>
         /// To Save the publisher
@@ -20,5 +19,12 @@ namespace LMS_API.Interfaces
         /// <param name="publisher"></param>
         /// <returns>Return the msg publishers saved successfully</returns>
         string SavePublisher(Publisher publisher);
+
+        /// <summary>
+        /// To delete a publisher
+        /// </summary>
+        /// <param name="publisherID"></param>
+        /// <returns>Return msg publisher deleted successfully</returns>
+        string DeletePublisher(int publisherID);
     }
 }

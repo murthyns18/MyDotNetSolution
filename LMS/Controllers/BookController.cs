@@ -12,7 +12,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Get("Publisher/PublisherList", null);
+                var response = API.Get("Publisher/PublisherList", null, "PublisherID=0");
                 return JsonConvert.DeserializeObject<List<Publisher>>(response) ?? new List<Publisher>();
             }
             catch
@@ -31,7 +31,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Get("Category/CategoryList", null);
+                var response = API.Get("Category/CategoryList", null, "categoryID=0");
                 return JsonConvert.DeserializeObject<List<Category>>(response) ?? new List<Category>();
             }
             catch
@@ -89,7 +89,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", null)) ?? new List<Book>();
+                var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", null, "bookID=0")) ?? new List<Book>();
                 var categories = LoadCategories();
                 var publishers = LoadPublishers();
 

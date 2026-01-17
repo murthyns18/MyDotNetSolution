@@ -19,7 +19,7 @@
                         @Html.HiddenFor(m => m.UserID)
 
                         <div class="row">
-                            <!-- LEFT COLUMN -->
+                           
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     @Html.LabelFor(m => m.UserName)
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
 
-                            <!-- RIGHT COLUMN -->
+                           
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     @Html.LabelFor(m => m.Password)
@@ -69,12 +69,8 @@
                                 <div class="mb-3">
                                     @Html.LabelFor(m => m.RoleID)
                                     <span class="text-danger">*</span>
-                                    @Html.DropDownListFor(
-                                    m => m.RoleID,
-                                                                Model.RoleList,
-                                                                "-- Select Role --",
-                                                                new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.RoleID, "", new { @class = "text-danger small" })
+                                    @Html.DropDownListFor( m => m.RoleID, Model.RoleList, "-- Select Role --", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.RoleID, "", new { @class = "text-danger small" })
                             </div>
 
                             <div class="mb-3">
@@ -93,7 +89,6 @@
                         </div>
                     </div>
 
-                    <!-- BUTTONS -->
                     <div class="d-flex justify-content-end gap-2 mt-3">
                         <a asp-action="ListUser" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">
