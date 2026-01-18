@@ -9,7 +9,7 @@ namespace LMS_API.Repositories
     public class BookRepository : IBookRepository
     {
         private readonly IDbConnection dbConnection;
-
+                    
         public BookRepository(string? connectionString)
         {
             dbConnection = new SqlConnection(connectionString);

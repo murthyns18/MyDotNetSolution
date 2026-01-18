@@ -1,0 +1,96 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Library Management System</title>
+    
+    <link rel="stylesheet" href="@Url.Content("~/lib/bootstrap/dist/css/bootstrap.min.css")" asp-append-version="true" />
+    <link rel="stylesheet" href="@Url.Content("~/css/site.css")" asp-append-version="true" />
+    <link rel="stylesheet" href="@Url.Content("~/LMS.styles.css")" asp-append-version="true" />
+ 
+  
+    <script src="@Url.Content("~/lib/jquery/dist/jquery.min.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/lib/jquery-validation/dist/jquery.validate.min.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js")" asp-append-version="true"></script>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <div class="container">
+        <main role="main" class="flex-fill pb-3">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+
+                    <div class="col-md-4">
+
+                        <div class="card shadow border-0">
+                            <div class="card-header bg-dark text-white text-center">
+                                <h5 class="mb-0">
+                                    <i class="fa fa-lock me-2"></i> Login
+                                </h5>
+                            </div>
+
+                            <div class="card-body">
+
+                                @if (TempData["Message"] != null)
+                                {
+                                    <div class="alert @TempData["Messageclass"]">
+                                        @TempData["Message"]
+                                    </div>
+                                }
+
+                                @using (Html.BeginForm("Login", "Login", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.Email)
+                                        @Html.TextBoxFor( m => m.Email, new { @class = "form-control", @placeholder = "Enter email" } )
+                                    @Html.ValidationMessageFor( m => m.Email, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.Password)
+                                        @Html.PasswordFor( m => m.Password, new { @class = "form-control", @placeholder = "Enter password" } )
+                                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fa fa-sign-in-alt me-1"></i> Login
+                                        </button>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted mt-auto">
+        <div class="container text-center">
+            &copy; 2026 - LMS-NS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="@Url.Content("~/lib/bootstrap/dist/js/bootstrap.bundle.min.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/js/site.js")" asp-append-version="true"></script>
+
+</body>
+
+</html>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

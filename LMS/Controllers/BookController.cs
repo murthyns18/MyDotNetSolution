@@ -12,7 +12,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Get("Publisher/PublisherList", null, "PublisherID=0");
+                var response = API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), "PublisherID=0");
                 return JsonConvert.DeserializeObject<List<Publisher>>(response) ?? new List<Publisher>();
             }
             catch
@@ -31,7 +31,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Get("Category/CategoryList", null, "categoryID=0");
+                var response = API.Get("Category/CategoryList", HttpContext.Session.GetString("Token"), "categoryID=0");
                 return JsonConvert.DeserializeObject<List<Category>>(response) ?? new List<Category>();
             }
             catch
@@ -73,7 +73,7 @@ namespace LMS.Controllers
 
             try
             {
-                API.Post("Book/SaveBook", null, model);
+                API.Post("Book/SaveBook", HttpContext.Session.GetString("Token"), model);
                 TempData["Message"] = model.BookId == 0 ? "Book added successfully." : "Book updated successfully.";
                 return RedirectToAction("BookList");
             }
@@ -89,7 +89,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", null, "bookID=0")) ?? new List<Book>();
+                var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), "bookID=0")) ?? new List<Book>();
                 var categories = LoadCategories();
                 var publishers = LoadPublishers();
 
@@ -113,7 +113,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var book = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", null, $"bookId={id}"))?.FirstOrDefault();
+                var book = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), $"bookId={id}"))?.FirstOrDefault();
                 if (book == null)
                 {
                     TempData["Error"] = "Book not found.";
@@ -136,7 +136,7 @@ namespace LMS.Controllers
         {
             try
             {
-                API.Post($"Book/DeleteBook?bookID={bookID}", null, new { });
+                API.Post($"Book/DeleteBook?bookID={bookID}", HttpContext.Session.GetString("Token"), new { });
                 TempData["Message"] = "Book deleted successfully.";
             }
             catch

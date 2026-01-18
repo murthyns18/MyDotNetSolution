@@ -24,5 +24,11 @@ namespace LMS_API.Interfaces
         /// </summary>
         /// <param name="userId"></param>
         void DeleteUser(int userId);
+        /// <summary>
+        /// To get the list of valid user details & respective menu details
+        /// </summary>
+        /// <param name="authenticateUser"></param>
+        /// <returns></returns>
+        Tuple<User, IEnumerable<Menu>> AuthenticateUser(AuthenticateUser authenticateUser);
     }
 }

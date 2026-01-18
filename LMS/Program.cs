@@ -7,10 +7,22 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
 // Bind API URL
 builder.Configuration
        .GetSection("API")
        .Bind(AppSettings.APIDetails);
+
+
+// Configure session
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = "LMS";
+    options.IdleTimeout = TimeSpan.FromMinutes(120);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 
 //Compression Configuration
 builder.Services.AddResponseCompression(options =>
@@ -50,8 +62,10 @@ app.MapStaticAssets();
 app.UseResponseCompression();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    //pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Login}/{action=Login}/{id?}")
     .WithStaticAssets();
+app.UseSession();
 
 
 app.Run();

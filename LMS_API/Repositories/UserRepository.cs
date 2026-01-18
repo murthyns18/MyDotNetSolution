@@ -62,5 +62,24 @@ namespace LMS_API.Repositories
         }
 
 
+        public Tuple<User, IEnumerable<Menu>> AuthenticateUser(AuthenticateUser authenticateUser)
+        {
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("Email", authenticateUser.Email);
+            parameters.Add("Password", authenticateUser.Password);
+
+            //returns multiple results -- QueryMultiple
+            var result = dbConnection.QueryMultiple("User_AuthenticateUser", parameters, commandType: CommandType.StoredProcedure, commandTimeout: 600);
+
+            var user = result.ReadSingleOrDefault<User>();
+            var menus = result.Read<Menu>();
+
+            if (user == null)
+                return null;
+
+            return new Tuple<User, IEnumerable<Menu>>(user, menus);
+
+        }
+
     }
 }

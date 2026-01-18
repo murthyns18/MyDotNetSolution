@@ -6,7 +6,7 @@ namespace LMS_API.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class BookController : Controller
+    public class BookController : BaseController
     {
         private readonly IBookRepository _bookRepository;
 
