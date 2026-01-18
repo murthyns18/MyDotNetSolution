@@ -47,7 +47,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var categories = JsonConvert.DeserializeObject<List<Category>>(API.Get("Category/CategoryList", null, "categoryID=0")) ?? new List<Category>();
+                var categories = JsonConvert.DeserializeObject<List<Category>>(API.Get("Category/CategoryList", HttpContext.Session.GetString("Token"), "categoryID=0")) ?? new List<Category>();
                 return View(categories);
             }
             catch (Exception)

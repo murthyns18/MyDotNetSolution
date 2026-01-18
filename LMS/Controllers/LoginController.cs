@@ -39,5 +39,13 @@ namespace LMS.Controllers
             return RedirectToAction("BookList", "Book");
         }
 
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            // Clear all session data (Menu, Token, User info)
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("Login", "Login");
+        }
     }
 }

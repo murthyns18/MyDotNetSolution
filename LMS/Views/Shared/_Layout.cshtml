@@ -1,36 +1,43 @@
-﻿@{
-    @inject IConfiguration configuration
+﻿@using Newtonsoft.Json
+@using LMS.Models
+@inject IConfiguration configuration
+
+@{
     var apiURL = Convert.ToString(configuration.GetSection("API")["URL"]);
+
+    var menuJson = Context.Session.GetString("MenuDetails");
+    var menuDetails = string.IsNullOrEmpty(menuJson) ? new List<Menu>() : JsonConvert.DeserializeObject<List<Menu>>(menuJson);
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>@ViewData["Title"] - LMS</title>
-    <script type="importmap"></script>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LMS.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LMS.styles.css" asp-append-version="true" />
 
     <script>
-        var ROOT='@Url.Content("~/")';
-        var APIURL='@apiURL';
+        var ROOT = '@Url.Content("~/")';
+        var APIURL = '@apiURL';
     </script>
-    <script src="@Url.Content("~/lib/jquery/dist/jquery.min.js")"></script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3">
             <div class="container-fluid">
 
-                
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
                     Library Management System
                 </a>
-
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarContent" aria-controls="navbarContent"
@@ -40,60 +47,57 @@
 
                 <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
                     <ul class="navbar-nav">
+
+                        @if (menuDetails != null && menuDetails.Any())
+                        {
+                            foreach (var menu in menuDetails
+                            .Where(m => m.IsRead)
+                            .OrderBy(m => m.DisplayOrder))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       href="@Url.Content(menu.MenuURL)">
+                                        @menu.DisplayName
+                                    </a>
+                                </li>
+                            }
+                        }
+
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-warning" asp-controller="Login" asp-action="Logout">
+                                Logout
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="User" asp-action="ListUser">Users</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Book" asp-action="BookList">Books</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Publisher" asp-action="PublisherList">Publishers</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Category" asp-action="CategoryList">Categories</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Role" asp-action="RoleList">Roles</a>
-                        </li>
+
                     </ul>
                 </div>
 
             </div>
         </nav>
-
     </header>
+
     <div class="container">
-        <!-- Notification Message -->
         @if (TempData["Message"] != null)
         {
             var type = TempData["Type"] ?? "success";
-            <div id="notification" class="alert alert-@type text-center mx-auto" style="width:300px; margin-bottom:10px;">
-                @Convert.ToString(TempData["Message"])
+            <div class="alert alert-@type text-center mx-auto" style="width:350px;">
+                @TempData["Message"]
             </div>
         }
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
+
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - LMS-NS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container text-center">
+            &copy; 2026 - LMS-NS
         </div>
     </footer>
-   
-    @* <script src="@Url.Content("~/lib/jquery/dist/jquery.min.js")"></script> *@
-    <script src="@Url.Content("~/lib/bootstrap/dist/js/bootstrap.bundle.min.js")"></script> 
-    <script src="@Url.Content("~/js/site.js")" asp-append-version="true"></script>
 
-    
-    <script src="@Url.Content("~/js/book.js")" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 

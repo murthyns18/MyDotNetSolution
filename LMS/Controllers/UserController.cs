@@ -13,7 +13,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Get("Role/GetRoles", null, "roleId=-1");
+                var response = API.Get("Role/GetRoles", null, "roleId=0");
                 return JsonConvert.DeserializeObject<List<Role>>(response) ?? new List<Role>();
             }
             catch
@@ -49,8 +49,21 @@ namespace LMS.Controllers
         {
             model.RoleList = GetRoleSelectList();
 
+            // For editing remove password validation in Edit
+            if (model.UserID > 0)
+            {
+                ModelState.Remove(nameof(model.Password));
+                ModelState.Remove(nameof(model.ConfirmPassword));
+            }
+
             if (!ModelState.IsValid)
                 return View(model);
+
+            // Optional set pass = null
+            if (model.UserID > 0 && string.IsNullOrWhiteSpace(model.Password))
+            {
+                model.Password = null;
+            }
 
             try
             {

@@ -52,6 +52,10 @@
 
                            
                             <div class="col-md-6">
+
+                                @if (Model.UserID == 0)
+                                {
+                                    
                                 <div class="mb-3">
                                     @Html.LabelFor(m => m.Password)
                                     <span class="text-danger">*</span>
@@ -65,6 +69,7 @@
                                     @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
                                     @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small" })
                                 </div>
+                                }
 
                                 <div class="mb-3">
                                     @Html.LabelFor(m => m.RoleID)
