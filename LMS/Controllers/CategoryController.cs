@@ -31,8 +31,10 @@ namespace LMS.Controllers
 
             try
             {
-                API.Post("Category/SaveCategory", HttpContext.Session.GetString("Token"), model);
-                TempData["Message"] = model.CategoryID == 0 ? "Category added successfully" : "Category updated successfully";
+                var result = API.Post("Category/SaveCategory", HttpContext.Session.GetString("Token"), model);
+                var message = JObject.Parse(result)["message"]?.ToString();
+                TempData["Message"] = message;
+
                 return RedirectToAction("CategoryList");
             }
             catch (Exception)
@@ -85,7 +87,7 @@ namespace LMS.Controllers
             {
                 var result = API.Post($"Category/DeleteCategory?categoryID={categoryID}", HttpContext.Session.GetString("Token"), new { });
                 var message = JObject.Parse(result)["message"]?.ToString();
-                TempData["Message"] = message ?? "Category deleted successfully";
+                TempData["Message"] = message;
             }
             catch (Exception)
             {

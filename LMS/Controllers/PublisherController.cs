@@ -31,8 +31,10 @@ namespace LMS.Controllers
 
             try
             {
-                API.Post("Publisher/SavePublisher", HttpContext.Session.GetString("Token"), model);
-                TempData["Message"] = model.PublisherID == 0 ? "Publisher added successfully" : "Publisher updated successfully";
+                var result = API.Post("Publisher/SavePublisher", HttpContext.Session.GetString("Token"), model);
+                var message = JObject.Parse(result)["message"]?.ToString();
+                TempData["Message"] = message;
+        
                 return RedirectToAction("PublisherList");
             }
             catch

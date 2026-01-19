@@ -17,6 +17,10 @@
 
     <title>@ViewData["Title"] - LMS</title>
 
+    <link href="@Url.Content("~/assets/plugins/jqGrid/css/jquery-ui.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/assets/plugins/jqGrid/css/ui.jqgrid.min.css")" rel="stylesheet" />
+
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/custom.min.css" asp-append-version="true" />
@@ -98,6 +102,9 @@
     
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/book.min.js" asp-append-version="true"></script>
+    <script src="@Url.Content("~/assets/plugins/jqGrid/js/grid.locale-en.min.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/assets/plugins/jqGrid/js/jquery-ui.min.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/assets/plugins/jqGrid/js/jquery.jqGrid.min.js")" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 

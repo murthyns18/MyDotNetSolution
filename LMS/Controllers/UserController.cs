@@ -4,6 +4,7 @@ using LMS_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LMS.Controllers
 {
@@ -67,8 +68,10 @@ namespace LMS.Controllers
 
             try
             {
-                API.Post("User/SaveUser", HttpContext.Session.GetString("Token"), model);
-                TempData["Message"] = model.UserID == 0 ? "User added successfully" : "User updated successfully";
+                var result =  API.Post("User/SaveUser", HttpContext.Session.GetString("Token"), model);
+                var message = JObject.Parse(result)["message"]?.ToString();
+                TempData["Message"] = message;
+               
                 return RedirectToAction("ListUser");
             }
             catch
@@ -81,23 +84,25 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult ListUser()
         {
-            try
-            {
-                var users = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), "userId=0")) ?? new List<User>();
-                var roles = LoadRoles();
+            //try
+            //{
+            //    var users = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), "userId=0")) ?? new List<User>();
+            //    var roles = LoadRoles();
 
-                foreach (var user in users)
-                {
-                    user.RoleName = roles.FirstOrDefault(r => r.RoleID == user.RoleID)?.RoleName;
-                }
+            //    foreach (var user in users)
+            //    {
+            //        user.RoleName = roles.FirstOrDefault(r => r.RoleID == user.RoleID)?.RoleName;
+            //    }
 
-                return View(users);
-            }
-            catch
-            {
-                TempData["Error"] = "Unable to load users list.";
-                return View(new List<User>());
-            }
+            //    return View(users);
+            //}
+            //catch
+            //{
+            //    TempData["Error"] = "Unable to load users list.";
+            //    return View(new List<User>());
+            //}
+
+            return View();
         }
 
         [HttpGet]
@@ -122,13 +127,14 @@ namespace LMS.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public IActionResult DeleteUser(int id)
         {
             try
             {
                 var result = API.Post($"User/DeleteUser?userID={id}", HttpContext.Session.GetString("Token"), new { });
-                TempData["Message"] = "User deleted successfully";
+                var message = JObject.Parse(result)["message"]?.ToString();
+                TempData["Message"] = message;
             }
             catch
             {

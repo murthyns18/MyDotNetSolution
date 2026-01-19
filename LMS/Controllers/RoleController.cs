@@ -31,8 +31,10 @@ namespace LMS.Controllers
 
             try
             {
-                API.Post("Role/SaveRole", HttpContext.Session.GetString("Token"), model);
-                TempData["Message"] = model.RoleID == 0 ? "Role added successfully" : "Role updated successfully";
+                var result = API.Post("Role/SaveRole", HttpContext.Session.GetString("Token"), model);
+                var message = JObject.Parse(result)["message"]?.ToString();
+                TempData["Message"] = message;
+
                 return RedirectToAction("RoleList");
             }
             catch
@@ -85,7 +87,7 @@ namespace LMS.Controllers
             {
                 var result = API.Post($"Role/DeleteRole?RoleID={roleID}", HttpContext.Session.GetString("Token"), new { });
                 var message = JObject.Parse(result)["message"]?.ToString();
-                TempData["Message"] = message ?? "Role deleted successfully";
+                TempData["Message"] = message;
             }
             catch
             {

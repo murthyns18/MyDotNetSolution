@@ -12,7 +12,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="assets\plugins\" />
+    <None Include="wwwroot\assets\plugins\jqGrid\css\images\ui-icons_056b93_256x240.png" />
+    <None Include="wwwroot\assets\plugins\jqGrid\css\jquery-ui.min.css" />
+    <None Include="wwwroot\assets\plugins\jqGrid\css\ui.jqgrid.min.css" />
+    <None Include="wwwroot\assets\plugins\jqGrid\jqGrid\css\images\ui-icons_056b93_256x240.png" />
+    <None Include="wwwroot\assets\plugins\jqGrid\jqGrid\css\jquery-ui.min.css" />
+    <None Include="wwwroot\assets\plugins\jqGrid\jqGrid\css\ui.jqgrid.min.css" />
+    <None Include="wwwroot\assets\plugins\jqGrid\jqGrid\jqzip\jszip.js" />
+    <None Include="wwwroot\assets\plugins\jqGrid\jqGrid\js\grid.locale-en.min.js" />
+    <None Include="wwwroot\assets\plugins\jqGrid\jqGrid\js\jquery-ui.min.js" />
+    <None Include="wwwroot\assets\plugins\jqGrid\jqGrid\js\jquery.jqGrid.min.js" />
+    <None Include="wwwroot\assets\plugins\jqGrid\jqGrid\js\jszip.min.js" />
+    <None Include="wwwroot\assets\plugins\jqGrid\jqzip\jszip.js" />
+    <None Include="wwwroot\assets\plugins\jqGrid\js\grid.locale-en.min.js" />
+    <None Include="wwwroot\assets\plugins\jqGrid\js\jquery-ui.min.js" />
+    <None Include="wwwroot\assets\plugins\jqGrid\js\jquery.jqGrid.min.js" />
+    <None Include="wwwroot\assets\plugins\jqGrid\js\jszip.min.js" />
   </ItemGroup>
 
 </Project>

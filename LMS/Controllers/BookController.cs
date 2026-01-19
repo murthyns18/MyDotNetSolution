@@ -3,6 +3,7 @@ using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LMS.Controllers
 {
@@ -73,8 +74,10 @@ namespace LMS.Controllers
 
             try
             {
-                API.Post("Book/SaveBook", HttpContext.Session.GetString("Token"), model);
-                TempData["Message"] = model.BookId == 0 ? "Book added successfully." : "Book updated successfully.";
+                var result = API.Post("Book/SaveBook", HttpContext.Session.GetString("Token"), model);
+                var message = JObject.Parse(result)["message"]?.ToString();
+                TempData["Message"] = message;
+              
                 return RedirectToAction("BookList");
             }
             catch
@@ -136,8 +139,9 @@ namespace LMS.Controllers
         {
             try
             {
-                API.Post($"Book/DeleteBook?bookID={bookID}", HttpContext.Session.GetString("Token"), new { });
-                TempData["Message"] = "Book deleted successfully.";
+                var result = API.Post($"Book/DeleteBook?bookID={bookID}", HttpContext.Session.GetString("Token"), new { });
+                var message = JObject.Parse(result)["message"]?.ToString();
+                TempData["Message"] = message;
             }
             catch
             {
