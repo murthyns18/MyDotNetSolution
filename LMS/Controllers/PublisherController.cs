@@ -31,7 +31,7 @@ namespace LMS.Controllers
 
             try
             {
-                API.Post("Publisher/SavePublisher", null, model);
+                API.Post("Publisher/SavePublisher", HttpContext.Session.GetString("Token"), model);
                 TempData["Message"] = model.PublisherID == 0 ? "Publisher added successfully" : "Publisher updated successfully";
                 return RedirectToAction("PublisherList");
             }
@@ -47,14 +47,14 @@ namespace LMS.Controllers
         {
             try
             {
-                var publishers = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", null, "publisherID=0")) ?? new List<Publisher>();
+                var publishers = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), "publisherID=0")) ?? new List<Publisher>();
                 return View(publishers);
             }
             catch
             {
                 TempData["Error"] = "Unable to load publisher list.";
                 return View(new List<Publisher>());
-            }
+            }       
         }
 
         [HttpGet]
@@ -62,7 +62,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var publisher = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", null, $"publisherId={id}"))?.FirstOrDefault();
+                var publisher = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), $"publisherId={id}"))?.FirstOrDefault();
                 if (publisher == null)
                 {
                     TempData["Error"] = "Publisher not found.";
@@ -83,7 +83,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post("Publisher/DeletePublisher", null, publisherID );
+                var result = API.Post("Publisher/DeletePublisher", HttpContext.Session.GetString("Token"), publisherID );
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
             }

@@ -18,9 +18,9 @@
     <title>@ViewData["Title"] - LMS</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LMS.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/custom.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/home.min.css" asp-append-version="true" />
 
     <script>
         var ROOT = '@Url.Content("~/")';
@@ -80,7 +80,7 @@
         @if (TempData["Message"] != null)
         {
             var type = TempData["Type"] ?? "success";
-            <div class="alert alert-@type text-center mx-auto" style="width:350px;">
+            <div class="alert alert-@type notification text-center mx-auto" style="width:350px;">
                 @TempData["Message"]
             </div>
         }
@@ -95,9 +95,9 @@
             &copy; 2026 - LMS-NS
         </div>
     </footer>
-
+    
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/book.min.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 

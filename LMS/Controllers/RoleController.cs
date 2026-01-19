@@ -31,7 +31,7 @@ namespace LMS.Controllers
 
             try
             {
-                API.Post("Role/SaveRole", null, model);
+                API.Post("Role/SaveRole", HttpContext.Session.GetString("Token"), model);
                 TempData["Message"] = model.RoleID == 0 ? "Role added successfully" : "Role updated successfully";
                 return RedirectToAction("RoleList");
             }
@@ -47,7 +47,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var roles = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", null)) ?? new List<Role>();
+                var roles = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"))) ?? new List<Role>();
                 return View(roles);
             }
             catch
@@ -62,7 +62,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var role = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", null, $"roleId={id}"))?.FirstOrDefault();
+                var role = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), $"roleId={id}"))?.FirstOrDefault();
                 if (role == null)
                 {
                     TempData["Error"] = "Role not found.";
@@ -83,7 +83,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post($"Role/DeleteRole?RoleID={roleID}", null, new { });
+                var result = API.Post($"Role/DeleteRole?RoleID={roleID}", HttpContext.Session.GetString("Token"), new { });
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message ?? "Role deleted successfully";
             }

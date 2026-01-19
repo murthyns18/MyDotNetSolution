@@ -8,7 +8,7 @@ $(document).ready(function () {
     });
 
     $(document).ready(function () {
-        $("#notification").delay(3000).fadeOut("slow");
+        $(".notification").delay(3000).fadeOut("slow");
     });
 
 });

@@ -13,7 +13,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Get("Role/GetRoles", null, "roleId=0");
+                var response = API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), "roleId=0");
                 return JsonConvert.DeserializeObject<List<Role>>(response) ?? new List<Role>();
             }
             catch
@@ -67,7 +67,7 @@ namespace LMS.Controllers
 
             try
             {
-                API.Post("User/SaveUser", null, model);
+                API.Post("User/SaveUser", HttpContext.Session.GetString("Token"), model);
                 TempData["Message"] = model.UserID == 0 ? "User added successfully" : "User updated successfully";
                 return RedirectToAction("ListUser");
             }
@@ -83,7 +83,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var users = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", null, "userId=0")) ?? new List<User>();
+                var users = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), "userId=0")) ?? new List<User>();
                 var roles = LoadRoles();
 
                 foreach (var user in users)
@@ -105,7 +105,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var user = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", null, $"userId={id}"))?.FirstOrDefault();
+                var user = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={id}"))?.FirstOrDefault();
                 if (user == null)
                 {
                     TempData["Error"] = "User not found.";
@@ -127,7 +127,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post($"User/DeleteUser?userID={id}", null, new { });
+                var result = API.Post($"User/DeleteUser?userID={id}", HttpContext.Session.GetString("Token"), new { });
                 TempData["Message"] = "User deleted successfully";
             }
             catch
@@ -136,5 +136,49 @@ namespace LMS.Controllers
             }
             return RedirectToAction("ListUser");
         }
+
+        [HttpGet]
+        public JsonResult GetUsersForGrid(int page, int rows)
+        {
+            try
+            {
+                var users = JsonConvert.DeserializeObject<List<User>>(
+                    API.Get("User/UserList", HttpContext.Session.GetString("Token"), "userId=0")
+                ) ?? new List<User>();
+
+                var roles = LoadRoles();
+                foreach (var user in users)
+                {
+                    user.RoleName = roles.FirstOrDefault(r => r.RoleID == user.RoleID)?.RoleName;
+                }
+
+                int totalRecords = users.Count;
+                int totalPages = (int)Math.Ceiling((double)totalRecords / rows);
+
+                var pagedData = users
+                    .Skip((page - 1) * rows)
+                    .Take(rows)
+                    .ToList();
+
+                return Json(new
+                {
+                    page = page,
+                    total = totalPages,
+                    records = totalRecords,
+                    rows = pagedData
+                });
+            }
+            catch
+            {
+                return Json(new
+                {
+                    page = 1,
+                    total = 0,
+                    records = 0,
+                    rows = new List<User>()
+                });
+            }
+        }
+
     }
 }
