@@ -106,44 +106,6 @@ namespace LMS.Controllers
         }
 
         [HttpGet]
-        public IActionResult EditUser(int id)
-        {
-            try
-            {
-                var user = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={id}"))?.FirstOrDefault();
-                if (user == null)
-                {
-                    TempData["Error"] = "User not found.";
-                    return RedirectToAction("ListUser");
-                }
-                user.RoleList = GetRoleSelectList();
-                return View("AddUser", user);
-            }
-            catch
-            {
-                TempData["Error"] = "Unable to load user details.";
-                return RedirectToAction("ListUser");
-            }
-        }
-
-        [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public IActionResult DeleteUser(int id)
-        {
-            try
-            {
-                var result = API.Post($"User/DeleteUser?userID={id}", HttpContext.Session.GetString("Token"), new { });
-                var message = JObject.Parse(result)["message"]?.ToString();
-                TempData["Message"] = message;
-            }
-            catch
-            {
-                TempData["Error"] = "Unable to delete user.";
-            }
-            return RedirectToAction("ListUser");
-        }
-
-        [HttpGet]
         public JsonResult GetUsersForGrid(int page, int rows)
         {
             try
@@ -186,5 +148,45 @@ namespace LMS.Controllers
             }
         }
 
+
+        [HttpGet]
+        public IActionResult EditUser(int id)
+        {
+            try
+            {
+                var user = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={id}"))?.FirstOrDefault();
+                if (user == null)
+                {
+                    TempData["Error"] = "User not found.";
+                    return RedirectToAction("ListUser");
+                }
+                user.RoleList = GetRoleSelectList();
+                return View("AddUser", user);
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load user details.";
+                return RedirectToAction("ListUser");
+            }
+        }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public IActionResult DeleteUser(int id)
+        {
+            try
+            {
+                var result = API.Post($"User/DeleteUser?userID={id}", HttpContext.Session.GetString("Token"), new { });
+                var message = JObject.Parse(result)["message"]?.ToString();
+                TempData["Message"] = message;
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to delete user.";
+            }
+            return RedirectToAction("ListUser");
+        }
+
+        
     }
 }

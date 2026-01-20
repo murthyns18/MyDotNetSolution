@@ -9,6 +9,8 @@
         public int? CategoryId { get; set; }
 
         public int? PublisherId { get; set; }
+        public string? PublisherName { get; set; }
+        public string? CategoryName { get; set; }
 
         public decimal Price { get; set; }
 

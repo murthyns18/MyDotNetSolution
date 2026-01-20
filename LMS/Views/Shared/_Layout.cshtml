@@ -25,10 +25,12 @@
     <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/custom.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/home.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.css" />
 
     <script>
         var ROOT = '@Url.Content("~/")';
         var APIURL = '@apiURL';
+        var TOKEN = '@Context.Session.GetString("Token")';
     </script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -101,7 +103,7 @@
     </footer>
     
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/book.min.js" asp-append-version="true"></script>
+    <script src="~/js/bookList.js" asp-append-version="true"></script>
     <script src="@Url.Content("~/assets/plugins/jqGrid/js/grid.locale-en.min.js")" asp-append-version="true"></script>
     <script src="@Url.Content("~/assets/plugins/jqGrid/js/jquery-ui.min.js")" asp-append-version="true"></script>
     <script src="@Url.Content("~/assets/plugins/jqGrid/js/jquery.jqGrid.min.js")" asp-append-version="true"></script>
@@ -110,3 +112,4 @@
 
 </body>
 </html>
+    

@@ -77,7 +77,7 @@ namespace LMS.Controllers
                 var result = API.Post("Book/SaveBook", HttpContext.Session.GetString("Token"), model);
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
-              
+
                 return RedirectToAction("BookList");
             }
             catch
@@ -90,24 +90,52 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult BookList()
         {
+            //try
+            //{
+            //    var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), "bookID=0")) ?? new List<Book>();
+            //    var categories = LoadCategories();
+            //    var publishers = LoadPublishers();
+
+            //    foreach (var book in books)
+            //    {
+            //        book.CategoryName = categories.FirstOrDefault(c => c.CategoryID == book.CategoryID)?.CategoryName;
+            //        book.PublisherName = publishers.FirstOrDefault(p => p.PublisherID == book.PublisherID)?.PublisherName;
+            //    }
+
+            return View();
+            //}
+            //catch
+            //{
+            //    TempData["Error"] = "Unable to load book list.";
+            //    return View(new List<Book>());
+            //}
+        }
+
+        [HttpGet]
+        public IActionResult GetBooksForGrid()
+        {
             try
             {
-                var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), "bookID=0")) ?? new List<Book>();
-                var categories = LoadCategories();
-                var publishers = LoadPublishers();
+                var books = JsonConvert.DeserializeObject<List<Book>>(
+                    API.Get("Book/BookList",
+                        HttpContext.Session.GetString("Token"),
+                        "bookId=0")
+                ) ?? new List<Book>();
 
-                foreach (var book in books)
+                return Json(new
                 {
-                    book.CategoryName = categories.FirstOrDefault(c => c.CategoryID == book.CategoryID)?.CategoryName;
-                    book.PublisherName = publishers.FirstOrDefault(p => p.PublisherID == book.PublisherID)?.PublisherName;
-                }
-
-                return View(books);
+                    rows = books,
+                    records = books.Count
+                });
             }
-            catch
+            catch (Exception ex)
             {
-                TempData["Error"] = "Unable to load book list.";
-                return View(new List<Book>());
+                Response.StatusCode = 500;
+                return Json(new
+                {
+                    error = "Failed to load books",
+                    details = ex.Message
+                });
             }
         }
 

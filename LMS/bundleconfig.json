@@ -1,8 +1,8 @@
 [
   {
-    "outputFileName": "wwwroot/js/book.min.js",
+    "outputFileName": "~/js/userList.min.js",
     "inputFiles": [
-      "wwwroot/js/book.js"
+      "~/js/userList.js"
     ],
     "minify": {
       "enabled": true,
@@ -12,9 +12,9 @@
   },
 
   {
-    "outputFileName": "wwwroot/css/site.min.css",
+    "outputFileName": "~/css/site.min.css",
     "inputFiles": [
-      "wwwroot/css/site.css"
+      "~/css/site.css"
     ],
     "minify": {
       "enabled": true
@@ -24,7 +24,7 @@
   {
     "outputFileName": "wwwroot/css/home.min.css",
     "inputFiles": [
-      "wwwroot/css/home.css"
+      "~/css/home.css"
     ],
     "minify": {
       "enabled": true
@@ -32,12 +32,23 @@
     "sourceMap": true
   },
   {
-    "outputFileName": "wwwroot/css/custom.min.css",
+    "outputFileName": "~/css/custom.min.css",
     "inputFiles": [
-      "wwwroot/css/custom.css"
+      "~/css/custom.css"
     ],
     "minify": {
       "enabled": true
+    },
+    "sourceMap": true
+  },
+  {
+    "outputFileName": "~/js/bookList.min.js",
+    "inputFiles": [
+      "~/js/bookList.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
     },
     "sourceMap": true
   }
