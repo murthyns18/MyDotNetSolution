@@ -1,30 +1,28 @@
 ﻿$(document).ready(function () {
-
     $(".notification").delay(3000).fadeOut("slow");
-
 });
 
-
-function actionFormatter(cellValue, options, row) {
+/* ================= ACTION COLUMN ================= */
+function publisherActionFormatter(cellValue, options, row) {
 
     var token = $('input[name="__RequestVerificationToken"]').val();
 
     return `
 <div style="white-space:nowrap;">
-    <a href="/User/EditUser/${row.userID}"
+    <a href="/Publisher/EditPublisher/${row.publisherID}"
        class="btn btn-sm btn-warning me-1"
-       title="Edit User">
+       title="Edit Publisher">
         <i class="bi bi-pencil-square"></i>
     </a>
 
     <form method="post"
-          action="/User/DeleteUser"
+          action="/Publisher/DeletePublisher"
           style="display:inline;">
-        <input type="hidden" name="id" value="${row.userID}" />
+        <input type="hidden" name="publisherID" value="${row.publisherID}" />
         <input type="hidden" name="__RequestVerificationToken" value="${token}" />
         <button type="submit"
                 class="btn btn-sm btn-danger"
-                title="Delete User">
+                title="Delete Publisher">
             <i class="bi bi-trash"></i>
         </button>
     </form>
@@ -32,17 +30,18 @@ function actionFormatter(cellValue, options, row) {
 `;
 }
 
-function statusFormatter(value) {
+/* ================= STATUS ================= */
+function publisherStatusFormatter(value) {
     return value
         ? "<span class='badge bg-success'><i class='bi bi-check-circle'></i> Active</span>"
         : "<span class='badge bg-danger'><i class='bi bi-x-circle'></i> Inactive</span>";
 }
 
-
+/* ================= GRID ================= */
 $(function () {
 
-    $("#userGrid").jqGrid({
-        url: '/User/GetUsersForGrid',
+    $("#publisherGrid").jqGrid({
+        url: '/Publisher/GetPublishersForGrid',
         datatype: "json",
         mtype: "GET",
 
@@ -55,21 +54,17 @@ $(function () {
                 align: "center",
                 sortable: false,
                 search: false,
-                formatter: actionFormatter,
+                formatter: publisherActionFormatter,
                 cellattr: () => "style='white-space:nowrap;'"
             },
-            { label: "ID", name: "userID", key: true, hidden: true },
-            { label: "Name", name: "userName", width: 150, sortable: true },
-            { label: "Email", name: "email", width: 220, sortable: true },
-            { label: "Mobile", name: "mobileNumber", width: 120 },
-            { label: "Role", name: "roleName", width: 120 },
-            { label: "Address", name: "address", width: 200 },
+            { label: "ID", name: "publisherID", key: true, hidden: true },
+            { label: "Publisher Name", name: "publisherName", width: 200, sortable: true },
             {
                 label: "Status",
-                name: "status",
+                name: "isActive",
                 width: 100,
                 align: "center",
-                formatter: statusFormatter,
+                formatter: publisherStatusFormatter,
                 stype: "select",
                 searchoptions: {
                     value: ":All;true:Active;false:Inactive"
@@ -77,7 +72,7 @@ $(function () {
             }
         ],
 
-        pager: "#userPager",
+        pager: "#publisherPager",
         rowNum: 10,
         rowList: [10, 20, 50],
         autowidth: true,
@@ -85,25 +80,23 @@ $(function () {
         height: "auto",
         loadonce: true,
         viewrecords: true,
-        caption: "<i class='bi bi-people'></i> User List",
+        caption: "<i class='bi bi-building'></i> Publisher List",
 
         jsonReader: {
             root: "rows",
             records: "records",
             repeatitems: false,
-            id: "userID"
+            id: "publisherID"
         }
     });
 
-    $("#userGrid").jqGrid('filterToolbar', {
+    $("#publisherGrid").jqGrid('filterToolbar', {
         stringResult: true,
         searchOnEnter: false,
         defaultSearch: "cn"
     });
 
-    /* Search placeholder */
     setTimeout(function () {
         $(".ui-search-input input").attr("placeholder", "🔍 Search");
     }, 200);
-
 });

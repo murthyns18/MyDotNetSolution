@@ -13,7 +13,6 @@ $(document).ready(function () {
 
 });
 
-/* ================= ACTION COLUMN ================= */
 function actionFormatter(cellValue, options, row) {
 
     var token = $('input[name="__RequestVerificationToken"]').val();
@@ -29,12 +28,11 @@ function actionFormatter(cellValue, options, row) {
     <form method="post"
           action="/Book/DeleteBook"
           style="display:inline;">
-        <input type="hidden" name="id" value="${row.bookID}" />
+        <input type="hidden" name="bookID" value="${row.bookId}" />
         <input type="hidden" name="__RequestVerificationToken" value="${token}" />
         <button type="submit"
                 class="btn btn-sm btn-danger"
-                title="Delete Book"
-                onclick="return confirm('Delete this book?');">
+                title="Delete Book">
             <i class="bi bi-trash"></i>
         </button>
     </form>

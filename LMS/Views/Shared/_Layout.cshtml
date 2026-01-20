@@ -36,7 +36,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3">
             <div class="container-fluid">
@@ -71,7 +72,7 @@
 
                         <li class="nav-item">
                             <a class="nav-link text-warning" asp-controller="Login" asp-action="Logout">
-                                Logout
+                                <i class="bi bi-box-arrow-right"></i>
                             </a>
                         </li>
 
@@ -82,7 +83,7 @@
         </nav>
     </header>
 
-    <div class="container">
+    <div class="container flex-fill">
         @if (TempData["Message"] != null)
         {
             var type = TempData["Type"] ?? "success";
@@ -90,23 +91,25 @@
                 @TempData["Message"]
             </div>
         }
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
-
     </div>
+
 
     <footer class="border-top footer text-muted">
         <div class="container text-center">
-            &copy; 2026 - LMS-NS
+            &copy; 2026 - LMS
         </div>
     </footer>
     
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/bookList.js" asp-append-version="true"></script>
     <script src="@Url.Content("~/assets/plugins/jqGrid/js/grid.locale-en.min.js")" asp-append-version="true"></script>
     <script src="@Url.Content("~/assets/plugins/jqGrid/js/jquery-ui.min.js")" asp-append-version="true"></script>
     <script src="@Url.Content("~/assets/plugins/jqGrid/js/jquery.jqGrid.min.js")" asp-append-version="true"></script>
+
 
     @await RenderSectionAsync("Scripts", required: false)
 

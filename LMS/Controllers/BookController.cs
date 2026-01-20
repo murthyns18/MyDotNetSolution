@@ -167,7 +167,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post($"Book/DeleteBook?bookID={bookID}", HttpContext.Session.GetString("Token"), new { });
+                var result = API.Post($"Book/DeleteBook", HttpContext.Session.GetString("Token"), bookID);
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
             }

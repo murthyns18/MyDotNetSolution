@@ -47,17 +47,46 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult RoleList()
         {
+            //try
+            //{
+            //    var roles = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"))) ?? new List<Role>();
+                return View();
+            //}
+            //catch
+            //{
+            //    TempData["Error"] = "Unable to load roles list.";
+            //    return View(new List<Role>());
+            //}
+        }
+
+        [HttpGet]
+        public IActionResult GetRolesForGrid()
+        {
             try
             {
-                var roles = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"))) ?? new List<Role>();
-                return View(roles);
+                var roles = JsonConvert.DeserializeObject<List<Role>>(
+                    API.Get("Role/GetRoles",
+                        HttpContext.Session.GetString("Token"),
+                        "roleId=0")
+                ) ?? new List<Role>();
+
+                return Json(new
+                {
+                    rows = roles,
+                    records = roles.Count
+                });
             }
-            catch
+            catch (Exception ex)
             {
-                TempData["Error"] = "Unable to load roles list.";
-                return View(new List<Role>());
+                Response.StatusCode = 500;
+                return Json(new
+                {
+                    error = "Failed to load roles",
+                    details = ex.Message
+                });
             }
         }
+
 
         [HttpGet]
         public IActionResult EditRole(short id)

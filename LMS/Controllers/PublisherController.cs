@@ -27,14 +27,14 @@ namespace LMS.Controllers
         public IActionResult AddPublisher(Publisher model)
         {
             if (!ModelState.IsValid)
-                return View(model); 
+                return View(model);
 
             try
             {
                 var result = API.Post("Publisher/SavePublisher", HttpContext.Session.GetString("Token"), model);
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
-        
+
                 return RedirectToAction("PublisherList");
             }
             catch
@@ -47,17 +47,46 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult PublisherList()
         {
+            //try
+            //{
+            //    var publishers = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), "publisherID=0")) ?? new List<Publisher>();
+            return View();
+            //}
+            //catch
+            //{
+            //    TempData["Error"] = "Unable to load publisher list.";
+            //    return View(new List<Publisher>());
+            //}       
+        }
+
+        [HttpGet]
+        public IActionResult GetPublishersForGrid()
+        {
             try
             {
-                var publishers = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), "publisherID=0")) ?? new List<Publisher>();
-                return View(publishers);
+                var publishers = JsonConvert.DeserializeObject<List<Publisher>>(
+                    API.Get("Publisher/PublisherList",
+                        HttpContext.Session.GetString("Token"),
+                        "publisherID=0")
+                ) ?? new List<Publisher>();
+
+                return Json(new
+                {
+                    rows = publishers,
+                    records = publishers.Count
+                });
             }
-            catch
+            catch (Exception ex)
             {
-                TempData["Error"] = "Unable to load publisher list.";
-                return View(new List<Publisher>());
-            }       
+                Response.StatusCode = 500;
+                return Json(new
+                {
+                    error = "Failed to load publishers",
+                    details = ex.Message
+                });
+            }
         }
+
 
         [HttpGet]
         public IActionResult EditPublisher(int id)
@@ -85,7 +114,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post("Publisher/DeletePublisher", HttpContext.Session.GetString("Token"), publisherID );
+                var result = API.Post("Publisher/DeletePublisher", HttpContext.Session.GetString("Token"), publisherID);
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
             }

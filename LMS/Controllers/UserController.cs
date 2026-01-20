@@ -106,44 +106,40 @@ namespace LMS.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetUsersForGrid(int page, int rows)
+        public IActionResult GetUsersForGrid()
         {
             try
             {
                 var users = JsonConvert.DeserializeObject<List<User>>(
-                    API.Get("User/UserList", HttpContext.Session.GetString("Token"), "userId=0")
+                    API.Get("User/UserList",
+                        HttpContext.Session.GetString("Token"),
+                        "userId=0")
                 ) ?? new List<User>();
 
+                // Load roles once
                 var roles = LoadRoles();
+
+                // Map RoleName
                 foreach (var user in users)
                 {
-                    user.RoleName = roles.FirstOrDefault(r => r.RoleID == user.RoleID)?.RoleName;
+                    user.RoleName = roles
+                        .FirstOrDefault(r => r.RoleID == user.RoleID)
+                        ?.RoleName;
                 }
 
-                int totalRecords = users.Count;
-                int totalPages = (int)Math.Ceiling((double)totalRecords / rows);
-
-                var pagedData = users
-                    .Skip((page - 1) * rows)
-                    .Take(rows)
-                    .ToList();
-
                 return Json(new
                 {
-                    page = page,
-                    total = totalPages,
-                    records = totalRecords,
-                    rows = pagedData
+                    rows = users,
+                    records = users.Count
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                Response.StatusCode = 500;
                 return Json(new
                 {
-                    page = 1,
-                    total = 0,
-                    records = 0,
-                    rows = new List<User>()
+                    error = "Failed to load users",
+                    details = ex.Message
                 });
             }
         }

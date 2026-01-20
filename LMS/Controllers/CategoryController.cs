@@ -47,17 +47,46 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult CategoryList()
         {
+            //try
+            //{
+            //    var categories = JsonConvert.DeserializeObject<List<Category>>(API.Get("Category/CategoryList", HttpContext.Session.GetString("Token"), "categoryID=0")) ?? new List<Category>();
+                return View();
+            //}
+            //catch (Exception)
+            //{
+            //    TempData["Error"] = "Unable to load category list.";
+            //    return View(new List<Category>());
+            //}
+        }
+
+        [HttpGet]
+        public IActionResult GetCategoriesForGrid()
+        {
             try
             {
-                var categories = JsonConvert.DeserializeObject<List<Category>>(API.Get("Category/CategoryList", HttpContext.Session.GetString("Token"), "categoryID=0")) ?? new List<Category>();
-                return View(categories);
+                var categories = JsonConvert.DeserializeObject<List<Category>>(
+                API.Get("Category/CategoryList",
+                    HttpContext.Session.GetString("Token"),
+                    "categoryId=0")
+            ) ?? new List<Category>();
+
+                return Json(new
+                {
+                    rows = categories,
+                    records = categories.Count
+                });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                TempData["Error"] = "Unable to load category list.";
-                return View(new List<Category>());
+                Response.StatusCode = 500;
+                return Json(new
+                {
+                    error = "Failed to load categories",
+                    details = ex.Message
+                });
             }
         }
+
 
         [HttpGet]
         public IActionResult EditCategory(int id)
@@ -81,11 +110,11 @@ namespace LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteCategory(int categoryID)
+        public IActionResult DeleteCategory(int id)
         {
             try
             {
-                var result = API.Post($"Category/DeleteCategory?categoryID={categoryID}", HttpContext.Session.GetString("Token"), new { });
+                var result = API.Post($"Category/DeleteCategory?categoryID={id}", HttpContext.Session.GetString("Token"), new { });
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
             }
