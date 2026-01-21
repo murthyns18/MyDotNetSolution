@@ -44,8 +44,6 @@ namespace LMS_API.Controllers
             }
         }
 
-
-
         [HttpPost]
         public IActionResult DeleteCategory(int categoryID)
         {

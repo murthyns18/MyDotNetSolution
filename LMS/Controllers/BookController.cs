@@ -26,8 +26,9 @@ namespace LMS.Controllers
                 var response = API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), "PublisherID=0");
                 return JsonConvert.DeserializeObject<List<Publisher>>(response) ?? new List<Publisher>();
             }
-            catch
+            catch(Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load publishers.";
                 return new List<Publisher>();
             }
@@ -45,8 +46,9 @@ namespace LMS.Controllers
                 var response = API.Get("Category/CategoryList", HttpContext.Session.GetString("Token"), "categoryID=0");
                 return JsonConvert.DeserializeObject<List<Category>>(response) ?? new List<Category>();
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load categories.";
                 return new List<Category>();
             }
@@ -65,8 +67,9 @@ namespace LMS.Controllers
                 var model = new Book { PublisherList = GetPublisherSelectList(), CategoryList = GetCategorySelectList() };
                 return View(model);
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load Add Book page.";
                 return RedirectToAction("BookList");
             }
@@ -90,8 +93,9 @@ namespace LMS.Controllers
 
                 return RedirectToAction("BookList");
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 ModelState.AddModelError(string.Empty, "An error occurred while saving the book. Please try again.");
                 return View(model);
             }
@@ -112,12 +116,11 @@ namespace LMS.Controllers
                     book.PublisherName = publishers.FirstOrDefault(p => p.PublisherID == book.PublisherID)?.PublisherName;
                 }
 
-                throw new Exception("Serilog test error");
-
                 return View();
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load book list.";
                 return View(new List<Book>());
             }
@@ -142,6 +145,7 @@ namespace LMS.Controllers
             }
             catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 Response.StatusCode = 500;
                 return Json(new
                 {
@@ -156,7 +160,6 @@ namespace LMS.Controllers
         {
             try
             {
-                throw new Exception("FORCED SERILOG TEST ERROR");
 
                 var book = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), $"bookId={bookID}"))?.FirstOrDefault();
                 if (book == null)
@@ -171,7 +174,6 @@ namespace LMS.Controllers
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-
                 TempData["Error"] = "Unable to load book details.";
                 return RedirectToAction("BookList");
             }
@@ -187,8 +189,9 @@ namespace LMS.Controllers
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to delete book.";
             }
 

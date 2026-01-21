@@ -1,6 +1,7 @@
 ﻿using LMS.Services;
 using LMS_API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -9,6 +10,13 @@ namespace LMS.Controllers
     [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class RoleController : Controller
     {
+        private readonly ILogger<BookController> _logger;
+
+        public RoleController(ILogger<BookController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public IActionResult AddRole()
         {
@@ -16,8 +24,9 @@ namespace LMS.Controllers
             {
                 return View(new Role());
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load Add Role page.";
                 return RedirectToAction("RoleList");
             }
@@ -38,8 +47,9 @@ namespace LMS.Controllers
 
                 return RedirectToAction("RoleList");
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 ModelState.AddModelError(string.Empty, "An error occurred while saving the role. Please try again.");
                 return View(model);
             }
@@ -50,8 +60,12 @@ namespace LMS.Controllers
         {
             //try
             //{
-            //    var roles = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"))) ?? new List<Role>();
-                return View();
+            //    var roles = JsonConvert.DeserializeObject<List<Role>>(
+            //        API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"))
+            //    ) ?? new List<Role>();
+
+            return View();
+
             //}
             //catch
             //{
@@ -79,6 +93,7 @@ namespace LMS.Controllers
             }
             catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 Response.StatusCode = 500;
                 return Json(new
                 {
@@ -88,22 +103,26 @@ namespace LMS.Controllers
             }
         }
 
-
         [HttpGet]
         public IActionResult EditRole(short roleID)
         {
             try
             {
-                var role = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), $"roleId={roleID}"))?.FirstOrDefault();
+                var result = API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), $"roleId={roleID}");
+                var roles = JsonConvert.DeserializeObject<List<Role>>(result);
+                var role = roles?.FirstOrDefault();
+
                 if (role == null)
                 {
                     TempData["Error"] = "Role not found.";
                     return RedirectToAction("RoleList");
                 }
+
                 return View("AddRole", role);
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load role details.";
                 return RedirectToAction("RoleList");
             }
@@ -119,10 +138,12 @@ namespace LMS.Controllers
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to delete role.";
             }
+
             return RedirectToAction("RoleList");
         }
     }

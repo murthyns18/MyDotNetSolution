@@ -3,6 +3,7 @@ using LMS.Services;
 using LMS_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -11,6 +12,12 @@ namespace LMS.Controllers
     [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class UserController : Controller
     {
+        private readonly ILogger<BookController> _logger;
+
+        public UserController(ILogger<BookController> logger)
+        {
+            _logger = logger;
+        }
         private List<Role> LoadRoles()
         {
             try
@@ -18,8 +25,9 @@ namespace LMS.Controllers
                 var response = API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), "roleId=0");
                 return JsonConvert.DeserializeObject<List<Role>>(response) ?? new List<Role>();
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load roles.";
                 return new List<Role>();
             }
@@ -38,8 +46,9 @@ namespace LMS.Controllers
                 var model = new User { RoleList = GetRoleSelectList() };
                 return View(model);
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load Add User page.";
                 return RedirectToAction("ListUser");
             }
@@ -69,14 +78,22 @@ namespace LMS.Controllers
 
             try
             {
-                var result =  API.Post("User/SaveUser", HttpContext.Session.GetString("Token"), model);
+                var result = API.Post("User/SaveUser", HttpContext.Session.GetString("Token"), model);
                 var message = JObject.Parse(result)["message"]?.ToString();
+
+                if (message == "Email already exists.")
+                {
+                    ModelState.AddModelError("Email", message);
+                    model.RoleList = GetRoleSelectList();
+                    return View(model);
+                }
+
                 TempData["Message"] = message;
-               
                 return RedirectToAction("ListUser");
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 ModelState.AddModelError(string.Empty, "An error occurred while saving the user. Please try again.");
                 return View(model);
             }
@@ -87,7 +104,10 @@ namespace LMS.Controllers
         {
             //try
             //{
-            //    var users = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), "userId=0")) ?? new List<User>();
+            //    var users = JsonConvert.DeserializeObject<List<User>>(
+            //        API.Get("User/UserList", HttpContext.Session.GetString("Token"), "userId=0")
+            //    ) ?? new List<User>();
+
             //    var roles = LoadRoles();
 
             //    foreach (var user in users)
@@ -112,20 +132,14 @@ namespace LMS.Controllers
             try
             {
                 var users = JsonConvert.DeserializeObject<List<User>>(
-                    API.Get("User/UserList",
-                        HttpContext.Session.GetString("Token"),
-                        "userId=0")
+                    API.Get("User/UserList", HttpContext.Session.GetString("Token"), "userId=0")
                 ) ?? new List<User>();
 
-                // Load roles once
                 var roles = LoadRoles();
 
-                // Map RoleName
                 foreach (var user in users)
                 {
-                    user.RoleName = roles
-                        .FirstOrDefault(r => r.RoleID == user.RoleID)
-                        ?.RoleName;
+                    user.RoleName = roles.FirstOrDefault(r => r.RoleID == user.RoleID)?.RoleName;
                 }
 
                 return Json(new
@@ -136,6 +150,7 @@ namespace LMS.Controllers
             }
             catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 Response.StatusCode = 500;
                 return Json(new
                 {
@@ -145,23 +160,27 @@ namespace LMS.Controllers
             }
         }
 
-
         [HttpGet]
         public IActionResult EditUser(int userID)
         {
             try
             {
-                var user = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={userID}"))?.FirstOrDefault();
+                var result = API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={userID}");
+                var users = JsonConvert.DeserializeObject<List<User>>(result);
+                var user = users?.FirstOrDefault();
+
                 if (user == null)
                 {
                     TempData["Error"] = "User not found.";
                     return RedirectToAction("ListUser");
                 }
+
                 user.RoleList = GetRoleSelectList();
                 return View("AddUser", user);
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load user details.";
                 return RedirectToAction("ListUser");
             }
@@ -177,13 +196,13 @@ namespace LMS.Controllers
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to delete user.";
             }
+
             return RedirectToAction("ListUser");
         }
-
-        
     }
 }

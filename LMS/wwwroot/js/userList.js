@@ -1,7 +1,4 @@
-﻿
-
-
-function actionFormatter(cellValue, options, row) {
+﻿function actionFormatter(cellValue, options, row) {
 
     var token = $('input[name="__RequestVerificationToken"]').val();
 
@@ -27,13 +24,11 @@ function actionFormatter(cellValue, options, row) {
 </div>
 `;
 }
-
 function statusFormatter(value) {
     return value
         ? "<span class='badge bg-success'><i class='bi bi-check-circle'></i> Active</span>"
         : "<span class='badge bg-danger'><i class='bi bi-x-circle'></i> Inactive</span>";
 }
-
 
 $(function () {
 

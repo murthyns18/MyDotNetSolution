@@ -1,6 +1,6 @@
 ﻿body {
     min-height: 100vh;
-    background: #ffffff; 
+    background-color:lightseagreen; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -15,8 +15,8 @@
 }
 
 .avatar {
-    width: 90px;
-    height: 90px;
+    width: 50px;
+    height: 50px;
     border: 2px solid #0d6efd;
     border-radius: 50%;
     margin: auto;
@@ -54,7 +54,7 @@
     position: absolute;
     top: 10px;
     left: 0;
-    color: #6c757d;
+    color: #0d6efd;
     font-size: 14px;
     transition: 0.3s;
     pointer-events: none;

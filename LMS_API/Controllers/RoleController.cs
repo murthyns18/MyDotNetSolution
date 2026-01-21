@@ -43,7 +43,6 @@ namespace LMS_API.Controllers
             }
         }
 
-
         [HttpPost]
         public IActionResult DeleteRole(int roleID)
         {

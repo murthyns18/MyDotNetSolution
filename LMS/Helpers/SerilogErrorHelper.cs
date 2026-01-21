@@ -2,16 +2,11 @@
 
 public static class SerilogErrorHelper
 {
-    public static void LogDetailedError(
-    ILogger logger,
-    Exception ex,
-    HttpContext context)
+    public static void LogDetailedError(ILogger logger, Exception ex, HttpContext context)
     {
         var stackTrace = new StackTrace(ex, true);
 
-        var frame = stackTrace.GetFrames()?
-            .FirstOrDefault(f =>
-                f.GetMethod()?.DeclaringType?.Namespace?.StartsWith("LMS") == true);
+        var frame = stackTrace.GetFrames()?.FirstOrDefault(f => f.GetMethod()?.DeclaringType?.Namespace?.StartsWith("LMS") == true);
 
         var method = frame?.GetMethod();
 

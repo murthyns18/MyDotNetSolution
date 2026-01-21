@@ -1,6 +1,4 @@
-﻿
-
-function publisherActionFormatter(cellValue, options, row) {
+﻿function publisherActionFormatter(cellValue, options, row) {
 
     var token = $('input[name="__RequestVerificationToken"]').val();
 
@@ -27,14 +25,12 @@ function publisherActionFormatter(cellValue, options, row) {
 `;
 }
 
-/* ================= STATUS ================= */
 function publisherStatusFormatter(value) {
     return value
         ? "<span class='badge bg-success'><i class='bi bi-check-circle'></i> Active</span>"
         : "<span class='badge bg-danger'><i class='bi bi-x-circle'></i> Inactive</span>";
 }
 
-/* ================= GRID ================= */
 $(function () {
 
     $("#publisherGrid").jqGrid({

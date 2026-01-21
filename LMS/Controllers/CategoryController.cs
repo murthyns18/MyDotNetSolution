@@ -9,6 +9,13 @@ namespace LMS.Controllers
     [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class CategoryController : Controller
     {
+        private readonly ILogger<BookController> _logger;
+
+        public CategoryController(ILogger<BookController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public IActionResult AddCategory()
         {
@@ -16,8 +23,9 @@ namespace LMS.Controllers
             {
                 return View(new Category());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Failed to load Add Category page.";
                 return RedirectToAction("CategoryList");
             }
@@ -38,8 +46,9 @@ namespace LMS.Controllers
 
                 return RedirectToAction("CategoryList");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 ModelState.AddModelError(string.Empty, "Error occurred while saving category.");
                 return View(model);
             }
@@ -66,7 +75,7 @@ namespace LMS.Controllers
             try
             {
                 var categories = JsonConvert.DeserializeObject<List<Category>>(
-                API.Get("Category/CategoryList",
+                    API.Get("Category/CategoryList",
                     HttpContext.Session.GetString("Token"),
                     "categoryId=0")
             ) ?? new List<Category>();
@@ -79,6 +88,7 @@ namespace LMS.Controllers
             }
             catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 Response.StatusCode = 500;
                 return Json(new
                 {
@@ -102,8 +112,9 @@ namespace LMS.Controllers
                 }
                 return View("AddCategory", category);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load category details.";
                 return RedirectToAction("CategoryList");
             }
@@ -119,8 +130,9 @@ namespace LMS.Controllers
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Failed to delete category.";
             }
             return RedirectToAction("CategoryList");

@@ -38,9 +38,9 @@
 
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3">
-            <div class="container-fluid">
+            <div class="container-fluid d-flex align-items-center">
 
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand me-auto" asp-controller="Home" asp-action="Index">
                     Library Management System
                 </a>
 
@@ -50,14 +50,12 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
-                    <ul class="navbar-nav">
+                <div class="collapse navbar-collapse" id="navbarContent">
 
+                    <ul class="navbar-nav mx-auto">
                         @if (menuDetails != null && menuDetails.Any())
                         {
-                            foreach (var menu in menuDetails
-                            .Where(m => m.IsRead)
-                            .OrderBy(m => m.DisplayOrder))
+                            foreach (var menu in menuDetails.Where(m => m.IsRead).OrderBy(m => m.DisplayOrder))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link"
@@ -67,19 +65,21 @@
                                 </li>
                             }
                         }
+                    </ul>
 
+                    <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a class="nav-link text-warning" asp-controller="Login" asp-action="Logout">
-                                <i class="bi bi-box-arrow-right"></i>
+                                <i class="bi bi-box-arrow-right"></i> Logout
                             </a>
                         </li>
-
                     </ul>
-                </div>
 
+                </div>
             </div>
         </nav>
     </header>
+
 
     <div class="container flex-fill">
         @if (TempData["Message"] != null)

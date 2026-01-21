@@ -1,6 +1,7 @@
 ﻿using LMS.Models;
 using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -9,6 +10,13 @@ namespace LMS.Controllers
     [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class PublisherController : Controller
     {
+        private readonly ILogger<BookController> _logger;
+
+        public PublisherController(ILogger<BookController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public IActionResult AddPublisher()
         {
@@ -16,8 +24,9 @@ namespace LMS.Controllers
             {
                 return View(new Publisher());
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load Add Publisher page.";
                 return RedirectToAction("PublisherList");
             }
@@ -38,8 +47,9 @@ namespace LMS.Controllers
 
                 return RedirectToAction("PublisherList");
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 ModelState.AddModelError(string.Empty, "An error occurred while saving the publisher. Please try again.");
                 return View(model);
             }
@@ -50,14 +60,18 @@ namespace LMS.Controllers
         {
             //try
             //{
-            //    var publishers = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), "publisherID=0")) ?? new List<Publisher>();
+            //    var publishers = JsonConvert.DeserializeObject<List<Publisher>>(
+            //        API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), "publisherID=0")
+            //    ) ?? new List<Publisher>();
+
             return View();
+
             //}
             //catch
             //{
             //    TempData["Error"] = "Unable to load publisher list.";
             //    return View(new List<Publisher>());
-            //}       
+            //}
         }
 
         [HttpGet]
@@ -66,9 +80,7 @@ namespace LMS.Controllers
             try
             {
                 var publishers = JsonConvert.DeserializeObject<List<Publisher>>(
-                    API.Get("Publisher/PublisherList",
-                        HttpContext.Session.GetString("Token"),
-                        "publisherID=0")
+                    API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), "publisherID=0")
                 ) ?? new List<Publisher>();
 
                 return Json(new
@@ -79,6 +91,7 @@ namespace LMS.Controllers
             }
             catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 Response.StatusCode = 500;
                 return Json(new
                 {
@@ -88,22 +101,26 @@ namespace LMS.Controllers
             }
         }
 
-
         [HttpGet]
         public IActionResult EditPublisher(int publisherID)
         {
             try
             {
-                var publisher = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), $"publisherId={publisherID}"))?.FirstOrDefault();
+                var result = API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), $"publisherId={publisherID}");
+                var publishers = JsonConvert.DeserializeObject<List<Publisher>>(result);
+                var publisher = publishers?.FirstOrDefault();
+
                 if (publisher == null)
                 {
                     TempData["Error"] = "Publisher not found.";
                     return RedirectToAction("PublisherList");
                 }
+
                 return View("AddPublisher", publisher);
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to load publisher details.";
                 return RedirectToAction("PublisherList");
             }
@@ -119,10 +136,12 @@ namespace LMS.Controllers
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 TempData["Error"] = "Unable to delete publisher.";
             }
+
             return RedirectToAction("PublisherList");
         }
     }

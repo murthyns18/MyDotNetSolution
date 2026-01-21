@@ -24,8 +24,11 @@ namespace LMS_API.Controllers
             var checkUser = userRepository.AuthenticateUser(authenticateUser);
             if (checkUser != null)
             {
-                var claims = new List<Claim> { new Claim(ClaimTypes.Name,checkUser.Item1.UserName),
-                    new Claim("UserID",Convert.ToString(checkUser.Item1.UserID)) };
+                var claims = new List<Claim> 
+                { 
+                    new Claim(ClaimTypes.Name,checkUser.Item1.UserName),
+                    new Claim("UserID",Convert.ToString(checkUser.Item1.UserID)) 
+                };
 
                 var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);

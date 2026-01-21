@@ -40,17 +40,12 @@ namespace LMS.Filters
             // Normal MVC request → Error view
             context.Result = new ViewResult
             {
-                ViewName = "Error",
-                ViewData = new ViewDataDictionary(
-                    new EmptyModelMetadataProvider(),
-                    new ModelStateDictionary())
-        {
-            {
-                "ErrorMessage",
-                exception?.Message ??
-                "An unexpected error occurred."
-            }
-        }
+                ViewName = "Error", ViewData = new ViewDataDictionary( new EmptyModelMetadataProvider(),new ModelStateDictionary())
+                {
+                    {
+                        "ErrorMessage",exception?.Message ?? "An unexpected error occurred."
+                    }
+                }
             };
         }
 

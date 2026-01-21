@@ -49,7 +49,7 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 });
 
 
-//OnExceptionAttribute
+//OnExceptionAttribute globally
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<OnExceptionAttribute>();

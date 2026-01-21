@@ -1,5 +1,4 @@
 ﻿
-/* ================= ACTION COLUMN ================= */
 function categoryActionFormatter(cellValue, options, row) {
 
     var token = $('input[name="__RequestVerificationToken"]').val();
@@ -25,19 +24,16 @@ function categoryActionFormatter(cellValue, options, row) {
 `;
 }
 
-/* ================= STATUS DISPLAY ================= */
 function categoryStatusFormatter(value) {
     return value
         ? "<span class='badge bg-success'><i class='bi bi-check-circle'></i> Active</span>"
         : "<span class='badge bg-danger'><i class='bi bi-x-circle'></i> Inactive</span>";
 }
 
-/* ================= STATUS UNFORMAT (FOR FILTERING) ================= */
 function categoryStatusUnformatter(cellValue) {
     return cellValue.indexOf("Active") !== -1;
 }
 
-/* ================= GRID ================= */
 $(function () {
 
     $("#categoryGrid").jqGrid({
@@ -67,8 +63,6 @@ $(function () {
                 sortable: true,
                 search: true
             },
-
-            /* ✅ Status column WITH working filter */
             {
                 label: "Status",
                 name: "isActive",
@@ -102,7 +96,6 @@ $(function () {
         }
     });
 
-    /* ================= FILTER TOOLBAR ================= */
     $("#categoryGrid").jqGrid('filterToolbar', {
         stringResult: true,
         searchOnEnter: false,

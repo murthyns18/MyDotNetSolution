@@ -1,15 +1,4 @@
-﻿
-$(document).ready(function () {
-
-    $('input[name="Price"], input[name="Quantity"]').on('focus', function () {
-        if ($(this).val() === '0') {
-            $(this).val('');
-        }
-    });
-
-});
-
-function actionFormatter(cellValue, options, row) {
+﻿function actionFormatter(cellValue, options, row) {
 
     var token = $('input[name="__RequestVerificationToken"]').val();
 
