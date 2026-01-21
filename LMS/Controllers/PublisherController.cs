@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LMS.Controllers
 {
+    [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class PublisherController : Controller
     {
         [HttpGet]
@@ -89,11 +90,11 @@ namespace LMS.Controllers
 
 
         [HttpGet]
-        public IActionResult EditPublisher(int id)
+        public IActionResult EditPublisher(int publisherID)
         {
             try
             {
-                var publisher = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), $"publisherId={id}"))?.FirstOrDefault();
+                var publisher = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), $"publisherId={publisherID}"))?.FirstOrDefault();
                 if (publisher == null)
                 {
                     TempData["Error"] = "Publisher not found.";

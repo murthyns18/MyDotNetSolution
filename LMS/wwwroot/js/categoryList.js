@@ -6,7 +6,7 @@ function categoryActionFormatter(cellValue, options, row) {
 
     return `
 <div style="white-space:nowrap;">
-    <a href="/Category/EditCategory/${row.categoryID}"
+    <a href="/Category/EditCategory?q=${Encrypt('categoryID='+ row.categoryID)}"
        class="btn btn-sm btn-warning me-1"
        title="Edit Category">
         <i class="bi bi-pencil-square"></i>

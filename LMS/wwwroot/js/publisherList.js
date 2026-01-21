@@ -1,15 +1,12 @@
-﻿$(document).ready(function () {
-    $(".notification").delay(3000).fadeOut("slow");
-});
+﻿
 
-/* ================= ACTION COLUMN ================= */
 function publisherActionFormatter(cellValue, options, row) {
 
     var token = $('input[name="__RequestVerificationToken"]').val();
 
     return `
 <div style="white-space:nowrap;">
-    <a href="/Publisher/EditPublisher/${row.publisherID}"
+    <a href="/Publisher/EditPublisher?q=${Encrypt('publisherID='+row.publisherID)}"
        class="btn btn-sm btn-warning me-1"
        title="Edit Publisher">
         <i class="bi bi-pencil-square"></i>

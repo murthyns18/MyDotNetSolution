@@ -1,14 +1,24 @@
-﻿using LMS.Models;
+﻿
+using LMS.Models;
 using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace LMS.Controllers
 {
+    [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class BookController : Controller
     {
+        private readonly ILogger<BookController> _logger;
+
+        public BookController(ILogger<BookController> logger)
+        {
+            _logger = logger;
+        }
+
         private List<Publisher> LoadPublishers()
         {
             try
@@ -90,25 +100,27 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult BookList()
         {
-            //try
-            //{
-            //    var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), "bookID=0")) ?? new List<Book>();
-            //    var categories = LoadCategories();
-            //    var publishers = LoadPublishers();
+            try
+            {
+                var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), "bookID=0")) ?? new List<Book>();
+                var categories = LoadCategories();
+                var publishers = LoadPublishers();
 
-            //    foreach (var book in books)
-            //    {
-            //        book.CategoryName = categories.FirstOrDefault(c => c.CategoryID == book.CategoryID)?.CategoryName;
-            //        book.PublisherName = publishers.FirstOrDefault(p => p.PublisherID == book.PublisherID)?.PublisherName;
-            //    }
+                foreach (var book in books)
+                {
+                    book.CategoryName = categories.FirstOrDefault(c => c.CategoryID == book.CategoryID)?.CategoryName;
+                    book.PublisherName = publishers.FirstOrDefault(p => p.PublisherID == book.PublisherID)?.PublisherName;
+                }
 
-            return View();
-            //}
-            //catch
-            //{
-            //    TempData["Error"] = "Unable to load book list.";
-            //    return View(new List<Book>());
-            //}
+                throw new Exception("Serilog test error");
+
+                return View();
+            }
+            catch
+            {
+                TempData["Error"] = "Unable to load book list.";
+                return View(new List<Book>());
+            }
         }
 
         [HttpGet]
@@ -140,11 +152,13 @@ namespace LMS.Controllers
         }
 
         [HttpGet]
-        public IActionResult EditBook(int id)
+        public IActionResult EditBook(int bookID)
         {
             try
             {
-                var book = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), $"bookId={id}"))?.FirstOrDefault();
+                throw new Exception("FORCED SERILOG TEST ERROR");
+
+                var book = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), $"bookId={bookID}"))?.FirstOrDefault();
                 if (book == null)
                 {
                     TempData["Error"] = "Book not found.";
@@ -154,8 +168,10 @@ namespace LMS.Controllers
                 book.CategoryList = GetCategorySelectList();
                 return View("AddBook", book);
             }
-            catch
+            catch (Exception ex)
             {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+
                 TempData["Error"] = "Unable to load book details.";
                 return RedirectToAction("BookList");
             }

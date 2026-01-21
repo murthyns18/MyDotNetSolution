@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LMS.Controllers
 {
+    [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class CategoryController : Controller
     {
         [HttpGet]
@@ -89,11 +90,11 @@ namespace LMS.Controllers
 
 
         [HttpGet]
-        public IActionResult EditCategory(int id)
+        public IActionResult EditCategory(int categoryID)
         {
             try
             {
-                var category = JsonConvert.DeserializeObject<List<Category>>(API.Get("Category/CategoryList", null, $"categoryId={id}"))?.FirstOrDefault();
+                var category = JsonConvert.DeserializeObject<List<Category>>(API.Get("Category/CategoryList", HttpContext.Session.GetString("Token"), $"categoryId={categoryID}"))?.FirstOrDefault();
                 if (category == null)
                 {
                     TempData["Error"] = "Category not found.";

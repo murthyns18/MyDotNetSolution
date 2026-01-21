@@ -1,6 +1,4 @@
-﻿$(document).ready(function () {
-    $(".notification").delay(3000).fadeOut("slow");
-});
+﻿
 
 /* ================= ACTION COLUMN ================= */
 function roleActionFormatter(cellValue, options, row) {
@@ -9,7 +7,7 @@ function roleActionFormatter(cellValue, options, row) {
 
     return `
 <div style="white-space:nowrap;">
-    <a href="/Role/EditRole/${row.roleID}"
+    <a href="/Role/EditRole?q=${Encrypt('roleID='+row.roleID)}"
        class="btn btn-sm btn-warning me-1"
        title="Edit Role">
         <i class="bi bi-pencil-square"></i>

@@ -21,19 +21,17 @@
     <link href="@Url.Content("~/assets/plugins/jqGrid/css/ui.jqgrid.min.css")" rel="stylesheet" />
 
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/custom.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/home.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.css" />
+    <link rel="stylesheet" href="@Url.Content("~/lib/bootstrap/dist/css/bootstrap.min.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/site.min.css")" asp-append-version="true" />
+    <link rel="stylesheet" href="@Url.Content("~/css/custom.min.css")" asp-append-version="true" />
+    <link rel="stylesheet" href="@Url.Content("~/css/home.min.css")" asp-append-version="true" />
+    <link rel="stylesheet" href="@Url.Content("~/lib/bootstrap-icons/bootstrap-icons.css")" />
+
 
     <script>
-        var ROOT = '@Url.Content("~/")';
-        var APIURL = '@apiURL';
         var TOKEN = '@Context.Session.GetString("Token")';
     </script>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -104,12 +102,14 @@
         </div>
     </footer>
     
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="@Url.Content("~/lib/jquery/dist/jquery.min.js")"></script>
+    <script src="@Url.Content("~/lib/bootstrap/dist/js/bootstrap.bundle.min.js")"></script>
     <script src="@Url.Content("~/assets/plugins/jqGrid/js/grid.locale-en.min.js")" asp-append-version="true"></script>
     <script src="@Url.Content("~/assets/plugins/jqGrid/js/jquery-ui.min.js")" asp-append-version="true"></script>
     <script src="@Url.Content("~/assets/plugins/jqGrid/js/jquery.jqGrid.min.js")" asp-append-version="true"></script>
-
+    <script src="@Url.Content("~/assets/plugins/aes/aes.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/js/layout.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/js/site.js")" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 

@@ -10,17 +10,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - LMS</title>
 
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="@Url.Content("~/lib/bootstrap/dist/css/bootstrap.min.css")" asp-append-version="true" />
+    <link rel="stylesheet" href="@Url.Content("~/lib/bootstrap-icons/bootstrap-icons.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/login.css")" asp-append-version="true" />
 
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="~/lib/bootstrap-icons/bootstrap-icons.css" />
-    <link rel="stylesheet" href="~/css/login.css" />
-
-    <!-- jQuery Validation -->
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
 </head>
 
 <body>
@@ -71,6 +64,9 @@
 
     </div>
 
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="@Url.Content("~/lib/jquery/dist/jquery.min.js")"></script>
+    <script src="@Url.Content("~/lib/jquery-validation/dist/jquery.validate.min.js")"></script>
+    <script src="@Url.Content("~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js")"></script>
+    <script src="@Url.Content("~/lib/bootstrap/dist/js/bootstrap.bundle.min.js")"></script>
 </body>
 </html>

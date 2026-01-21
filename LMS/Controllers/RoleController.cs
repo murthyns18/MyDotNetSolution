@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LMS.Controllers
 {
+    [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class RoleController : Controller
     {
         [HttpGet]
@@ -89,11 +90,11 @@ namespace LMS.Controllers
 
 
         [HttpGet]
-        public IActionResult EditRole(short id)
+        public IActionResult EditRole(short roleID)
         {
             try
             {
-                var role = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), $"roleId={id}"))?.FirstOrDefault();
+                var role = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), $"roleId={roleID}"))?.FirstOrDefault();
                 if (role == null)
                 {
                     TempData["Error"] = "Role not found.";

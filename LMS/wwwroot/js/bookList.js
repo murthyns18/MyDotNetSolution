@@ -7,10 +7,6 @@ $(document).ready(function () {
         }
     });
 
-    $(document).ready(function () {
-        $(".notification").delay(3000).fadeOut("slow");
-    });
-
 });
 
 function actionFormatter(cellValue, options, row) {
@@ -18,8 +14,8 @@ function actionFormatter(cellValue, options, row) {
     var token = $('input[name="__RequestVerificationToken"]').val();
 
     return `
-<div style="white-space:nowrap;">
-    <a href="/Book/EditBook/${row.bookID}"
+    <div style="white-space:nowrap;">
+      <a href="/Book/EditBook?q=${Encrypt('bookID=' + row.bookId)}"
        class="btn btn-sm btn-warning me-1"
        title="Edit Book">
         <i class="bi bi-pencil-square"></i>
@@ -40,14 +36,14 @@ function actionFormatter(cellValue, options, row) {
 `;
 }
 
-/* ================= STATUS ================= */
+
 function statusFormatter(value) {
     return value
         ? "<span class='badge bg-success'><i class='bi bi-check-circle'></i> Active</span>"
         : "<span class='badge bg-danger'><i class='bi bi-x-circle'></i> Inactive</span>";
 }
 
-/* ================= GRID ================= */
+
 $(function () {
 
     $("#bookGrid").jqGrid({

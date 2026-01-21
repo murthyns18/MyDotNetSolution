@@ -1,8 +1,4 @@
-﻿$(document).ready(function () {
-
-    $(".notification").delay(3000).fadeOut("slow");
-
-});
+﻿
 
 
 function actionFormatter(cellValue, options, row) {
@@ -11,7 +7,7 @@ function actionFormatter(cellValue, options, row) {
 
     return `
 <div style="white-space:nowrap;">
-    <a href="/User/EditUser/${row.userID}"
+    <a href="/User/EditUser?q=${Encrypt('userID='+ row.userID)}"
        class="btn btn-sm btn-warning me-1"
        title="Edit User">
         <i class="bi bi-pencil-square"></i>

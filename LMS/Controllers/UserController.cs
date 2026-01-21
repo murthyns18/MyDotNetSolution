@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LMS.Controllers
 {
+    [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class UserController : Controller
     {
         private List<Role> LoadRoles()
@@ -146,11 +147,11 @@ namespace LMS.Controllers
 
 
         [HttpGet]
-        public IActionResult EditUser(int id)
+        public IActionResult EditUser(int userID)
         {
             try
             {
-                var user = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={id}"))?.FirstOrDefault();
+                var user = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={userID}"))?.FirstOrDefault();
                 if (user == null)
                 {
                     TempData["Error"] = "User not found.";

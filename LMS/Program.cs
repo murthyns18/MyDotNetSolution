@@ -1,6 +1,12 @@
+using LMS.Common;
 using LMS.Models;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
+using Serilog;
+using Serilog.Events;
+using LMS.Filters;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +49,47 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 });
 
 
+//OnExceptionAttribute
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<OnExceptionAttribute>();
+});
+builder.Services.AddScoped<OnExceptionAttribute>();
+
+
+
+//DI ActionFilter
+builder.Services.AddScoped<EncryptedActionParameterFilter>();
+
+
+//Serilog configuraiton
+var logDirectory = @"C:\Errors";
+
+if (!Directory.Exists(logDirectory))
+{
+    Directory.CreateDirectory(logDirectory);
+}
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
+    .MinimumLevel.Override("System", LogEventLevel.Error)
+    .WriteTo.Async(a => a.File(
+        path: Path.Combine(logDirectory, "log-.txt"),
+        rollingInterval: RollingInterval.Day,
+        shared: true,
+        outputTemplate:
+            "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}]{NewLine}{Message:lj}",
+        fileSizeLimitBytes: 2147483648,
+        retainedFileCountLimit: 7
+    ))
+    .CreateLogger();
+
+
+
+
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -56,6 +103,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseSession();
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -65,7 +113,6 @@ app.MapControllerRoute(
     //pattern: "{controller=Home}/{action=Index}/{id?}")
     pattern: "{controller=Login}/{action=Login}/{id?}")
     .WithStaticAssets();
-app.UseSession();
 
 
 app.Run();
