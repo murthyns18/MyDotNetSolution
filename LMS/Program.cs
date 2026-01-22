@@ -57,6 +57,14 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddScoped<OnExceptionAttribute>();
 
 
+//session di
+builder.Services.AddScoped<SessionAuthorizeFilter>();
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<SessionAuthorizeFilter>();
+});
+
 
 //DI ActionFilter
 builder.Services.AddScoped<EncryptedActionParameterFilter>();
@@ -78,15 +86,11 @@ Log.Logger = new LoggerConfiguration()
         path: Path.Combine(logDirectory, "log-.txt"),
         rollingInterval: RollingInterval.Day,
         shared: true,
-        outputTemplate:
-            "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}]{NewLine}{Message:lj}",
+        outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3}]{NewLine}{Message:lj}",
         fileSizeLimitBytes: 2147483648,
         retainedFileCountLimit: 7
     ))
     .CreateLogger();
-
-
-
 
 builder.Host.UseSerilog();
 

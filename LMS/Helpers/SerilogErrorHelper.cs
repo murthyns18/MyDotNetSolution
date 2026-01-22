@@ -21,13 +21,7 @@ public static class SerilogErrorHelper
 
         RequestId    : {context.TraceIdentifier}
         Url          : {context.Request.Path}
-        HttpMethod   : {context.Request.Method}
-
-        UserName     : {context.User?.Identity?.Name ?? "Anonymous"}
-        IP           : {context.Connection.RemoteIpAddress}
-        UserAgent    : {context.Request.Headers["User-Agent"]}
-
-        Environment  : {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
+        HttpMethod   : {context.Request.Method}");
     }
 
 }

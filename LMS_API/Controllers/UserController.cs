@@ -6,7 +6,7 @@ namespace LMS_API.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         private readonly IUserRepository _userRepository;
 

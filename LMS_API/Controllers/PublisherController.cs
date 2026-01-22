@@ -7,7 +7,7 @@ namespace LMS_API.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class PublisherController : Controller
+    public class PublisherController : BaseController
     {
         private readonly IPublisherRepository _publisherRepository;
 

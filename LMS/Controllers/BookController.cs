@@ -89,6 +89,14 @@ namespace LMS.Controllers
             {
                 var result = API.Post("Book/SaveBook", HttpContext.Session.GetString("Token"), model);
                 var message = JObject.Parse(result)["message"]?.ToString();
+
+                if (message == "Book already exists with ISBN")
+                {
+                    ModelState.AddModelError("ISBN", message);
+                    model.PublisherList = GetPublisherSelectList();
+                    model.CategoryList = GetCategorySelectList();
+                    return View(model);
+                }
                 TempData["Message"] = message;
 
                 return RedirectToAction("BookList");

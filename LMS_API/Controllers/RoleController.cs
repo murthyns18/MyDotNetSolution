@@ -7,7 +7,7 @@ namespace LMS_API.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class RoleController : ControllerBase
+    public class RoleController : BaseController
     {
         private readonly IRoleRepository _roleRepository;
 

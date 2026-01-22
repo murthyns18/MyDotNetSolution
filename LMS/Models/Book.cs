@@ -56,6 +56,7 @@ namespace LMS.Models
 
         // ISBN
         [Display(Name = "ISBN")]
+        [Required(ErrorMessage = "Please enter ISBN.")]
         [StringLength(13, ErrorMessage = "ISBN must not exceed 13 characters.")]
         public string ISBN { get; set; } = string.Empty;
 

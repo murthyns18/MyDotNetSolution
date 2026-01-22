@@ -53,6 +53,7 @@ namespace WEBAPI
             builder.Services.AddScoped<IUserRepository>(m => new UserRepository(connectionString));
             //Role
             builder.Services.AddScoped<IRoleRepository>(m => new RoleRepository(connectionString));
+            builder.Services.AddScoped<ILoanRepository>(m => new LoanRepository(connectionString));
 
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

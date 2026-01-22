@@ -58,9 +58,7 @@ $(function () {
                 label: "Price",
                 name: "price",
                 width: 90,
-                align: "right",
-                formatter: "currency",
-                formatoptions: { prefix: "₹ " }
+                align: "right"
             },
             { label: "Quantity", name: "quantity", width: 90, align: "center" },
             { label: "Publisher", name: "publisherName", width: 150 },
@@ -103,8 +101,4 @@ $(function () {
         defaultSearch: "cn"
     });
 
-    /* Search placeholder */
-    setTimeout(function () {
-        $(".ui-search-input input").attr("placeholder", "🔍 Search");
-    }, 200);
 });

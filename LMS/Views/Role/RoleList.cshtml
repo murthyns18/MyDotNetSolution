@@ -20,54 +20,8 @@
         <div id="rolePager"></div>
     </div>
 
-    @* <div class="table-responsive">
-        <table class="table table-bordered table-striped table-hover">
-            <thead class="table-primary">
-                <tr>
-                    <th>Action</th>
-                    <th>Sl.No</th>
-                    <th>Role Name</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model != null && Model.Any())
-                {
-                    @foreach (var role in Model)
-                    {
-                        <tr>
-                            <td class="text-center">
-                                <a href="@Url.Action("EditRole", "Role", new { id = role.RoleID })"
-                                   class="btn btn-sm btn-info text-light me-1">Edit</a>
-
-                                <form asp-action="DeleteRole" method="post" class="d-inline">
-                                    <input type="hidden" name="roleID" value="@role.RoleID" />
-                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                </form>
-                            </td>
-
-                            <td>@role.RoleID</td>
-                            <td>@role.RoleName</td>
-                            <td class="text-center">
-                                <span class="badge @(role.IsActive ? "bg-success" : "bg-danger")">
-                                    @(role.IsActive ? "Active" : "Inactive")
-                                </span>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="4" class="text-center text-danger">No roles available</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div> *@
-
 </div>
 
 @section Scripts {
-    <script src="@Url.Content("~/js/roleList.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/js/roleList.min.js")" asp-append-version="true"></script>
 }

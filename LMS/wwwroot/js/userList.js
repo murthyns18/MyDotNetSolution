@@ -92,9 +92,4 @@ $(function () {
         defaultSearch: "cn"
     });
 
-    /* Search placeholder */
-    setTimeout(function () {
-        $(".ui-search-input input").attr("placeholder", "🔍 Search");
-    }, 200);
-
 });

@@ -7,7 +7,9 @@
 }
 
 th {
-    background-color: seagreen !important;
+    background-color: darkcyan !important;
     color: white !important;
+    letter-spacing: 2px;
+    font-weight: bold;
 }
 

@@ -28,6 +28,7 @@
                                     <span asp-validation-for="Title" class="text-danger small"></span>
                                 </div>
 
+
                                 <div class="mb-3">
                                     @Html.LabelFor(m => m.PublisherID)
                                     <span class="text-danger">*</span>
@@ -51,8 +52,14 @@
                             </div>
                         </div>
 
-                       
+
                         <div class="col-md-6">
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.ISBN)
+                            <span class="text-danger">*</span>
+                            @Html.TextBoxFor(m => m.ISBN, new { @class = "form-control" })
+                            <span asp-validation-for="ISBN" class="text-danger small"></span>
+                        </div>
                             <div class="mb-3">
                                 @Html.LabelFor(m => m.Price)
                                 <span class="text-danger">*</span>
