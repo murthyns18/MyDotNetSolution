@@ -1,29 +1,57 @@
 ﻿function actionFormatter(cellValue, options, row) {
-
-    var token = $('input[name="__RequestVerificationToken"]').val();
-
     return `
     <div style="white-space:nowrap;">
-      <a href="/Book/EditBook?q=${Encrypt('bookID=' + row.bookId)}"
-       class="btn btn-sm btn-warning me-1"
-       title="Edit Book">
-        <i class="bi bi-pencil-square"></i>
-    </a>
+        <button class="btn btn-sm btn-warning me-1"
+                onclick="openEditModal(${row.bookID})">
+            <i class="bi bi-pencil-square"></i>
+        </button>
 
-    <form method="post"
-          action="/Book/DeleteBook"
-          style="display:inline;">
-        <input type="hidden" name="bookID" value="${row.bookId}" />
-        <input type="hidden" name="__RequestVerificationToken" value="${token}" />
-        <button type="submit"
-                class="btn btn-sm btn-danger"
-                title="Delete Book">
+        <button class="btn btn-sm btn-danger"
+                onclick="confirmDelete(${row.bookID})">
             <i class="bi bi-trash"></i>
         </button>
-    </form>
-</div>
-`;
+    </div>`;
 }
+
+
+function openAddModal() {
+    $('#bookForm')[0].reset();
+    $('#BookId').val(0);
+    $('#bookModalTitle').text('Add Book');
+    $('#bookForm').attr('action', '/Book/AddBook');
+
+    const modal = new bootstrap.Modal(document.getElementById('bookModal'));
+    modal.show();
+}
+
+function openEditModal(bookId) {
+    $.get('/Book/EditBook', { bookID: bookId }, function (data) {
+
+        $('#BookId').val(data.bookId);
+        $('#Title').val(data.title);
+        $('#ISBN').val(data.isbn);
+        $('#Price').val(data.price);
+        $('#Quantity').val(data.quantity);
+        $('#PublisherID').val(data.publisherID);
+        $('#CategoryID').val(data.categoryID);
+
+        $('#bookModalTitle').text('Edit Book');
+        $('#bookForm').attr('action', '/Book/AddBook');
+
+        const modal = new bootstrap.Modal(document.getElementById('bookModal'));
+        modal.show();
+    });
+}
+
+
+function confirmDelete(bookId) {
+    $('#deleteBookId').val(bookId);
+
+    const modalEl = document.getElementById('deleteModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+}
+
 
 
 function statusFormatter(value) {

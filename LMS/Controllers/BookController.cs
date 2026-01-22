@@ -109,29 +109,37 @@ namespace LMS.Controllers
             }
         }
 
+        //[HttpGet]
+        //public IActionResult BookList()
+        //{
+        //    try
+        //    {
+        //        var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), "bookID=0")) ?? new List<Book>();
+        //        var categories = LoadCategories();
+        //        var publishers = LoadPublishers();
+
+        //        foreach (var book in books)
+        //        {
+        //            book.CategoryName = categories.FirstOrDefault(c => c.CategoryID == book.CategoryID)?.CategoryName;
+        //            book.PublisherName = publishers.FirstOrDefault(p => p.PublisherID == book.PublisherID)?.PublisherName;
+        //        }
+
+        //        return View();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+        //        TempData["Error"] = "Unable to load book list.";
+        //        return View(new List<Book>());
+        //    }
+        //}
+
         [HttpGet]
         public IActionResult BookList()
         {
-            try
-            {
-                var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), "bookID=0")) ?? new List<Book>();
-                var categories = LoadCategories();
-                var publishers = LoadPublishers();
-
-                foreach (var book in books)
-                {
-                    book.CategoryName = categories.FirstOrDefault(c => c.CategoryID == book.CategoryID)?.CategoryName;
-                    book.PublisherName = publishers.FirstOrDefault(p => p.PublisherID == book.PublisherID)?.PublisherName;
-                }
-
-                return View();
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to load book list.";
-                return View(new List<Book>());
-            }
+            ViewBag.Publishers = GetPublisherSelectList();
+            ViewBag.Categories = GetCategorySelectList();
+            return View();
         }
 
         [HttpGet]
@@ -163,28 +171,41 @@ namespace LMS.Controllers
             }
         }
 
+        //[HttpGet]
+        //public IActionResult EditBook(int bookID)
+        //{
+        //    try
+        //    {
+
+        //        var book = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), $"bookId={bookID}"))?.FirstOrDefault();
+        //        if (book == null)
+        //        {
+        //            TempData["Error"] = "Book not found.";
+        //            return RedirectToAction("BookList");
+        //        }
+        //        book.PublisherList = GetPublisherSelectList();
+        //        book.CategoryList = GetCategorySelectList();
+        //        return View("AddBook", book);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+        //        TempData["Error"] = "Unable to load book details.";
+        //        return RedirectToAction("BookList");
+        //    }
+        //}
+
         [HttpGet]
         public IActionResult EditBook(int bookID)
         {
-            try
-            {
+            var book = JsonConvert.DeserializeObject<List<Book>>(
+                API.Get("Book/BookList", HttpContext.Session.GetString("Token"), $"bookId={bookID}")
+            )?.FirstOrDefault();
 
-                var book = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), $"bookId={bookID}"))?.FirstOrDefault();
-                if (book == null)
-                {
-                    TempData["Error"] = "Book not found.";
-                    return RedirectToAction("BookList");
-                }
-                book.PublisherList = GetPublisherSelectList();
-                book.CategoryList = GetCategorySelectList();
-                return View("AddBook", book);
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to load book details.";
-                return RedirectToAction("BookList");
-            }
+            if (book == null)
+                return NotFound();
+
+            return Json(book);
         }
 
         [HttpPost]

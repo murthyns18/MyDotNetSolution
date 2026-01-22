@@ -6,7 +6,8 @@ namespace LMS_API.Interfaces
     {
         IEnumerable<LoanHeader> GetLoanList(int loanId = 0);
         IEnumerable<LoanDetail> GetLoanDetails(int loanId);
-        string SaveLoan(LoanHeader loan);
+
+        string TakeLoan(LoanHeader loan);
         string ReturnLoan(int loanId);
     }
 }

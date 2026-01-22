@@ -30,9 +30,9 @@ namespace LMS_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveLoan(LoanHeader loan)
+        public IActionResult TakeLoan(LoanHeader loan)
         {
-            var message = _loanRepository.SaveLoan(loan);
+            var message = _loanRepository.TakeLoan(loan);
             return Ok(new { message });
         }
 

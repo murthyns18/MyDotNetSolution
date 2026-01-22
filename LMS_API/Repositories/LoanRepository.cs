@@ -23,7 +23,8 @@ namespace LMS_API.Repositories
             return dbConnection.Query<LoanHeader>(
                 "Loan_GetList",
                 parameters,
-                commandType: CommandType.StoredProcedure
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 600
             );
         }
 
@@ -35,11 +36,12 @@ namespace LMS_API.Repositories
             return dbConnection.Query<LoanDetail>(
                 "LoanDetail_GetByLoanId",
                 parameters,
-                commandType: CommandType.StoredProcedure
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 600
             );
         }
 
-        public string SaveLoan(LoanHeader loan)
+        public string TakeLoan(LoanHeader loan)
         {
             try
             {
@@ -54,26 +56,42 @@ namespace LMS_API.Repositories
                 dbConnection.Execute(
                     "LoanHeader_Insert",
                     headerParams,
-                    commandType: CommandType.StoredProcedure
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 600
                 );
 
                 int loanId = headerParams.Get<int>("@LoanId");
+                string result = headerParams.Get<string>("@Result");
+
+                // Stop if header failed
+                if (loanId <= 0)
+                    return result;
 
                 // 2️⃣ Insert Loan Details
                 foreach (var bookId in loan.BookIds)
                 {
                     var detailParams = new DynamicParameters();
                     detailParams.Add("@LoanId", loanId);
+                    detailParams.Add("@BorrowerId", loan.BorrowerId); // ✅ REQUIRED
                     detailParams.Add("@BookId", bookId);
+                    detailParams.Add("@Result", dbType: DbType.String,
+                                     direction: ParameterDirection.Output,
+                                     size: 500);
 
                     dbConnection.Execute(
                         "LoanDetail_Insert",
                         detailParams,
-                        commandType: CommandType.StoredProcedure
+                        commandType: CommandType.StoredProcedure,
+                        commandTimeout: 600
                     );
+
+                    var detailResult = detailParams.Get<string>("@Result");
+
+                    if (detailResult != "Book issued successfully")
+                        return detailResult;
                 }
 
-                return headerParams.Get<string>("@Result");
+                return result;
             }
             catch (Exception ex)
             {
@@ -85,12 +103,16 @@ namespace LMS_API.Repositories
         {
             var parameters = new DynamicParameters();
             parameters.Add("@LoanId", loanId);
+            parameters.Add("@Result", dbType: DbType.String, direction: ParameterDirection.Output, size: 500);
 
-            return dbConnection.QuerySingle<string>(
+            dbConnection.Execute(
                 "Loan_Return",
                 parameters,
-                commandType: CommandType.StoredProcedure
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 600
             );
+
+            return parameters.Get<string>("@Result");
         }
     }
 }
