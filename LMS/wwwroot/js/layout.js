@@ -96,7 +96,7 @@ App.CreateJQGrid = function (
         },
 
         colModel: colmodels,
-        loadonce: false,
+        loadonce: true,
         viewrecords: true,
         autowidth: true,
         shrinkToFit: true,

@@ -1,35 +1,27 @@
-﻿// ---------------- ACTION FORMATTERS ----------------
-function actionFormatter(cellValue, options, row) {
+﻿function actionFormatter(cellValue, options, row) {
     return `
         <div class="text-nowrap">
-            <button class="btn btn-sm btn-warning me-1 btn-edit"
-                    data-id="${row.bookID}">
+            <button class="btn btn-sm btn-warning me-1 btn-edit" data-id="${row.bookID}">
                 <i class="bi bi-pencil-square"></i>
             </button>
 
-            <button class="btn btn-sm btn-danger btn-delete"
-                    data-id="${row.bookID}">
+            <button class="btn btn-sm btn-danger btn-delete" data-id="${row.bookID}" data-title="${row.title}">
                 <i class="bi bi-trash"></i>
             </button>
         </div>`;
 }
 
 function statusFormatter(value) {
-    return value
-        ? "<span class='badge bg-success'>Active</span>"
-        : "<span class='badge bg-danger'>Inactive</span>";
+    return value ? "<span class='badge bg-success'>Active</span>" : "<span class='badge bg-danger'>Inactive</span>";
 }
 
 function reloadBookGrid() {
     $("#bookGrid")
-        .jqGrid('setGridParam', {
-            datatype: 'json',
-            page: 1
-        })
+        .jqGrid('setGridParam', { page: 1 })
         .trigger('reloadGrid');
 }
 
-// ---------------- MODAL HANDLERS ----------------
+//modal for add
 function openAddModal() {
     $('#bookForm')[0].reset();
     $('#BookId').val(0);
@@ -38,6 +30,7 @@ function openAddModal() {
     $('#bookModal').modal('show');
 }
 
+//modal for edit
 function openEditModal(bookId) {
     $.get('/Book/EditBook', { bookID: bookId })
         .done(function (data) {
@@ -48,7 +41,6 @@ function openEditModal(bookId) {
             $('#Quantity').val(data.quantity);
             $('#PublisherID').val(data.publisherID);
             $('#CategoryID').val(data.categoryID);
-
             $('#bookModalTitle').text('Edit Book');
             $('#bookModal').modal('show');
         })
@@ -57,11 +49,9 @@ function openEditModal(bookId) {
         });
 }
 
-// ---------------- DELETE USING GLOBAL CONFIRM ----------------
-function deleteBook(bookId) {
-
-    confirm("Are you sure you want to delete this book?", function () {
-
+// delete using confirm
+function deleteBook(bookId, title) {
+    confirm(`Are you sure you want to delete this book? "${title}"`, function () {
         $.ajax({
             url: '/Book/DeleteBook',
             type: 'POST',
@@ -73,7 +63,6 @@ function deleteBook(bookId) {
                 App.alert("Book deleted successfully");
                 reloadBookGrid();
             },
-
             error: function () {
                 App.alert("Delete failed");
             }
@@ -81,18 +70,53 @@ function deleteBook(bookId) {
     });
 }
 
-// ---------------- EVENTS ----------------
+// events for edit delete
 $(document).on('click', '.btn-edit', function () {
     openEditModal($(this).data('id'));
 });
 
 $(document).on('click', '.btn-delete', function () {
-    deleteBook($(this).data('id'));
+    deleteBook($(this).data('id'), $(this).data('title'));
 });
 
-// ---------------- GRID INIT (USING LAYOUT) ----------------
-$(function () {
+function getPublisherFilter() {
+    let result = ":All";
+    $.ajax({
+        url: apiURL + "Publisher/PublisherList",
+        data: { publisherID: -1 },
+        async: false,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", "Bearer " + TOKEN);
+        },
+        success: function (data) {
+            data.forEach(p => {
+                result += `;${p.publisherName}:${p.publisherName}`;
+            });
+        }
+    });
+    return result;
+}
 
+function getCategoryFilter() {
+    let result = ":All";
+    $.ajax({
+        url: apiURL + "Category/CategoryList",
+        data: { categoryID: -1 },
+        async: false,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", "Bearer " + TOKEN);
+        },
+        success: function (data) {
+            data.forEach(c => {
+                result += `;${c.categoryName}:${c.categoryName}`;
+            });
+        }
+    });
+    return result;
+}
+
+// grid
+$(function () {
     const colModels = [
         {
             label: "Action",
@@ -100,23 +124,35 @@ $(function () {
             width: 90,
             sortable: false,
             search: false,
-            align:"center",
+            align: "center",
             formatter: actionFormatter
         },
         { name: "bookID", key: true, hidden: true },
-        { label: "Title", name: "title", width: 200, align: "left" },
+        { label: "Title", name: "title", width: 200 },
         { label: "Price", name: "price", width: 80, align: "right" },
         { label: "Quantity", name: "quantity", width: 80, align: "right" },
-        { label: "Publisher", name: "publisherName", width: 150, align: "left" },
-        { label: "Category", name: "categoryName", width: 150, align: "left" },
+        {
+            label: "Publisher",
+            name: "publisherName",
+            width: 150,
+            stype: "select",
+            searchoptions: { value: getPublisherFilter(), sopt: ["eq"] }
+        },
+        {
+            label: "Category",
+            name: "categoryName",
+            width: 150,
+            stype: "select",
+            searchoptions: { value: getCategoryFilter(), sopt: ["eq"] }
+        },
         {
             label: "Status",
             name: "isActive",
             width: 90,
             formatter: statusFormatter,
             stype: "select",
-            align:"center",
-            searchoptions: { value: ":All;true:Active;false:Inactive" }
+            align: "center",
+            searchoptions: { value: ":All;true:Active;false:Inactive", sopt: ["eq"] }
         }
     ];
 

@@ -1,24 +1,19 @@
-﻿using System.Text.Json.Serialization;
-namespace LMS_API.Models
+﻿namespace LMS_API.Models
 {
-
     public class LoanHeader
     {
         public int LoanId { get; set; }
-        public int BorrowerId { get; set; }
-
-        public string? BorrowerName { get; set; }
+        public int UserId { get; set; }
+        public int TotalQty { get; set; }
 
         public DateTime LoanDate { get; set; }
-
         public DateTime DueDate { get; set; }
-
         public DateTime? ReturnDate { get; set; }
 
-        [JsonIgnore]
-        public DateTime CreatedAt { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; }
 
-        public List<int> BookIds { get; set; } = new();
+        // For create loan (UI → API)
+        public List<LoanDetails> LoanDetails { get; set; }
     }
-
 }

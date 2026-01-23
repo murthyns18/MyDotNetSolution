@@ -1,1 +1,17 @@
-﻿
+﻿@model IList<LMS.Models.LoanHeader>
+
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between mb-3">
+        <h4>Loan List</h4>
+        <a href="/Loan/AddLoan" class="btn btn-primary">Add Loan</a>
+    </div>
+
+    @Html.AntiForgeryToken()
+
+    <table id="loanGrid"></table>
+    <div id="loanGrid_pager"></div>
+</div>
+
+@section Scripts {
+    <script src="~/js/loanList.js"></script>
+}
