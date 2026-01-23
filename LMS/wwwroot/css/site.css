@@ -75,3 +75,8 @@ body {
 .custom-book-modal .modal-footer {
     padding: 16px 24px;
 }
+
+
+.bg-primary {
+    background-color: #008b8b !important;
+}

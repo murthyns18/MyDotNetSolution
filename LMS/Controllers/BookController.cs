@@ -109,31 +109,6 @@ namespace LMS.Controllers
             }
         }
 
-        //[HttpGet]
-        //public IActionResult BookList()
-        //{
-        //    try
-        //    {
-        //        var books = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), "bookID=0")) ?? new List<Book>();
-        //        var categories = LoadCategories();
-        //        var publishers = LoadPublishers();
-
-        //        foreach (var book in books)
-        //        {
-        //            book.CategoryName = categories.FirstOrDefault(c => c.CategoryID == book.CategoryID)?.CategoryName;
-        //            book.PublisherName = publishers.FirstOrDefault(p => p.PublisherID == book.PublisherID)?.PublisherName;
-        //        }
-
-        //        return View();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-        //        TempData["Error"] = "Unable to load book list.";
-        //        return View(new List<Book>());
-        //    }
-        //}
-
         [HttpGet]
         public IActionResult BookList()
         {
@@ -148,52 +123,24 @@ namespace LMS.Controllers
             try
             {
                 var books = JsonConvert.DeserializeObject<List<Book>>(
-                    API.Get("Book/BookList",
+                    API.Get(
+                        "Book/BookList",
                         HttpContext.Session.GetString("Token"),
-                        "bookId=0")
+                        "bookId=0"
+                    )
                 ) ?? new List<Book>();
 
-                return Json(new
-                {
-                    rows = books,
-                    records = books.Count
-                });
+                // ✅ RETURN ARRAY ONLY (what layout.js expects)
+                return Json(books);
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 Response.StatusCode = 500;
-                return Json(new
-                {
-                    error = "Failed to load books",
-                    details = ex.Message
-                });
+                return Json(new List<Book>());
             }
         }
 
-        //[HttpGet]
-        //public IActionResult EditBook(int bookID)
-        //{
-        //    try
-        //    {
-
-        //        var book = JsonConvert.DeserializeObject<List<Book>>(API.Get("Book/BookList", HttpContext.Session.GetString("Token"), $"bookId={bookID}"))?.FirstOrDefault();
-        //        if (book == null)
-        //        {
-        //            TempData["Error"] = "Book not found.";
-        //            return RedirectToAction("BookList");
-        //        }
-        //        book.PublisherList = GetPublisherSelectList();
-        //        book.CategoryList = GetCategorySelectList();
-        //        return View("AddBook", book);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-        //        TempData["Error"] = "Unable to load book details.";
-        //        return RedirectToAction("BookList");
-        //    }
-        //}
 
         [HttpGet]
         public IActionResult EditBook(int bookID)
@@ -210,21 +157,25 @@ namespace LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteBook(int bookID)
+        public IActionResult DeleteBook([FromForm] int bookID)
         {
             try
             {
-                var result = API.Post($"Book/DeleteBook", HttpContext.Session.GetString("Token"), bookID);
+                var result = API.Post(
+                    "Book/DeleteBook",
+                    HttpContext.Session.GetString("Token"),
+                    bookID
+                );
+
                 var message = JObject.Parse(result)["message"]?.ToString();
-                TempData["Message"] = message;
+                return Json(new { success = true, message });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to delete book.";
+                return Json(new { success = false });
             }
-
-            return RedirectToAction("BookList");
         }
+
     }
 }

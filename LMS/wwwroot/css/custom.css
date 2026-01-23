@@ -58,3 +58,8 @@ footer.footer {
 .container main {
     margin-top: 20px;
 }
+
+
+tr.jqgrow td {
+    white-space: nowrap !important;
+}

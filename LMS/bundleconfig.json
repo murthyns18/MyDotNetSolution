@@ -63,6 +63,15 @@
     },
     "sourceMap": true
   },
+  {
+    "outputFileName": "wwwroot/js/loan.min.js",
+    "inputFiles": [ "wwwroot/js/loan.js" ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": true
+  },
 
 
   {

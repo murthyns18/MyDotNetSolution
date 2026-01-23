@@ -30,6 +30,7 @@
 
     <script>
         var TOKEN = '@Context.Session.GetString("Token")';
+        var apiURL = '@configuration.GetSection("API")["URL"]';
     </script>
 
 </head>
@@ -101,7 +102,38 @@
             &copy; 2026 - LMS
         </div>
     </footer>
-    
+    <!-- ALERT MODAL -->
+    <div class="modal fade" id="alertpopup" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Alert</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="popupmesssage"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONFIRM MODAL -->
+    <div class="modal fade" id="confirmpopup" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">Confirm</h5>
+                </div>
+                <div class="modal-body" id="confirmpopupmesssage"></div>
+                <div class="modal-footer">
+                    <button id="ConfirmOKbutton" class="btn btn-danger" data-bs-dismiss="modal">Yes</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="@Url.Content("~/lib/jquery/dist/jquery.min.js")"></script>
     <script src="@Url.Content("~/lib/bootstrap/dist/js/bootstrap.bundle.min.js")"></script>
     <script src="@Url.Content("~/assets/plugins/jqGrid/js/grid.locale-en.min.js")" asp-append-version="true"></script>

@@ -11,14 +11,14 @@ namespace LMS.Models
 
         // Book Title
         [Display(Name = "Book Title")]
-        [Required(ErrorMessage = "Please enter book title.")]
+        [Required(ErrorMessage = "Please enter Book Title.")]
         [StringLength(20, MinimumLength = 3,
-            ErrorMessage = "Book title must be between 3 and 20 characters.")]
+            ErrorMessage = "Book Title must be between 3 and 20 characters.")]
         public string Title { get; set; } = string.Empty;
 
         // Category
         [Display(Name = "Category")]
-        [Required(ErrorMessage = "Please select category.")]
+        [Required(ErrorMessage = "Please select Category.")]
         public int CategoryID { get; set; }
 
         [ValidateNever]
@@ -30,7 +30,7 @@ namespace LMS.Models
 
         // Publisher
         [Display(Name = "Publisher")]
-        [Required(ErrorMessage = "Please select publisher.")]
+        [Required(ErrorMessage = "Please select Publisher.")]
         public int PublisherID { get; set; }
 
         [ValidateNever]
@@ -42,14 +42,14 @@ namespace LMS.Models
 
         // Price
         [Display(Name = "Price")]
-        [Required(ErrorMessage = "Please enter price.")]
+        [Required(ErrorMessage = "Please enter Price.")]
         [Range(0.1, 1000,
-            ErrorMessage = "Please enter a valid price between 0.1 and 1000.")]
+            ErrorMessage = "Please enter a valid Price.")]
         public decimal Price { get; set; }
 
         // Quantity
         [Display(Name = "Quantity")]
-        [Required(ErrorMessage = "Please enter quantity.")]
+        [Required(ErrorMessage = "Please enter Quantity.")]
         [Range(1, int.MaxValue,
             ErrorMessage = "Quantity must be at least 1.")]
         public int Quantity { get; set; }
