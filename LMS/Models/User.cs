@@ -37,13 +37,15 @@ namespace LMS.Models
         [Required(ErrorMessage = "Please select role.")]
         public short? RoleID { get; set; }
 
+        [ValidateNever]
         public string? RoleName { get; set; }
 
         [ValidateNever]
         public IEnumerable<SelectListItem> RoleList { get; set; }
             = new List<SelectListItem>();
-
+            
         // Status
+        [Required(ErrorMessage = "Please select Status.")]
         public bool Status { get; set; } = true;
 
         // Password
@@ -54,7 +56,7 @@ namespace LMS.Models
         public string Password { get; set; } = string.Empty;
 
         // Confirm Password
-        [Required(ErrorMessage = "Please confirm password.")]
+        [Required(ErrorMessage = "Please enter confirm password.")]
         [DataType(DataType.Password)]
         [Compare("Password",
             ErrorMessage = "Password and confirm password do not match.")]

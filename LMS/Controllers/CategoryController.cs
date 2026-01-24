@@ -69,64 +69,32 @@ namespace LMS.Controllers
             //}
         }
 
-        [HttpGet]
-        public IActionResult GetCategoriesForGrid()
-        {
-            try
-            {
-                var categories = JsonConvert.DeserializeObject<List<Category>>(
-                    API.Get("Category/CategoryList",
-                    HttpContext.Session.GetString("Token"),
-                    "categoryId=0")
-            ) ?? new List<Category>();
-
-                return Json(new
-                {
-                    rows = categories,
-                    records = categories.Count
-                });
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                Response.StatusCode = 500;
-                return Json(new
-                {
-                    error = "Failed to load categories",
-                    details = ex.Message
-                });
-            }
-        }
 
 
         [HttpGet]
         public IActionResult EditCategory(int categoryID)
         {
-            try
-            {
-                var category = JsonConvert.DeserializeObject<List<Category>>(API.Get("Category/CategoryList", HttpContext.Session.GetString("Token"), $"categoryId={categoryID}"))?.FirstOrDefault();
-                if (category == null)
-                {
-                    TempData["Error"] = "Category not found.";
-                    return RedirectToAction("CategoryList");
-                }
-                return View("AddCategory", category);
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to load category details.";
-                return RedirectToAction("CategoryList");
-            }
+            var category = JsonConvert.DeserializeObject<List<Category>>(
+                API.Get(
+                    "Category/CategoryList",
+                    HttpContext.Session.GetString("Token"),
+                    $"categoryID={categoryID}"
+                )
+            )?.FirstOrDefault();
+
+            if (category == null)
+                return NotFound();
+
+            return Json(category);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteCategory(int id)
+        public IActionResult DeleteCategory(int categoryID)
         {
             try
             {
-                var result = API.Post($"Category/DeleteCategory?categoryID={id}", HttpContext.Session.GetString("Token"), new { });
+                var result = API.Post($"Category/DeleteCategory?categoryID={categoryID}", HttpContext.Session.GetString("Token"), new { });
                 var message = JObject.Parse(result)["message"]?.ToString();
                 TempData["Message"] = message;
             }

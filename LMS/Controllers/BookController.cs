@@ -117,29 +117,6 @@ namespace LMS.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult GetBooksForGrid()
-        {
-            try
-            {
-                var books = JsonConvert.DeserializeObject<List<Book>>(
-                    API.Get(
-                        "Book/BookList",
-                        HttpContext.Session.GetString("Token"),
-                        "bookId=0"
-                    )
-                ) ?? new List<Book>();
-
-                return Json(books);
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                Response.StatusCode = 500;
-                return Json(new List<Book>());
-            }
-        }
-
 
         [HttpGet]
         public IActionResult EditBook(int bookID)
@@ -153,6 +130,7 @@ namespace LMS.Controllers
 
             return Json(book);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

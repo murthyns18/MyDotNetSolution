@@ -1,95 +1,166 @@
 ﻿function actionFormatter(cellValue, options, row) {
-
-    var token = $('input[name="__RequestVerificationToken"]').val();
-
     return `
-<div style="white-space:nowrap;">
-    <a href="/User/EditUser?q=${Encrypt('userID='+ row.userID)}"
-       class="btn btn-sm btn-warning me-1"
-       title="Edit User">
-        <i class="bi bi-pencil-square"></i>
-    </a>
+        <div class="text-nowrap">
+            <button class="btn btn-sm btn-warning me-1 btn-edit" data-id="${row.userID}">
+                <i class="bi bi-pencil-square"></i>
+            </button>
 
-    <form method="post"
-          action="/User/DeleteUser"
-          style="display:inline;">
-        <input type="hidden" name="id" value="${row.userID}" />
-        <input type="hidden" name="__RequestVerificationToken" value="${token}" />
-        <button type="submit"
-                class="btn btn-sm btn-danger"
-                title="Delete User">
-            <i class="bi bi-trash"></i>
-        </button>
-    </form>
-</div>
-`;
+            <button class="btn btn-sm btn-danger btn-delete"
+                    data-id="${row.userID}"
+                    data-name="${row.userName}">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>`;
 }
+
 function statusFormatter(value) {
     return value
-        ? "<span class='badge bg-success'><i class='bi bi-check-circle'></i> Active</span>"
-        : "<span class='badge bg-danger'><i class='bi bi-x-circle'></i> Inactive</span>";
+        ? "<span class='badge bg-success'>Active</span>"
+        : "<span class='badge bg-danger'>Inactive</span>";
 }
 
-$(function () {
+function reloadUserGrid() {
+    $("#userGrid")
+        .jqGrid('setGridParam', { page: 1 })
+        .trigger('reloadGrid');
+}
 
-    $("#userGrid").jqGrid({
-        url: '/User/GetUsersForGrid',
-        datatype: "json",
-        mtype: "GET",
+/* ---------------- ADD ---------------- */
+function openAddUserModal() {
+    $('#userForm')[0].reset();
+    $('#UserID').val(0);
 
-        colModel: [
-            {
-                label: "Action",
-                name: "action",
-                width: 100,
-                fixed: true,
-                align: "center",
-                sortable: false,
-                search: false,
-                formatter: actionFormatter,
-                cellattr: () => "style='white-space:nowrap;'"
+    $('#passwordContainer').removeClass('d-none');
+    $('#confirmPasswordContainer').removeClass('d-none');
+    $('#statusContainer').addClass('d-none');
+
+    $('#userModalTitle').text('Add User');
+    $('#userForm').attr('action', '/User/AddUser');
+    $('#userModal').modal('show');
+}
+
+/* ---------------- EDIT ---------------- */
+function openEditUserModal(userId) {
+    $.get('/User/EditUser', { userID: userId })
+        .done(function (data) {
+            $('#UserID').val(data.userID);
+            $('#UserName').val(data.userName);
+            $('#Email').val(data.email);
+            $('#MobileNumber').val(data.mobileNumber);
+            $('#Address').val(data.address);
+            $('#RoleID').val(data.roleID);
+
+            $('input[name="Status"][value="' + data.status + '"]').prop('checked', true);
+
+            $('#passwordContainer').addClass('d-none');
+            $('#confirmPasswordContainer').addClass('d-none');
+            $('#statusContainer').removeClass('d-none');
+
+            $('#userModalTitle').text('Edit User');
+            $('#userModal').modal('show');
+        })
+        .fail(function () {
+            App.alert('Failed to load user details.');
+        });
+}
+
+/* ---------------- DELETE ---------------- */
+function deleteUser(userId, name) {
+    confirm(`Are you sure you want to delete "${name}"?`, function () {
+        $.ajax({
+            url: '/User/DeleteUser',
+            type: 'POST',
+            data: {
+                id: userId,
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
             },
-            { label: "ID", name: "userID", key: true, hidden: true },
-            { label: "Name", name: "userName", width: 150, sortable: true },
-            { label: "Email", name: "email", width: 220, sortable: true },
-            { label: "Mobile", name: "mobileNumber", width: 120 },
-            { label: "Role", name: "roleName", width: 120 },
-            { label: "Address", name: "address", width: 200 },
-            {
-                label: "Status",
-                name: "status",
-                width: 100,
-                align: "center",
-                formatter: statusFormatter,
-                stype: "select",
-                searchoptions: {
-                    value: ":All;true:Active;false:Inactive"
-                }
+            success: function () {
+                App.alert("User deleted successfully");
+                reloadUserGrid();
             }
-        ],
+        });
+    });
+}
 
-        pager: "#userPager",
-        rowNum: 10,
-        rowList: [10, 20, 50],
-        autowidth: true,
-        shrinkToFit: true,
-        height: "auto",
-        loadonce: true,
-        viewrecords: true,
-        caption: "<i class='bi bi-people'></i> User List",
+/* ---------------- EVENTS ---------------- */
+$(document).on('click', '.btn-edit', function () {
+    openEditUserModal($(this).data('id'));
+});
 
-        jsonReader: {
-            root: "rows",
-            records: "records",
-            repeatitems: false,
-            id: "userID"
+$(document).on('click', '.btn-delete', function () {
+    deleteUser($(this).data('id'), $(this).data('name'));
+});
+
+/* ---------------- ROLE FILTER (same as Publisher/Category) ---------------- */
+function getRoleFilter() {
+    let result = ":All";
+    $.ajax({
+        url: apiURL + "Role/GetRoles",
+        data: { roleId: -1 },
+        async: false,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", "Bearer " + TOKEN);
+        },
+        success: function (data) {
+            data.forEach(r => {
+                result += `;${r.roleName}:${r.roleName}`;
+            });
         }
     });
+    return result;
+}
 
-    $("#userGrid").jqGrid('filterToolbar', {
-        stringResult: true,
-        searchOnEnter: false,
-        defaultSearch: "cn"
-    });
+/* ---------------- GRID ---------------- */
+$(function () {
 
+    const colModels = [
+        {
+            label: "Action",
+            name: "action",
+            width: 90,
+            sortable: false,
+            search: false,
+            align: "center",
+            formatter: actionFormatter
+        },
+        { name: "userID", key: true, hidden: true },
+        { label: "Name", name: "userName", width: 150 },
+        { label: "Email", name: "email", width: 220 },
+        { label: "Mobile", name: "mobileNumber", width: 120 },
+        {
+            label: "Role",
+            name: "roleName",
+            width: 150,
+            stype: "select",
+            searchoptions: {
+                value: getRoleFilter(),
+                sopt: ["eq"]
+            }
+        },
+        { label: "Address", name: "address", width: 200 },
+        {
+            label: "Status",
+            name: "status",
+            width: 90,
+            align: "center",
+            formatter: statusFormatter,
+            stype: "select",
+            searchoptions: {
+                value: ":All;true:Active;false:Inactive",
+                sopt: ["eq"]
+            }
+        }
+    ];
+
+    App.CreateJQGrid(
+        '#userGrid',
+        apiURL + 'User/UserList', 
+        'json',
+        [],
+        colModels,
+        TOKEN,
+        true,
+        false,
+        "55vh"
+    );
 });

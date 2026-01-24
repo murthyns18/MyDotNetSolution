@@ -4,6 +4,6 @@
     {
         public short RoleID { get; set; }
         public string RoleName { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

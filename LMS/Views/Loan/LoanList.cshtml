@@ -3,7 +3,9 @@
 <div class="container-fluid mt-4 px-4">
     <div class="d-flex justify-content-between mb-3">
         <h4>Loan List</h4>
-        <a href="/Loan/AddLoan" class="btn btn-primary">Add Loan</a>
+        <button class="btn btn-primary" onclick="openAddLoanModal()">
+            Add Loan
+        </button>
     </div>
 
     @Html.AntiForgeryToken()
@@ -12,6 +14,9 @@
     <div id="loanGrid_pager"></div>
 </div>
 
+@await Html.PartialAsync("_AddLoanModal", new LMS.Models.LoanHeader())
+
 @section Scripts {
     <script src="~/js/loanList.js"></script>
+    <script src="~/js/addLoan.js"></script>
 }

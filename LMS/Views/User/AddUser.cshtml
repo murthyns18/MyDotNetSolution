@@ -88,6 +88,7 @@
                                     <div class="form-check form-check-inline">
                                         @Html.RadioButtonFor(m => m.Status, false, new { @class = "form-check-input" })
                                         <label class="form-check-label">Inactive</label>
+                                    @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger small" })
                                     </div>
                                 </div>
                             </div>

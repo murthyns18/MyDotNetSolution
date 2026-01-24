@@ -1,104 +1,113 @@
-﻿
-function categoryActionFormatter(cellValue, options, row) {
-
-    var token = $('input[name="__RequestVerificationToken"]').val();
-
+﻿function actionFormatter(cellValue, options, row) {
     return `
-<div style="white-space:nowrap;">
-    <a href="/Category/EditCategory?q=${Encrypt('categoryID='+ row.categoryID)}"
-       class="btn btn-sm btn-warning me-1"
-       title="Edit Category">
-        <i class="bi bi-pencil-square"></i>
-    </a>
-
-    <form method="post" action="/Category/DeleteCategory" style="display:inline;">
-        <input type="hidden" name="id" value="${row.categoryID}" />
-        <input type="hidden" name="__RequestVerificationToken" value="${token}" />
-        <button type="submit" class="btn btn-sm btn-danger" title="Delete Category">
-            <i class="bi bi-trash"></i>
-        </button>
-    </form>
-
-
-</div>
-`;
+        <div class="text-nowrap">
+            <button class="btn btn-sm btn-warning me-1 btn-edit" data-id="${row.categoryID}">
+                <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-sm btn-danger btn-delete"
+                    data-id="${row.categoryID}"
+                    data-name="${row.categoryName}">
+                <i class="bi bi-trash"></i>     
+            </button>
+        </div>`;
 }
 
-function categoryStatusFormatter(value) {
+function statusFormatter(value) {
     return value
-        ? "<span class='badge bg-success'><i class='bi bi-check-circle'></i> Active</span>"
-        : "<span class='badge bg-danger'><i class='bi bi-x-circle'></i> Inactive</span>";
+        ? "<span class='badge bg-success'>Active</span>"
+        : "<span class='badge bg-danger'>Inactive</span>";
 }
 
-function categoryStatusUnformatter(cellValue) {
-    return cellValue.indexOf("Active") !== -1;
+function reloadCategoryGrid() {
+    $("#categoryGrid")
+        .jqGrid('setGridParam', { page: 1 })
+        .trigger('reloadGrid');
 }
 
+/* ---------- ADD ---------- */
+function openAddCategoryModal() {
+    $('#categoryForm')[0].reset();
+    $('#CategoryID').val(0);
+
+    $('#statusContainer').addClass('d-none');
+
+    $('#categoryModalTitle').text('Add Category');
+    $('#categoryModal').modal('show');
+}
+
+/* ---------- EDIT ---------- */
+function openEditCategoryModal(categoryId) {
+    $.get('/Category/EditCategory', { categoryID: categoryId })
+        .done(function (data) {
+
+            $('#CategoryID').val(data.categoryID);
+            $('#CategoryName').val(data.categoryName);
+            $('input[name="IsActive"][value="' + data.isActive + '"]').prop('checked', true);
+
+            $('#statusContainer').removeClass('d-none');
+
+            $('#categoryModalTitle').text('Edit Category');
+            $('#categoryModal').modal('show');
+        })
+        .fail(function () {
+            App.alert('Failed to load category details.');
+        });
+}
+
+/* ---------- DELETE ---------- */
+function deleteCategory(id, name) {
+    confirm(`Are you sure you want to delete "${name}"?`, function () {
+        $.ajax({
+            url: '/Category/DeleteCategory',
+            type: 'POST',
+            data: {
+                categoryID: id,
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function () {
+                App.alert("Category deleted successfully");
+                reloadCategoryGrid();
+            }
+        });
+    });
+}
+
+/* ---------- EVENTS ---------- */
+$(document).on('click', '.btn-edit', function () {
+    openEditCategoryModal($(this).data('id'));
+});
+
+$(document).on('click', '.btn-delete', function () {
+    deleteCategory($(this).data('id'), $(this).data('name'));
+});
+
+/* ---------- GRID ---------- */
 $(function () {
 
-    $("#categoryGrid").jqGrid({
-        url: '/Category/GetCategoriesForGrid',
-        datatype: "json",
-        mtype: "GET",
-
-        colModel: [
-            {
-                label: "Action",
-                name: "action",
-                width: 100,
-                fixed: true,
-                align: "center",
-                sortable: false,
-                search: false,
-                formatter: categoryActionFormatter,
-                cellattr: () => "style='white-space:nowrap;'"
-            },
-
-            { label: "ID", name: "categoryID", key: true, hidden: true },
-
-            {
-                label: "Category Name",
-                name: "categoryName",
-                width: 220,
-                sortable: true,
-                search: true
-            },
-            {
-                label: "Status",
-                name: "isActive",
-                width: 120,
-                align: "center",
-                formatter: categoryStatusFormatter,
-                unformat: categoryStatusUnformatter,
-                stype: "select",
-                searchoptions: {
-                    value: ":All;true:Active;false:Inactive",
-                    sopt: ["eq"]
-                }
-            }
-        ],
-
-        pager: "#categoryPager",
-        rowNum: 10,
-        rowList: [10, 20, 50],
-        autowidth: true,
-        shrinkToFit: true,
-        height: "auto",
-        loadonce: true,
-        viewrecords: true,
-        caption: "<i class='bi bi-tags'></i> Category List",
-
-        jsonReader: {
-            root: "rows",
-            records: "records",
-            repeatitems: false,
-            id: "categoryID"
+    const colModels = [
+        { label: "Action", name: "action", width: 90, align: "center", sortable: false, search: false, formatter: actionFormatter },
+        { name: "categoryID", key: true, hidden: true },
+        { label: "Category Name", name: "categoryName", width: 220 },
+        {
+            label: "Status",
+            name: "isActive",
+            width: 90,
+            align: "center",
+            formatter: statusFormatter,
+            stype: "select",
+            searchoptions: { value: ":All;true:Active;false:Inactive", sopt: ["eq"] }
         }
-    });
+    ];
 
-    $("#categoryGrid").jqGrid('filterToolbar', {
-        stringResult: true,
-        searchOnEnter: false,
-        defaultSearch: "cn"
-    });
+    App.CreateJQGrid(
+        '#categoryGrid',
+        apiURL + 'Category/CategoryList',
+        'json',
+        [],
+        colModels,
+        TOKEN,
+        true,
+        false,
+        "55vh"
+    );
 });

@@ -74,59 +74,22 @@ namespace LMS.Controllers
             //}
         }
 
-        [HttpGet]
-        public IActionResult GetRolesForGrid()
-        {
-            try
-            {
-                var roles = JsonConvert.DeserializeObject<List<Role>>(
-                    API.Get("Role/GetRoles",
-                        HttpContext.Session.GetString("Token"),
-                        "roleId=0")
-                ) ?? new List<Role>();
-
-                return Json(new
-                {
-                    rows = roles,
-                    records = roles.Count
-                });
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                Response.StatusCode = 500;
-                return Json(new
-                {
-                    error = "Failed to load roles",
-                    details = ex.Message
-                });
-            }
-        }
 
         [HttpGet]
-        public IActionResult EditRole(short roleID)
+        public IActionResult EditRole(int roleID)
         {
-            try
-            {
-                var result = API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), $"roleId={roleID}");
-                var roles = JsonConvert.DeserializeObject<List<Role>>(result);
-                var role = roles?.FirstOrDefault();
+            var role = JsonConvert.DeserializeObject<List<Role>>(
+                API.Get("Role/GetRoles",
+                HttpContext.Session.GetString("Token"),
+                $"roleId={roleID}")
+            )?.FirstOrDefault();
 
-                if (role == null)
-                {
-                    TempData["Error"] = "Role not found.";
-                    return RedirectToAction("RoleList");
-                }
+            if (role == null)
+                return NotFound();
 
-                return View("AddRole", role);
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to load role details.";
-                return RedirectToAction("RoleList");
-            }
+            return Json(role);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

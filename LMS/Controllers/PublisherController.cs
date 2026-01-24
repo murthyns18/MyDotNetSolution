@@ -104,27 +104,20 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult EditPublisher(int publisherID)
         {
-            try
-            {
-                var result = API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), $"publisherId={publisherID}");
-                var publishers = JsonConvert.DeserializeObject<List<Publisher>>(result);
-                var publisher = publishers?.FirstOrDefault();
+            var publisher = JsonConvert.DeserializeObject<List<Publisher>>(
+                API.Get(
+                    "Publisher/PublisherList",
+                    HttpContext.Session.GetString("Token"),
+                    $"publisherID={publisherID}"
+                )
+            )?.FirstOrDefault();
 
-                if (publisher == null)
-                {
-                    TempData["Error"] = "Publisher not found.";
-                    return RedirectToAction("PublisherList");
-                }
+            if (publisher == null)
+                return NotFound();
 
-                return View("AddPublisher", publisher);
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to load publisher details.";
-                return RedirectToAction("PublisherList");
-            }
+            return Json(publisher);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

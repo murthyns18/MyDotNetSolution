@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net;
 
 namespace LMS.Controllers
 {
@@ -102,88 +103,23 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult ListUser()
         {
-            //try
-            //{
-            //    var users = JsonConvert.DeserializeObject<List<User>>(
-            //        API.Get("User/UserList", HttpContext.Session.GetString("Token"), "userId=0")
-            //    ) ?? new List<User>();
-
-            //    var roles = LoadRoles();
-
-            //    foreach (var user in users)
-            //    {
-            //        user.RoleName = roles.FirstOrDefault(r => r.RoleID == user.RoleID)?.RoleName;
-            //    }
-
-            //    return View(users);
-            //}
-            //catch
-            //{
-            //    TempData["Error"] = "Unable to load users list.";
-            //    return View(new List<User>());
-            //}
-
+            ViewBag.Roles = GetRoleSelectList();
             return View();
-        }
-
-        [HttpGet]
-        public IActionResult GetUsersForGrid()
-        {
-            try
-            {
-                var users = JsonConvert.DeserializeObject<List<User>>(
-                    API.Get("User/UserList", HttpContext.Session.GetString("Token"), "userId=0")
-                ) ?? new List<User>();
-
-                var roles = LoadRoles();
-
-                foreach (var user in users)
-                {
-                    user.RoleName = roles.FirstOrDefault(r => r.RoleID == user.RoleID)?.RoleName;
-                }
-
-                return Json(new
-                {
-                    rows = users,
-                    records = users.Count
-                });
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                Response.StatusCode = 500;
-                return Json(new
-                {
-                    error = "Failed to load users",
-                    details = ex.Message
-                });
-            }
         }
 
         [HttpGet]
         public IActionResult EditUser(int userID)
         {
-            try
-            {
-                var result = API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={userID}");
-                var users = JsonConvert.DeserializeObject<List<User>>(result);
-                var user = users?.FirstOrDefault();
+            var user = JsonConvert.DeserializeObject<List<User>>(
+               API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={userID}")
+               )?.FirstOrDefault();
 
-                if (user == null)
-                {
-                    TempData["Error"] = "User not found.";
-                    return RedirectToAction("ListUser");
-                }
 
-                user.RoleList = GetRoleSelectList();
-                return View("AddUser", user);
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to load user details.";
-                return RedirectToAction("ListUser");
-            }
+            if (user == null)
+                return NotFound();
+
+            return Json(user);
+
         }
 
         [HttpPost]

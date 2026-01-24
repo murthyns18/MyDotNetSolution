@@ -1,72 +1,25 @@
-﻿@model IList<LMS.Models.Category>
+﻿@{
+    ViewData["Title"] = "Category List";
+}
 
-<div class="container mt-4">
-
-    <form id="antiForgeryForm" method="post">
-        @Html.AntiForgeryToken()
-    </form>
-
-    <div class="d-flex align-items-center mb-3 justify-content-between">
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between mb-3">
         <h4>Category List</h4>
-        <div>
-            <a href="@Url.Content("~/Category/AddCategory")" class="btn btn-primary">
-                Add Category
-            </a>
-        </div>
+        <button class="btn btn-primary" onclick="openAddCategoryModal()">
+            Add Category
+        </button>
     </div>
-        
+
     <table id="categoryGrid"></table>
     <div id="categoryPager"></div>
-
-
-  @*   <div class="table-responsive">
-        <table class="table table-bordered table-striped table-hover">
-            <thead class="table-primary">
-                <tr>
-                    <th>Action</th>
-                    <th>Sl.No</th>
-                    <th>Category Name</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model != null && Model.Any())
-                {
-                    @foreach (var category in Model)
-                    {
-                        <tr>
-                            <td class="text-center">
-                                <a href="@Url.Action("EditCategory", "Category", new { id = category.CategoryID })"
-                                   class="btn btn-sm btn-info text-light me-1">Edit</a>
-
-                                <form asp-action="DeleteCategory" method="post" class="d-inline">
-                                    <input type="hidden" name="categoryID" value="@category.CategoryID" />
-                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                </form>
-                            </td>
-                            <td>@category.CategoryID</td>
-                            <td>@category.CategoryName</td>
-                            <td class="text-center">
-                                <span class="badge @(category.IsActive ? "bg-success" : "bg-danger")">
-                                    @(category.IsActive ? "Active" : "Inactive")
-                                </span>
-                            </td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="4" class="text-center text-danger">No categories available</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div> *@
-
 </div>
 
+<form method="post">
+    @Html.AntiForgeryToken()
+</form>
+
+@await Html.PartialAsync("_CategoryModal", new LMS.Models.Category())
 
 @section Scripts {
-    <script src="@Url.Content("~/js/categoryList.min.js")" asp-append-version="true"></script>
+    <script src="~/js/categoryList.js"></script>
 }

@@ -1,24 +1,21 @@
-﻿@model IList<User>
+﻿@model IList<LMS.Models.User>
 
-<div class="container mt-4">
-
-    <div class="d-flex align-items-center mb-3 justify-content-between">
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between mb-3">
         <h4>User List</h4>
-        <div>
-            <a href="@Url.Content("~/User/AddUser")" class="btn btn-primary">
-                Add User
-            </a>
-        </div>
+        <button class="btn btn-primary" onclick="openAddUserModal()">Add User</button>
     </div>
 
-    <div class="container-fluid">
-        <table id="userGrid"></table>
-        <div id="userPager"></div>
-    </div>
-
+    <table id="userGrid"></table>
+    <div id="userPager"></div>
 </div>
 
-@section Scripts {
-    <script src="@Url.Content("~/js/userList.min.js")" asp-append-version="true"></script>
-}
+@await Html.PartialAsync("_UserModal", new LMS.Models.User
+{
+    RoleList = ViewBag.Roles
+})
 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/userList.min.js"></script>
+}

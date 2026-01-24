@@ -1,27 +1,19 @@
-﻿@model IList<LMS_API.Models.Role>
-
-<div class="container mt-4">
-
-    <form id="antiForgeryForm" method="post">
-        @Html.AntiForgeryToken()
-    </form>
-
-    <div class="d-flex align-items-center mb-3 justify-content-between">
+﻿<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between mb-3">
         <h4>Role List</h4>
-        <div>
-            <a href="@Url.Content("~/Role/AddRole")" class="btn btn-primary">
-                Add Role
-            </a>
-        </div>
+        <button class="btn btn-primary" onclick="openAddRoleModal()">Add Role</button>
     </div>
 
-    <div class="container-fluid">
-        <table id="roleGrid"></table>
-        <div id="rolePager"></div>
-    </div>
-
+    <table id="roleGrid"></table>
+    <div id="rolePager"></div>
 </div>
 
+<form method="post">
+    @Html.AntiForgeryToken()
+</form>
+
+@await Html.PartialAsync("_RoleModal", new LMS_API.Models.Role())
+
 @section Scripts {
-    <script src="@Url.Content("~/js/roleList.min.js")" asp-append-version="true"></script>
+    <script src="~/js/roleList.js"></script>
 }
