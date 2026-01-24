@@ -68,6 +68,19 @@
                             @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control" })
                             <span asp-validation-for="Quantity" class="text-danger"></span>
                         </div>
+
+                        <!-- ✅ Status (hidden for Add, shown for Edit via JS) -->
+                        <div class="col-md-6 mb-3 d-none" id="statusContainer">
+                            @Html.LabelFor(m => m.IsActive)
+                            @Html.DropDownListFor(
+                                                        m => m.IsActive,
+                                                        new List<SelectListItem>
+                                                        {
+                                                        new SelectListItem { Text = "Active", Value = "true" },
+                                                        new SelectListItem { Text = "Inactive", Value = "false" }
+                                                        },
+                                                        new { @class = "form-control", id = "IsActive" })
+                        </div>
                     </div>
                 </div>
 

@@ -130,7 +130,6 @@ namespace LMS.Controllers
                     )
                 ) ?? new List<Book>();
 
-                // ✅ RETURN ARRAY ONLY (what layout.js expects)
                 return Json(books);
             }
             catch (Exception ex)

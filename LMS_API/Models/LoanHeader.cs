@@ -4,6 +4,8 @@
     {
         public int LoanId { get; set; }
         public int UserId { get; set; }
+        public string UserName { get; set; }
+
         public int TotalQty { get; set; }
 
         public DateTime LoanDate { get; set; }

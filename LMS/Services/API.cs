@@ -18,123 +18,93 @@ namespace LMS.Services
         /// <param name="token">JWT token for authorization (optional)</param>
         /// <param name="myobject">Request body object</param>
         /// <returns>API response as string</returns>
-        //public static string Post(string URL, string? token, dynamic myobject)
-        //{
-        //    try
-        //    {
-        //        // HttpClient is used to send HTTP requests to the API
-        //        HttpClient client = new HttpClient();
-
-        //        // Attach JWT Bearer token to request header if provided
-        //        // This allows secured API endpoints to validate the request
-        //        if (!string.IsNullOrEmpty(token))
-        //            client.DefaultRequestHeaders.Authorization =
-        //                new AuthenticationHeaderValue("Bearer", token);
-
-        //        // Converts C# object into JSON automatically
-        //        // Also sets Content-Type: application/json
-        //        // This ensures API model binding works correctly
-        //        // Prevents issues like: "bookID is null"
-        //        JsonContent content = JsonContent.Create(myobject);
-
-        //        // Send POST request synchronously to API
-        //        var response = client
-        //            .PostAsync(apiBaseURL + URL, content)
-        //            .GetAwaiter()
-        //            .GetResult();
-
-        //        // Handle success response
-        //        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        //        {
-        //            // Read and return response content
-        //            var responseMessage =
-        //                response.Content.ReadAsStringAsync()
-        //                .GetAwaiter()
-        //                .GetResult();
-
-        //            return responseMessage;
-        //        }
-        //        // Handle unauthorized (token expired or invalid)
-        //        else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        //        {
-        //            return "token expired";
-        //        }
-        //        // Handle all other HTTP errors
-        //        else
-        //        {
-        //            var responseMessage =
-        //                response.Content.ReadAsStringAsync()
-        //                .GetAwaiter()
-        //                .GetResult();
-
-        //            return responseMessage;
-        //        }
-        //    }
-        //    // Handle network-level errors (API unreachable, no internet, timeout, etc.)
-        //    catch (HttpRequestException httpEx)
-        //        when (httpEx.InnerException is SocketException socketEx)
-        //    {
-        //        switch (socketEx.SocketErrorCode)
-        //        {
-        //            case SocketError.NetworkDown:
-        //                return "The network is down. Please check your network connection.";
-
-        //            case SocketError.NetworkUnreachable:
-        //                return "Network unreachable. Please ensure you have a working internet connection.";
-
-        //            case SocketError.HostUnreachable:
-        //                return "The remote host is unreachable. Please try again later.";
-
-        //            case SocketError.ConnectionRefused:
-        //                return "The connection was refused by the server. Please check if the server is running.";
-
-        //            case SocketError.ConnectionReset:
-        //                return "The connection was reset by the server. Please try again.";
-
-        //            case SocketError.TimedOut:
-        //                return "The connection attempt timed out. Please try again later.";
-
-        //            default:
-        //                return "A network issue occurred. Please try again.";
-        //        }
-        //    }
-        //    // Catch any unexpected runtime exception
-        //    catch (Exception ex)
-        //    {
-        //        return ex.Message;
-        //    }
-        //}
-
-        public static string? Post(string URL, string? token, object myobject)
+        public static string Post(string URL, string? token, dynamic myobject)
         {
             try
             {
+                // HttpClient is used to send HTTP requests to the API
                 HttpClient client = new HttpClient();
 
+                // Attach JWT Bearer token to request header if provided
+                // This allows secured API endpoints to validate the request
                 if (!string.IsNullOrEmpty(token))
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    client.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("Bearer", token);
 
+                // Converts C# object into JSON automatically
+                // Also sets Content-Type: application/json
+                // This ensures API model binding works correctly
+                // Prevents issues like: "bookID is null"
                 JsonContent content = JsonContent.Create(myobject);
 
-                var response = client.PostAsync(apiBaseURL + URL, content)
-                                     .GetAwaiter()
-                                     .GetResult();
+                // Send POST request synchronously to API
+                var response = client
+                    .PostAsync(apiBaseURL + URL, content)
+                    .GetAwaiter()
+                    .GetResult();
 
-                if (response.IsSuccessStatusCode)
+                // Handle success response
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    return response.Content.ReadAsStringAsync()
-                                           .GetAwaiter()
-                                           .GetResult();
-                }
+                    // Read and return response content
+                    var responseMessage =
+                        response.Content.ReadAsStringAsync()
+                        .GetAwaiter()
+                        .GetResult();
 
-                // ❗ Any failure → return null
-                return null;
+                    return responseMessage;
+                }
+                // Handle unauthorized (token expired or invalid)
+                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    return "token expired";
+                }
+                // Handle all other HTTP errors
+                else
+                {
+                    var responseMessage =
+                        response.Content.ReadAsStringAsync()
+                        .GetAwaiter()
+                        .GetResult();
+
+                    return responseMessage;
+                }
             }
-            catch
+            // Handle network-level errors (API unreachable, no internet, timeout, etc.)
+            catch (HttpRequestException httpEx)
+                when (httpEx.InnerException is SocketException socketEx)
             {
-                return null;
+                switch (socketEx.SocketErrorCode)
+                {
+                    case SocketError.NetworkDown:
+                        return "The network is down. Please check your network connection.";
+
+                    case SocketError.NetworkUnreachable:
+                        return "Network unreachable. Please ensure you have a working internet connection.";
+
+                    case SocketError.HostUnreachable:
+                        return "The remote host is unreachable. Please try again later.";
+
+                    case SocketError.ConnectionRefused:
+                        return "The connection was refused by the server. Please check if the server is running.";
+
+                    case SocketError.ConnectionReset:
+                        return "The connection was reset by the server. Please try again.";
+
+                    case SocketError.TimedOut:
+                        return "The connection attempt timed out. Please try again later.";
+
+                    default:
+                        return "A network issue occurred. Please try again.";
+                }
+            }
+            // Catch any unexpected runtime exception
+            catch (Exception ex)
+            {
+                return ex.Message;
             }
         }
+
 
         /// <summary>
         /// Sends HTTP GET request to Web API

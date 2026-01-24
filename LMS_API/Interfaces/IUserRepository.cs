@@ -23,7 +23,7 @@ namespace LMS_API.Interfaces
         /// To delete user
         /// </summary>
         /// <param name="userId"></param>
-        void DeleteUser(int userId);
+        string DeleteUser(int userId);
         /// <summary>
         /// To get the list of valid user details & respective menu details
         /// </summary>

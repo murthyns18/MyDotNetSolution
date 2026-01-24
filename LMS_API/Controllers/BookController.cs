@@ -23,6 +23,12 @@ namespace LMS_API.Controllers
             return Ok(list);
         }
 
+        [HttpGet]
+        public IActionResult GetBooksByPublisher(int publisherId)
+        {
+            var list = _bookRepository.GetByPublisher(publisherId);
+            return Ok(list);
+        }
 
         [HttpPost]
         public IActionResult SaveBook(Book book)

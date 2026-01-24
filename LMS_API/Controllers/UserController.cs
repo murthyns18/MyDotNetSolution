@@ -32,8 +32,8 @@ namespace LMS_API.Controllers
         [HttpPost]
         public IActionResult DeleteUser(int userID)
         {
-            _userRepository.DeleteUser(userID);
-            return Ok(new { message = "User deleted successfully" });
+            var message = _userRepository.DeleteUser(userID);
+            return Ok(new { message });
         }
     }
 }

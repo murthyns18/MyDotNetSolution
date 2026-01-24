@@ -29,6 +29,19 @@ namespace LMS_API.Repositories
             );
         }
 
+        public IEnumerable<Book> GetByPublisher(int publisherId)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@PublisherId", publisherId);
+
+            return dbConnection.Query<Book>(
+                "Book_GetByPublisher",
+                parameters,
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 600
+            );
+        }
+
         public string SaveBook(Book book)
         {
             var parameters = new DynamicParameters();

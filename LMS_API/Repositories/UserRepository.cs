@@ -49,16 +49,17 @@ namespace LMS_API.Repositories
             return parameters.Get<string>("Result");
         }
 
-        public void DeleteUser(int userId)
+        public string DeleteUser(int userId)
         {
             var parameters = new DynamicParameters();
             parameters.Add("UserID", userId);
 
-            dbConnection.Execute(
+            return dbConnection.QuerySingle<string>(
                 "User_Delete",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
+           
         }
 
 

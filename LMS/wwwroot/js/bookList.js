@@ -41,13 +41,19 @@ function openEditModal(bookId) {
             $('#Quantity').val(data.quantity);
             $('#PublisherID').val(data.publisherID);
             $('#CategoryID').val(data.categoryID);
+
+            $('#IsActive').val(data.isActive.toString());
+            $('#statusContainer').removeClass('d-none');
+
             $('#bookModalTitle').text('Edit Book');
+            $('#bookForm').attr('action', '/Book/AddBook');
             $('#bookModal').modal('show');
         })
         .fail(function () {
             App.alert('Failed to load book details.');
         });
 }
+
 
 // delete using confirm
 function deleteBook(bookId, title) {

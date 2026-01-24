@@ -95,11 +95,12 @@ $(function () {
         },
         { name: "loanId", key: true, hidden: true },
 
-        { label: "User ID", name: "userId", width: 80, align: "center" },
-        { label: "Total Qty", name: "totalQty", width: 80, align: "center" },
-        { label: "Loan Date", name: "loanDate", width: 110 },
-        { label: "Due Date", name: "dueDate", width: 110 },
-        { label: "Return Date", name: "returnDate", width: 110 },
+        { label: "User ID", name: "userId", hidden: true},
+        { label: "User Name", name: "userName", width:100, align: "center"},
+        { label: "Total Qty", name: "totalQty", width: 80, align: "right" },
+        { label: "Loan Date", name: "loanDate", width: 110, align:"center" },
+        { label: "Due Date", name: "dueDate", width: 110, align: "center" },
+        { label: "Return Date", name: "returnDate", width: 110, align: "center" },
 
         {
             label: "Status",

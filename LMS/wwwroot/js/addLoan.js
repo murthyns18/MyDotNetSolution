@@ -1,4 +1,4 @@
-﻿// ================= TOKEN =================
+﻿
 $.ajaxSetup({
     beforeSend: function (xhr) {
         if (typeof TOKEN !== "undefined" && TOKEN) {
@@ -9,19 +9,21 @@ $.ajaxSetup({
 
 let selectedBooks = [];
 
-/* ================= USERS ================= */
+
 function loadUsers() {
     $.ajax({
         url: apiURL + "User/UserList",
         type: "GET",
-        data: { userId: -1 },
+        data: { userID: -1 },
         success: function (data) {
-            $("#ddlUser").empty()
+
+            $("#ddlUser")
+                .empty()
                 .append(`<option value="">-- Select User --</option>`);
 
             data.forEach(u => {
                 $("#ddlUser").append(
-                    `<option value="${u.userId}">${u.name}</option>`
+                    `<option value="${u.userID}">${u.userName}</option>`
                 );
             });
         }
@@ -29,16 +31,17 @@ function loadUsers() {
 }
 
 $("#ddlUser").on("change", function () {
-    const userId = $(this).val();
-    if (!userId) return;
+
+    const userID = $(this).val();
+    if (!userID) return;
 
     $.ajax({
         url: apiURL + "User/UserList",
         type: "GET",
-        data: { userId: userId },
+        data: { userID: userID },
         success: function (data) {
             const u = data[0];
-            $("#txtName").val(u.name);
+            $("#txtName").val(u.userName);
             $("#txtEmail").val(u.email);
             $("#txtAddress").val(u.address);
             $("#txtMobile").val(u.mobileNumber);
@@ -53,38 +56,50 @@ function loadPublishers() {
         type: "GET",
         data: { publisherID: -1 },
         success: function (data) {
-            $("#ddlPublisher").empty()
+
+            $("#ddlPublisher")
+                .empty()
                 .append(`<option value="">-- Select Publisher --</option>`);
 
             data.forEach(p => {
                 $("#ddlPublisher").append(
-                    `<option value="${p.publisherId}">${p.publisherName}</option>`
+                    `<option value="${p.publisherID}">${p.publisherName}</option>`
                 );
             });
         }
     });
 }
 
-$("#ddlPublisher").on("change", function () {
+/* ================= BOOKS BY PUBLISHER ================= */
+$(document).on("change", "#ddlPublisher", function () {
+
     const publisherId = $(this).val();
 
-    $("#ddlBook").empty()
+    $("#ddlBook")
+        .empty()
         .append(`<option value="">-- Select Book --</option>`);
 
     if (!publisherId) return;
 
     $.ajax({
-        url: apiURL + "Book/BookList",
+        url: apiURL + "Book/GetBooksByPublisher",
         type: "GET",
-        data: { bookID: -1 },
+        data: { publisherId: publisherId },
         success: function (data) {
-            data
-                .filter(b => b.PublisherId == publisherId) // ✅ FIX
-                .forEach(b => {
-                    $("#ddlBook").append(
-                        `<option value="${b.bookID}">${b.title}</option>`
-                    );
-                });
+
+            if (!data || data.length === 0) {
+                App.alert("No books available for this publisher");
+                return;
+            }
+
+            data.forEach(b => {
+                $("#ddlBook").append(
+                    `<option value="${b.bookID}">${b.title}</option>`
+                );
+            });
+        },
+        error: function () {
+            App.alert("Failed to load books");
         }
     });
 });
@@ -94,6 +109,7 @@ function addBook() {
 
     const bookId = $("#ddlBook").val();
     const bookName = $("#ddlBook option:selected").text();
+    const publisherName = $("#ddlPublisher option:selected").text();
 
     if (!bookId) {
         App.alert("Please select a book");
@@ -107,10 +123,15 @@ function addBook() {
 
     if (selectedBooks.some(b => b.bookId == bookId)) {
         App.alert("Book already added");
-        return;
+        return;     
     }
 
-    selectedBooks.push({ bookId: parseInt(bookId) });
+    selectedBooks.push({
+        bookId: parseInt(bookId),
+        bookName: bookName,
+        publisherName: publisherName
+    });
+
     renderSelectedBooks();
 }
 
@@ -129,7 +150,7 @@ function renderSelectedBooks() {
     if (selectedBooks.length === 0) {
         tbody.append(`
             <tr>
-                <td colspan="3" class="text-center text-muted">
+                <td colspan="4" class="text-center text-muted">
                     No books added
                 </td>
             </tr>
@@ -138,18 +159,18 @@ function renderSelectedBooks() {
     }
 
     selectedBooks.forEach(b => {
-        const name = $(`#ddlBook option[value='${b.bookId}']`).text();
-
         tbody.append(`
             <tr>
-                <td>${name}</td>
-                <td class="text-center">1</td>
-                <td class="text-center">
+                <td>
                     <button class="btn btn-sm btn-danger"
                             onclick="removeBook(${b.bookId})">
                         <i class="bi bi-trash"></i>
                     </button>
                 </td>
+                <td>${b.bookName}</td>      
+                <td>${b.publisherName}</td>
+                <td class="text-center">1</td>
+                <td class="text-start">
             </tr>
         `);
     });
@@ -158,39 +179,35 @@ function renderSelectedBooks() {
 /* ================= SUBMIT ================= */
 function submitLoan() {
 
-    const userId = $("#ddlUser").val();
+    const userID = $("#ddlUser").val();
 
-    if (!userId) {
+    if (!userID) {
         App.alert("Please select user");
-        return;
+        return false;
     }
 
     if (selectedBooks.length === 0) {
         App.alert("Add at least one book");
-        return;
+        return false;
     }
 
-    const payload = {
-        userId: parseInt(userId),
-        loanDetails: selectedBooks
-    };
+    // bind UserId
+    $("#UserId").val(userID);
 
-    $.ajax({
-        url: "/Loan/CreateLoan",
-        type: "POST",
-        data: {
-            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
-            loan: payload
-        },
-        success: function (res) {
-            App.alert(res.message);
-            window.location.href = "/Loan/LoanList";
-        },
-        error: function () {
-            App.alert("Loan creation failed");
-        }
+    // bind LoanDetails[]
+    const container = $("#loanDetailsContainer");
+    container.empty();
+
+    selectedBooks.forEach((b, i) => {
+        container.append(`
+            <input type="hidden" name="LoanDetails[${i}].BookId" value="${b.bookId}" />
+            <input type="hidden" name="LoanDetails[${i}].Qty" value="1" />
+        `);
     });
+
+    return true; // allow form submit
 }
+
 
 /* ================= INIT ================= */
 $(function () {

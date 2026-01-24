@@ -23,7 +23,7 @@ namespace LMS_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateLoan(LoanHeader loan)
+        public IActionResult CreateLoan([FromBody] LoanHeader loan)
         {
             var message = _loanRepository.CreateLoan(loan);
             return Ok(new { message });

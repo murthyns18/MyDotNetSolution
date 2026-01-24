@@ -28,23 +28,16 @@ namespace LMS_API.Repositories
                 commandTimeout: 600
             );
         }
-
         public string CreateLoan(LoanHeader loan)
         {
             var parameters = new DynamicParameters();
 
             parameters.Add("@UserId", loan.UserId);
-            parameters.Add("@CreatedBy", loan.CreatedBy);
 
-            // Convert LoanDetails list to JSON
             parameters.Add(
                 "@LoanDetailsJson",
                 JsonSerializer.Serialize(
-                    loan.LoanDetails.Select(x => new
-                    {
-                        x.BookId,
-                        x.Qty
-                    })
+                    loan.LoanDetails.Select(x => new { x.BookId })
                 )
             );
 
@@ -58,8 +51,7 @@ namespace LMS_API.Repositories
             dbConnection.Execute(
                 "Loan_Insert",
                 parameters,
-                commandType: CommandType.StoredProcedure,
-                commandTimeout: 600
+                commandType: CommandType.StoredProcedure
             );
 
             return parameters.Get<string>("@Result");
@@ -70,21 +62,13 @@ namespace LMS_API.Repositories
             var parameters = new DynamicParameters();
             parameters.Add("@LoanId", loanId);
 
-            parameters.Add(
-                "@Result",
-                dbType: DbType.String,
-                direction: ParameterDirection.Output,
-                size: 200
-            );
-
-            dbConnection.Execute(
+            return dbConnection.QuerySingle<string>(
                 "Loan_Delete",
                 parameters,
                 commandType: CommandType.StoredProcedure,
                 commandTimeout: 600
             );
 
-            return parameters.Get<string>("@Result");
         }
 
         public string ReturnLoan(int loanId)

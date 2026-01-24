@@ -2,23 +2,21 @@
 using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LMS.Controllers
 {
+
     public class LoanController : Controller
     {
-        // -----------------------------
-        // 1️⃣ Loan List Page
-        // -----------------------------
+        
         [HttpGet]
         public IActionResult LoanList()
         {
             return View();
         }
 
-        // -----------------------------
-        // 2️⃣ Add Loan Page
-        // -----------------------------
+       
         [HttpGet]
         public IActionResult AddLoan()
         {
@@ -28,62 +26,67 @@ namespace LMS.Controllers
             });
         }
 
-        // -----------------------------
-        // 3️⃣ Create Loan
-        // -----------------------------
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateLoan(LoanHeader loan)
         {
-            // UI-level safety (DB enforces rules anyway)
+            // ✅ DEBUGGER WILL HIT HERE
             if (loan == null || loan.LoanDetails == null || !loan.LoanDetails.Any())
             {
-                return Ok(new { message = "Please select at least one book" });
+                TempData["Error"] = "Please select at least one book";
+                return RedirectToAction("AddLoan");
             }
 
-            if (loan.LoanDetails.Count > 4)
-            {
-                return Ok(new { message = "You can borrow a maximum of 4 books only" });
-            }
-
-            // Ensure Qty is always 1 (ignore UI)
+            // force qty = 1
             loan.LoanDetails.ForEach(b => b.Qty = 1);
 
-            var response = API.Post("Loan/CreateLoan", null, loan);
+            var token = HttpContext.Session.GetString("Token");
+
+            var response = API.Post(
+                "Loan/CreateLoan",
+                HttpContext.Session.GetString("Token"),
+                loan
+            );
 
             if (string.IsNullOrEmpty(response))
             {
-                return Ok(new { message = "Failed to create loan" });
+                TempData["Error"] = "Loan creation failed";
+                return RedirectToAction("AddLoan");
             }
 
-            var result = JsonConvert.DeserializeAnonymousType(response, new
-            {
-                message = string.Empty
-            });
+            var message = JObject.Parse(response)["message"]?.ToString();
+            TempData["Message"] = message;
 
-            return Ok(new { message = result.message });
+            return RedirectToAction("LoanList");
         }
 
-        // -----------------------------
-        // 4️⃣ Delete Loan
-        // -----------------------------
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteLoan(int loanId)
         {
-            var response = API.Post("Loan/DeleteLoan", null, loanId);
-
-            var result = JsonConvert.DeserializeAnonymousType(response, new
+            try
             {
-                message = string.Empty
-            });
+                var result = API.Post(
+                    "Loan/DeleteLoan",
+                    HttpContext.Session.GetString("Token"),
+                    loanId
+                );
 
-            return Ok(new { message = result.message });
+                var message = JObject.Parse(result)["message"]?.ToString();
+                return Ok(new { message });
+            }
+            catch (Exception ex)
+            {
+                // SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                return Ok(new { message = "Unable to delete loan." });
+            }
         }
 
-        // -----------------------------
-        // 5️⃣ Return Loan
-        // -----------------------------
+
+
+  
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ReturnLoan(int loanId)
