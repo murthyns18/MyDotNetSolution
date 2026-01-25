@@ -37,69 +37,61 @@ namespace LMS.Controllers
         public IActionResult AddPublisher(Publisher model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+            {
+                return Json(new
+                {
+                    success = false,
+                    errors = ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .ToDictionary(
+                            x => x.Key,
+                            x => x.Value.Errors.First().ErrorMessage
+                        )
+                });
+            }
 
             try
             {
-                var result = API.Post("Publisher/SavePublisher", HttpContext.Session.GetString("Token"), model);
-                var message = JObject.Parse(result)["message"]?.ToString();
-                TempData["Message"] = message;
+                var result = API.Post(
+                    "Publisher/SavePublisher",
+                    HttpContext.Session.GetString("Token"),
+                    model
+                );
 
-                return RedirectToAction("PublisherList");
+                var message = JObject.Parse(result)["message"]?.ToString();
+
+                return Json(new
+                {
+                    success = true,
+                    message
+                });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                ModelState.AddModelError(string.Empty, "An error occurred while saving the publisher. Please try again.");
-                return View(model);
+
+                return Json(new
+                {
+                    success = false,
+                    errors = new Dictionary<string, string>
+            {
+                { "", "An error occurred while saving the publisher. Please try again." }
+            }
+                });
             }
         }
 
         [HttpGet]
         public IActionResult PublisherList()
         {
-            //try
-            //{
-            //    var publishers = JsonConvert.DeserializeObject<List<Publisher>>(
-            //        API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), "publisherID=0")
-            //    ) ?? new List<Publisher>();
+           
 
             return View();
 
-            //}
-            //catch
-            //{
-            //    TempData["Error"] = "Unable to load publisher list.";
-            //    return View(new List<Publisher>());
-            //}
+          
         }
 
-        [HttpGet]
-        public IActionResult GetPublishersForGrid()
-        {
-            try
-            {
-                var publishers = JsonConvert.DeserializeObject<List<Publisher>>(
-                    API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), "publisherID=0")
-                ) ?? new List<Publisher>();
-
-                return Json(new
-                {
-                    rows = publishers,
-                    records = publishers.Count
-                });
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                Response.StatusCode = 500;
-                return Json(new
-                {
-                    error = "Failed to load publishers",
-                    details = ex.Message
-                });
-            }
-        }
+       
 
         [HttpGet]
         public IActionResult EditPublisher(int publisherID)
@@ -127,15 +119,21 @@ namespace LMS.Controllers
             {
                 var result = API.Post("Publisher/DeletePublisher", HttpContext.Session.GetString("Token"), publisherID);
                 var message = JObject.Parse(result)["message"]?.ToString();
-                TempData["Message"] = message;
+                return Json(new
+                {
+                    success = true,
+                    message
+                });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to delete publisher.";
+                return Json(new
+                {
+                    success = false,
+                    message = "Unable to delete publisher."
+                });
             }
-
-            return RedirectToAction("PublisherList");
         }
     }
 }

@@ -72,6 +72,24 @@
     },
     "sourceMap": true
   },
+  {
+    "outputFileName": "wwwroot/js/login.min.js",
+    "inputFiles": [ "wwwroot/js/login.js" ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": true
+  },
+  {
+    "outputFileName": "wwwroot/js/addLoan.min.js",
+    "inputFiles": [ "wwwroot/js/addLoan.js" ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": true
+  },
 
 
   {

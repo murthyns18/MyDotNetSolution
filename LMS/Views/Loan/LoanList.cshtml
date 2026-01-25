@@ -17,6 +17,7 @@
 @await Html.PartialAsync("_AddLoanModal", new LMS.Models.LoanHeader())
 
 @section Scripts {
-    <script src="~/js/loanList.js"></script>
-    <script src="~/js/addLoan.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/loanList.min.js"></script>
+    <script src="~/js/addLoan.min.js"></script>
 }

@@ -79,33 +79,65 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddBook(Book model)
         {
-            model.PublisherList = GetPublisherSelectList();
-            model.CategoryList = GetCategorySelectList();
+            // NOTE:
+            // We DO NOT need PublisherList / CategoryList anymore
+            // because we are not returning View()
 
             if (!ModelState.IsValid)
-                return View(model);
+            {
+                return Json(new
+                {
+                    success = false,
+                    errors = ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .ToDictionary(
+                            x => x.Key,
+                            x => x.Value.Errors.First().ErrorMessage
+                        )
+                });
+            }
 
             try
             {
-                var result = API.Post("Book/SaveBook", HttpContext.Session.GetString("Token"), model);
+                var result = API.Post(
+                    "Book/SaveBook",
+                    HttpContext.Session.GetString("Token"),
+                    model
+                );
+
                 var message = JObject.Parse(result)["message"]?.ToString();
 
+                // Handle duplicate ISBN
                 if (message == "Book already exists with ISBN")
                 {
-                    ModelState.AddModelError("ISBN", message);
-                    model.PublisherList = GetPublisherSelectList();
-                    model.CategoryList = GetCategorySelectList();
-                    return View(model);
+                    return Json(new
+                    {
+                        success = false,
+                        errors = new Dictionary<string, string>
+                {
+                    { "ISBN", message }
                 }
-                TempData["Message"] = message;
+                    });
+                }
 
-                return RedirectToAction("BookList");
+                return Json(new
+                {
+                    success = true,
+                    message = message
+                });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                ModelState.AddModelError(string.Empty, "An error occurred while saving the book. Please try again.");
-                return View(model);
+
+                return Json(new
+                {
+                    success = false,
+                    errors = new Dictionary<string, string>
+            {
+                { "", "An error occurred while saving the book. Please try again." }
+            }
+                });
             }
         }
 
@@ -150,7 +182,7 @@ namespace LMS.Controllers
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                return Json(new { success = false });
+                return Json(new { success = false, message = "Unable to delete the book." });
             }
         }
 

@@ -20,7 +20,10 @@ function statusFormatter(value) {
 
 function reloadRoleGrid() {
     $("#roleGrid")
-        .jqGrid('setGridParam', { page: 1 })
+        .jqGrid('setGridParam', {
+            datatype: 'json',
+            page: 1
+        })
         .trigger('reloadGrid');
 }
 
@@ -64,9 +67,18 @@ function deleteRole(roleId, name) {
                 roleID: roleId,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
             },
-            success: function () {
-                App.alert("Role deleted successfully");
-                reloadRoleGrid();
+            success: function (result) {
+
+                if (result.success) {
+                    App.alert(result.message);
+
+                    reloadRoleGrid();
+                } else {
+                    App.alert(result.message);
+                }
+            },
+            error: function () {
+                App.alert("Delete failed");
             }
         });
     });
@@ -121,4 +133,12 @@ $(function () {
         false,
         "55vh"
     );
+});
+
+submitModalForm({
+    formSelector: '#roleForm',
+    modalSelector: '#roleModal',
+    onSuccess: function () {
+        reloadRoleGrid();
+    }
 });

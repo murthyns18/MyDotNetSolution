@@ -36,21 +36,47 @@ namespace LMS.Controllers
         public IActionResult AddCategory(Category model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+            {
+                return Json(new
+                {
+                    success = false,
+                    errors = ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .ToDictionary(
+                            x => x.Key,
+                            x => x.Value.Errors.First().ErrorMessage
+                        )
+                });
+            }
 
             try
             {
-                var result = API.Post("Category/SaveCategory", HttpContext.Session.GetString("Token"), model);
-                var message = JObject.Parse(result)["message"]?.ToString();
-                TempData["Message"] = message;
+                var result = API.Post(
+                    "Category/SaveCategory",
+                    HttpContext.Session.GetString("Token"),
+                    model
+                );
 
-                return RedirectToAction("CategoryList");
+                var message = JObject.Parse(result)["message"]?.ToString();
+
+                return Json(new
+                {
+                    success = true,
+                    message = message
+                });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                ModelState.AddModelError(string.Empty, "Error occurred while saving category.");
-                return View(model);
+
+                return Json(new
+                {
+                    success = false,
+                    errors = new Dictionary<string, string>
+            {
+                { "", "Error occurred while saving category." }
+            }
+                });
             }
         }
 
@@ -96,14 +122,21 @@ namespace LMS.Controllers
             {
                 var result = API.Post($"Category/DeleteCategory?categoryID={categoryID}", HttpContext.Session.GetString("Token"), new { });
                 var message = JObject.Parse(result)["message"]?.ToString();
-                TempData["Message"] = message;
+                return Json(new
+                {
+                    success = true,
+                    message
+                });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Failed to delete category.";
+                return Json(new
+                {
+                    success = false,
+                    message = "Unable to delete category."
+                });
             }
-            return RedirectToAction("CategoryList");
         }
     }
 }

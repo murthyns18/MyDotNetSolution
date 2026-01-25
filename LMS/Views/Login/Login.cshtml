@@ -39,28 +39,21 @@
 
             <div class="floating-group">
                 @Html.TextBoxFor(m => m.Email, new {
-                @class = "floating-input",
-                        placeholder = " "
-                        })
-            <label>Email</label>
-            <i class="bi bi-envelope input-icon"></i>
-            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
-        </div>
+                @class = "floating-input", placeholder = " "})
+                <label>Email</label>
+                <i class="bi bi-envelope input-icon"></i>
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+            </div>
 
-        <div class="floating-group">
-            @Html.PasswordFor(m => m.Password, new {
-                        @class = "floating-input",
-                        placeholder = " "
-                        })
-            <label>Password</label>
-            <i class="bi bi-lock input-icon"></i>
-            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
-        </div>
+            <div class="floating-group position-relative">
+                @Html.PasswordFor(m => m.Password, new { @class = "floating-input",placeholder = " ", id = "Password" })
+                <label>Password</label>
+                <i class="bi bi-eye-slash toggle-password" id="togglePassword"></i>
+                @Html.ValidationMessageFor( m => m.Password,"", new { @class = "text-danger small" })
+            </div>
 
-        <button type="submit" class="btn btn-primary w-100 btn-login">
-            Login
-        </button>
-                }
+            <button type="submit" class="btn btn-primary w-100 btn-login">Login</button>
+        }
 
     </div>
 
@@ -68,5 +61,6 @@
     <script src="@Url.Content("~/lib/jquery-validation/dist/jquery.validate.min.js")"></script>
     <script src="@Url.Content("~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js")"></script>
     <script src="@Url.Content("~/lib/bootstrap/dist/js/bootstrap.bundle.min.js")"></script>
+    <script src="@Url.Content("~/js/login.min.js")"></script>
 </body>
 </html>

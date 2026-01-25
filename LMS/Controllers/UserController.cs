@@ -59,9 +59,10 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddUser(User model)
         {
+            // For dropdown (if needed later)
             model.RoleList = GetRoleSelectList();
 
-            // For editing remove password validation in Edit
+            // Edit mode → remove password validation
             if (model.UserID > 0)
             {
                 ModelState.Remove(nameof(model.Password));
@@ -69,9 +70,20 @@ namespace LMS.Controllers
             }
 
             if (!ModelState.IsValid)
-                return View(model);
+            {
+                return Json(new
+                {
+                    success = false,
+                    errors = ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .ToDictionary(
+                            x => x.Key,
+                            x => x.Value.Errors.First().ErrorMessage
+                        )
+                });
+            }
 
-            // Optional set pass = null
+            // Optional: set password null in edit
             if (model.UserID > 0 && string.IsNullOrWhiteSpace(model.Password))
             {
                 model.Password = null;
@@ -79,26 +91,47 @@ namespace LMS.Controllers
 
             try
             {
-                var result = API.Post("User/SaveUser", HttpContext.Session.GetString("Token"), model);
+                var result = API.Post(
+                    "User/SaveUser",
+                    HttpContext.Session.GetString("Token"),
+                    model
+                );
+
                 var message = JObject.Parse(result)["message"]?.ToString();
 
                 if (message == "Email already exists.")
                 {
-                    ModelState.AddModelError("Email", message);
-                    model.RoleList = GetRoleSelectList();
-                    return View(model);
+                    return Json(new
+                    {
+                        success = false,
+                        errors = new Dictionary<string, string>
+                {
+                    { "Email", message }
+                }
+                    });
                 }
 
-                TempData["Message"] = message;
-                return RedirectToAction("ListUser");
+                return Json(new
+                {
+                    success = true,
+                    message
+                });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                ModelState.AddModelError(string.Empty, "An error occurred while saving the user. Please try again.");
-                return View(model);
+
+                return Json(new
+                {
+                    success = false,
+                    errors = new Dictionary<string, string>
+            {
+                { "", "An error occurred while saving the user. Please try again." }
+            }
+                });
             }
         }
+
 
         [HttpGet]
         public IActionResult ListUser()
@@ -123,22 +156,27 @@ namespace LMS.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public IActionResult DeleteUser(int id)
         {
             try
             {
-                var result = API.Post($"User/DeleteUser?userID={id}", HttpContext.Session.GetString("Token"), new { });
+                var result = API.Post(
+                    $"User/DeleteUser?userID={id}",
+                    HttpContext.Session.GetString("Token"),
+                    new { }
+                );
+
                 var message = JObject.Parse(result)["message"]?.ToString();
-                TempData["Message"] = message;
+
+                return Json(new {success = true, message });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to delete user.";
+                return Json(new {success = false, message = "Unable to delete user." });
             }
-
-            return RedirectToAction("ListUser");
         }
+
     }
 }

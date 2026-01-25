@@ -19,7 +19,7 @@
                         @Html.HiddenFor(m => m.BookId)
 
                         <div class="row">
-                          
+
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     @Html.LabelFor(m => m.Title)
@@ -34,9 +34,9 @@
                                     <span class="text-danger">*</span>
                                     @Html.DropDownListFor(
                                     m => m.PublisherID,
-                                    Model.PublisherList,
-                                    "-- Select Publisher --",
-                                    new { @class = "form-control" })
+                                                                Model.PublisherList,
+                                                                "-- Select Publisher --",
+                                                                new { @class = "form-control" })
                                 <span asp-validation-for="PublisherID" class="text-danger small"></span>
                             </div>
 
@@ -44,22 +44,22 @@
                                 @Html.LabelFor(m => m.CategoryID)
                                 <span class="text-danger">*</span>
                                 @Html.DropDownListFor(
-                                m => m.CategoryID,
-                                Model.CategoryList,
-                                "-- Select Category --",
-                                new { @class = "form-control" })
+                                                                m => m.CategoryID,
+                                                                Model.CategoryList,
+                                                                "-- Select Category --",
+                                                                new { @class = "form-control" })
                                 <span asp-validation-for="CategoryID" class="text-danger small"></span>
                             </div>
                         </div>
 
 
                         <div class="col-md-6">
-                        <div class="mb-3">
-                            @Html.LabelFor(m => m.ISBN)
-                            <span class="text-danger">*</span>
-                            @Html.TextBoxFor(m => m.ISBN, new { @class = "form-control" })
-                            <span asp-validation-for="ISBN" class="text-danger small"></span>
-                        </div>
+                            <div class="mb-3">
+                                @Html.LabelFor(m => m.ISBN)
+                                <span class="text-danger">*</span>
+                                @Html.TextBoxFor(m => m.ISBN, new { @class = "form-control" })
+                                <span asp-validation-for="ISBN" class="text-danger small"></span>
+                            </div>
                             <div class="mb-3">
                                 @Html.LabelFor(m => m.Price)
                                 <span class="text-danger">*</span>
@@ -76,7 +76,7 @@
                         </div>
                     </div>
 
-                   
+
                     <div class="d-flex justify-content-end gap-2 mt-3">
                         <a asp-action="BookList" class="btn btn-secondary">Cancel</a>
                         <button type="submit" class="btn btn-primary">

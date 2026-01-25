@@ -20,7 +20,10 @@ function statusFormatter(value) {
 
 function reloadPublisherGrid() {
     $("#publisherGrid")
-        .jqGrid('setGridParam', { page: 1 })
+        .jqGrid('setGridParam', {
+            datatype: 'json',
+            page: 1
+        })
         .trigger('reloadGrid');
 }
 
@@ -28,10 +31,7 @@ function reloadPublisherGrid() {
 function openAddPublisherModal() {
     $('#publisherForm')[0].reset();
     $('#PublisherID').val(0);
-
-    // ❌ hide status on add
     $('#statusContainer').addClass('d-none');
-
     $('#publisherModalTitle').text('Add Publisher');
     $('#publisherModal').modal('show');
 }
@@ -67,9 +67,17 @@ function deletePublisher(id, name) {
                 publisherID: id,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
             },
-            success: function () {
-                App.alert("Publisher deleted successfully");
-                reloadPublisherGrid();
+            success: function (result) {
+
+                if (result.success) {
+                    App.alert(result.message);
+                    reloadPublisherGrid();
+                } else {
+                    App.alert(result.message);
+                }
+            },
+            error: function () {
+                App.alert("Delete failed");
             }
         });
     });
@@ -125,3 +133,12 @@ $(function () {
         "55vh"
     );
 });
+
+submitModalForm({
+    formSelector: '#publisherForm',
+    modalSelector: '#publisherModal',
+    onSuccess: function () {
+        reloadPublisherGrid();
+    }
+});
+

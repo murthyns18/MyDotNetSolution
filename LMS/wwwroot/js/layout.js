@@ -132,3 +132,86 @@ App.CreateJQGrid = function (
     $('.ui-jqgrid-bdiv').css({ 'max-height': maxheight });
 };
 
+
+
+
+/* ================= COMMON MODAL AJAX SUBMIT ================= */
+function submitModalForm(options) {
+
+    const {
+        formSelector,
+        modalSelector,
+        onSuccess,          // callback
+        clearOnOpen = true  // optional
+    } = options;
+
+    $(document).on('submit', formSelector, function (e) {
+        e.preventDefault();
+
+        const form = $(this);
+
+        // Clear old errors
+        form.find('span.text-danger').text('');
+
+        $.ajax({
+            url: form.attr('action'),
+            type: 'POST',
+            data: form.serialize(),
+            success: function (res) {
+
+                if (res.success) {
+                    $(modalSelector).modal('hide');
+
+                    if (res.message) {
+                        showNotification(res.message, 'success');
+                    }
+
+                    if (typeof onSuccess === 'function') {
+                        onSuccess(res);
+                    }
+                }
+                else if (res.errors) {
+                    $.each(res.errors, function (key, value) {
+
+                        if (key) {
+                            form
+                                .find('span[data-valmsg-for="' + key + '"]')
+                                .text(value);
+                        } else {
+                            App.alert(value);
+                        }
+                    });
+                }
+            },
+            error: function () {
+                App.alert('Operation failed');
+            }
+        });
+    });
+
+    // Optional: clear errors when modal opens
+    if (clearOnOpen && modalSelector) {
+        $(document).on('show.bs.modal', modalSelector, function () {
+            $(this).find('span.text-danger').text('');
+        });
+    }
+}
+
+
+//Notification
+function showNotification(message, type = 'success') {
+
+    const alertHtml = `
+        <div class="alert alert-${type} notification text-center mx-auto" style="width:350px;">
+            ${message}
+        </div>`;
+
+    $('.notification').remove(); // remove old message
+    $('.container.flex-fill').prepend(alertHtml);
+
+    setTimeout(() => {
+        $('.notification').fadeOut(500, function () {
+            $(this).remove();
+        });
+    }, 3000);
+}

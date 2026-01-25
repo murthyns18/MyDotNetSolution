@@ -20,7 +20,10 @@ function statusFormatter(value) {
 
 function reloadCategoryGrid() {
     $("#categoryGrid")
-        .jqGrid('setGridParam', { page: 1 })
+        .jqGrid('setGridParam', {
+            datatype: 'json',
+            page: 1
+        })
         .trigger('reloadGrid');
 }
 
@@ -64,9 +67,18 @@ function deleteCategory(id, name) {
                 categoryID: id,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
             },
-            success: function () {
-                App.alert("Category deleted successfully");
-                reloadCategoryGrid();
+            success: function (result) {
+
+                if (result.success) {
+                    App.alert(result.message);
+
+                    reloadCategoryGrid();
+                } else {
+                    App.alert(result.message);
+                }
+            },
+            error: function () {
+                App.alert("Delete failed");
             }
         });
     });
@@ -110,4 +122,13 @@ $(function () {
         false,
         "55vh"
     );
+});
+
+
+submitModalForm({
+    formSelector: '#categoryForm',
+    modalSelector: '#categoryModal',
+    onSuccess: function () {
+        reloadCategoryGrid();
+    }
 });

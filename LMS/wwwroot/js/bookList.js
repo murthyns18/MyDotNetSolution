@@ -14,17 +14,21 @@
 function statusFormatter(value) {
     return value ? "<span class='badge bg-success'>Active</span>" : "<span class='badge bg-danger'>Inactive</span>";
 }
-
 function reloadBookGrid() {
     $("#bookGrid")
-        .jqGrid('setGridParam', { page: 1 })
+        .jqGrid('setGridParam', {
+            datatype: 'json',
+            page: 1
+        })
         .trigger('reloadGrid');
 }
+
 
 //modal for add
 function openAddModal() {
     $('#bookForm')[0].reset();
     $('#BookId').val(0);
+    $('#statusContainer').addClass('d-none');
     $('#bookModalTitle').text('Add Book');
     $('#bookForm').attr('action', '/Book/AddBook');
     $('#bookModal').modal('show');
@@ -34,6 +38,7 @@ function openAddModal() {
 function openEditModal(bookId) {
     $.get('/Book/EditBook', { bookID: bookId })
         .done(function (data) {
+
             $('#BookId').val(data.bookId);
             $('#Title').val(data.title);
             $('#ISBN').val(data.isbn);
@@ -41,10 +46,8 @@ function openEditModal(bookId) {
             $('#Quantity').val(data.quantity);
             $('#PublisherID').val(data.publisherID);
             $('#CategoryID').val(data.categoryID);
-
-            $('#IsActive').val(data.isActive.toString());
             $('#statusContainer').removeClass('d-none');
-
+            $('input[name="IsActive"][value="' + data.isActive + '"]').prop('checked', true);
             $('#bookModalTitle').text('Edit Book');
             $('#bookForm').attr('action', '/Book/AddBook');
             $('#bookModal').modal('show');
@@ -53,6 +56,7 @@ function openEditModal(bookId) {
             App.alert('Failed to load book details.');
         });
 }
+
 
 
 // delete using confirm
@@ -65,9 +69,15 @@ function deleteBook(bookId, title) {
                 bookID: bookId,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
             },
-            success: function () {
-                App.alert("Book deleted successfully");
-                reloadBookGrid();
+            success: function (result) {
+
+                if (result.success) {
+                    App.alert(result.message);
+
+                    reloadBookGrid();
+                } else {
+                    App.alert(result.message);
+                }
             },
             error: function () {
                 App.alert("Delete failed");
@@ -173,4 +183,13 @@ $(function () {
         false,
         "55vh"
     );
+});
+
+
+submitModalForm({
+    formSelector: '#bookForm',
+    modalSelector: '#bookModal',
+    onSuccess: function () {
+        reloadBookGrid();
+    }
 });

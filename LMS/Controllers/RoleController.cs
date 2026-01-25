@@ -37,41 +37,27 @@ namespace LMS.Controllers
         public IActionResult AddRole(Role model)
         {
             if (!ModelState.IsValid)
-                return View(model);
-
-            try
             {
-                var result = API.Post("Role/SaveRole", HttpContext.Session.GetString("Token"), model);
-                var message = JObject.Parse(result)["message"]?.ToString();
-                TempData["Message"] = message;
+                return Json(new
+                {
+                    success = false,
+                    error = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .First().ErrorMessage
+                });
+            }
 
-                return RedirectToAction("RoleList");
-            }
-            catch (Exception ex)
-            {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                ModelState.AddModelError(string.Empty, "An error occurred while saving the role. Please try again.");
-                return View(model);
-            }
+            var result = API.Post("Role/SaveRole", HttpContext.Session.GetString("Token"), model);
+            var message = JObject.Parse(result)["message"]?.ToString();
+
+            return Json(new { success = true, message });
         }
+
 
         [HttpGet]
         public IActionResult RoleList()
         {
-            //try
-            //{
-            //    var roles = JsonConvert.DeserializeObject<List<Role>>(
-            //        API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"))
-            //    ) ?? new List<Role>();
-
             return View();
-
-            //}
-            //catch
-            //{
-            //    TempData["Error"] = "Unable to load roles list.";
-            //    return View(new List<Role>());
-            //}
         }
 
 
@@ -98,16 +84,25 @@ namespace LMS.Controllers
             try
             {
                 var result = API.Post($"Role/DeleteRole?RoleID={roleID}", HttpContext.Session.GetString("Token"), new { });
+
                 var message = JObject.Parse(result)["message"]?.ToString();
-                TempData["Message"] = message;
+
+                return Json(new
+                {
+                    success = true,
+                    message
+                });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to delete role.";
-            }
 
-            return RedirectToAction("RoleList");
+                return Json(new
+                {
+                    success = false,
+                    message = "Unable to delete role."
+                });
+            }
         }
     }
 }

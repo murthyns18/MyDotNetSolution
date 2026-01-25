@@ -15,5 +15,6 @@
 @await Html.PartialAsync("_RoleModal", new LMS_API.Models.Role())
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script src="~/js/roleList.js"></script>
 }

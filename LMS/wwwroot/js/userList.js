@@ -21,7 +21,10 @@ function statusFormatter(value) {
 
 function reloadUserGrid() {
     $("#userGrid")
-        .jqGrid('setGridParam', { page: 1 })
+        .jqGrid('setGridParam', {
+            datatype: 'json',
+            page: 1
+        })
         .trigger('reloadGrid');
 }
 
@@ -74,9 +77,18 @@ function deleteUser(userId, name) {
                 id: userId,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
             },
-            success: function () {
-                App.alert("User deleted successfully");
-                reloadUserGrid();
+            success: function (result) {
+
+                if (result.success) {
+                    App.alert(result.message);
+
+                    reloadUserGrid();
+                } else {
+                    App.alert(result.message);
+                }
+            },
+            error: function () {
+                App.alert("Delete failed");
             }
         });
     });
@@ -126,7 +138,7 @@ $(function () {
         { name: "userID", key: true, hidden: true },
         { label: "Name", name: "userName", width: 150 },
         { label: "Email", name: "email", width: 220 },
-        { label: "Mobile", name: "mobileNumber", width: 120 },
+        { label: "Mobile", name: "mobileNumber", width: 120, align:"right" },
         {
             label: "Role",
             name: "roleName",
@@ -163,4 +175,12 @@ $(function () {
         false,
         "55vh"
     );
+});
+
+submitModalForm({
+    formSelector: '#userForm',
+    modalSelector: '#userModal',
+    onSuccess: function () {
+        reloadUserGrid();
+    }
 });

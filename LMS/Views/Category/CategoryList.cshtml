@@ -21,5 +21,7 @@
 @await Html.PartialAsync("_CategoryModal", new LMS.Models.Category())
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script src="~/js/categoryList.js"></script>
 }
+    

@@ -8,78 +8,98 @@
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m => m.UserID, new { id = "UserID" })
 
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="userModalTitle">Add User</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-primary text-white py-2">
+                    <h6 class="modal-title" id="userModalTitle">Add User</h6>
+                    <button type="button"
+                            class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+                <div class="modal-body py-2">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-1 small"></div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            @Html.LabelFor(m => m.UserName)
+                    <div class="row g-2">
+
+                        <div class="col-md-6">
+                            @Html.LabelFor(m => m.UserName, new { @class = "form-label small mb-1" })
                             <span class="text-danger">*</span>
-                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", id = "UserName" })
-                            <span asp-validation-for="UserName" class="text-danger"></span>
+                            @Html.TextBoxFor(m => m.UserName,
+                            new { @class = "form-control form-control-sm", id = "UserName" })
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            @Html.LabelFor(m => m.Email)
+                        <div class="col-md-6">
+                            @Html.LabelFor(m => m.Email, new { @class = "form-label small mb-1" })
                             <span class="text-danger">*</span>
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", id = "Email" })
-                            <span asp-validation-for="Email" class="text-danger"></span>
+                            @Html.TextBoxFor(m => m.Email,
+                                                        new { @class = "form-control form-control-sm", id = "Email" })
+                            <span asp-validation-for="Email" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            @Html.LabelFor(m => m.MobileNumber)
+                        <div class="col-md-6">
+                            @Html.LabelFor(m => m.MobileNumber, new { @class = "form-label small mb-1" })
                             <span class="text-danger">*</span>
-                            @Html.TextBoxFor(m => m.MobileNumber, new { @class = "form-control", id = "MobileNumber" })
-                            <span asp-validation-for="MobileNumber" class="text-danger"></span>
+                            @Html.TextBoxFor(m => m.MobileNumber,
+                                                        new { @class = "form-control form-control-sm", id = "MobileNumber" })
+                            <span asp-validation-for="MobileNumber" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            @Html.LabelFor(m => m.RoleID)
+                        <div class="col-md-6">
+                            @Html.LabelFor(m => m.RoleID, new { @class = "form-label small mb-1" })
                             <span class="text-danger">*</span>
-                            @Html.DropDownListFor(m => m.RoleID, Model.RoleList, "-- Select Role --",
-                            new { @class = "form-control", id = "RoleID" })
-                            <span asp-validation-for="RoleID" class="text-danger"></span>
+                            @Html.DropDownListFor(m => m.RoleID,
+                                                        Model.RoleList,
+                                                        "-- Select Role --",
+                                                        new { @class = "form-control form-control-sm", id = "RoleID" })
+                            <span asp-validation-for="RoleID" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-12 mb-3">
-                            @Html.LabelFor(m => m.Address)
-                            @Html.TextAreaFor(m => m.Address, new { @class = "form-control", rows = 3, id = "Address" })
-                            <span asp-validation-for="Address" class="text-danger"></span>
+                        <div class="col-md-12">
+                            @Html.LabelFor(m => m.Address, new { @class = "form-label small mb-1" })
+                            @Html.TextAreaFor(m => m.Address,
+                                                        new { @class = "form-control form-control-sm", rows = 2, id = "Address" })
+                            <span asp-validation-for="Address" class="text-danger small"></span>
                         </div>
 
                         <!-- PASSWORD (ADD ONLY) -->
-                        <div class="col-md-6 mb-3" id="passwordContainer">
-                            @Html.LabelFor(m => m.Password)
+                        <div class="col-md-6" id="passwordContainer">
+                            @Html.LabelFor(m => m.Password, new { @class = "form-label small mb-1" })
                             <span class="text-danger">*</span>
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                            <span asp-validation-for="Password" class="text-danger"></span>
+                            @Html.PasswordFor(m => m.Password,
+                                                        new { @class = "form-control form-control-sm" })
+                            <span asp-validation-for="Password" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-6 mb-3" id="confirmPasswordContainer">
-                            @Html.LabelFor(m => m.ConfirmPassword)
+                        <div class="col-md-6" id="confirmPasswordContainer">
+                            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label small mb-1" })
                             <span class="text-danger">*</span>
-                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
-                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            @Html.PasswordFor(m => m.ConfirmPassword,
+                                                        new { @class = "form-control form-control-sm" })
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
                         </div>
 
                         <!-- STATUS (EDIT ONLY) -->
-                        <div class="col-md-6 mb-3 d-none" id="statusContainer">
-                            <label>Status</label><br />
+                        <div class="col-md-6 d-none small" id="statusContainer">
+                            <label class="form-label mb-1">Status</label><br />
                             <input type="radio" name="Status" value="true" /> Active
                             <input type="radio" name="Status" value="false" class="ms-3" /> Inactive
                         </div>
+
                     </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                <div class="modal-footer py-2">
+                    <button type="button"
+                            class="btn btn-secondary btn-sm"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="btn btn-primary btn-sm">
+                        Submit
+                    </button>
                 </div>
+
             </form>
 
         </div>
