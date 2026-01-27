@@ -47,11 +47,6 @@ function dateFormatter(cellValue) {
 }
 
 
-function reloadLoanGrid() {
-    $("#loanGrid")
-        .jqGrid('setGridParam', { page: 1 })
-        .trigger('reloadGrid');
-}
 
 function deleteLoan(loanId, loan) {
     confirm(`Are you sure you want to delete this loan? "${loan}"`, function () {
@@ -84,7 +79,7 @@ function returnLoan(loanId, userName) {
             },
             success: function (res) {
                 App.alert(res.message);
-                reloadLoanGrid();
+                $("#loanGrid").jqGrid('delRowData', loanId);
             },
             error: function () {
                 App.alert("Return failed");

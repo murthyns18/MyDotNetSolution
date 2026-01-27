@@ -202,23 +202,3 @@ submitModalForm({
     }
 });
 
-var isExport = false;
-
-
-
-function exportToExcel(gridId, file) {
-    $("#" + gridId).jqGrid("exportToExcel", {
-        includeLabels: true,
-        includeGroupHeader: true,
-        includeFooter: true,
-        fileName: file + ".xlsx",
-        maxlength: 200
-    });
-}
- 
-
-$(document).on("click", "#excelDownload", function () {
-    isExport = true;
-    exportToExcel("bookGrid", "BookList");
-    isExport = false;
-});

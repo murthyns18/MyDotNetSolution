@@ -22,14 +22,6 @@ function statusFormatter(cellValue) {
         : "<span class='badge bg-danger'>Inactive</span>";
 }
 
-function reloadUserGrid() {
-    $("#userGrid")
-        .jqGrid('setGridParam', {
-            datatype: 'json',
-            page: 1
-        })
-        .trigger('reloadGrid');
-}
 
 function openAddUserModal() {
     $('#userForm')[0].reset();
@@ -84,7 +76,7 @@ function deleteUser(userId, name) {
                 if (result.success) {
                     App.alert(result.message);
 
-                    reloadUserGrid();
+                    $("#userGrid").jqGrid('delRowData', userId);
                 } else {
                     App.alert(result.message);
                 }
@@ -123,7 +115,6 @@ function getRoleFilter() {
     });
     return result;
 }
-
 
 $(function () {
 

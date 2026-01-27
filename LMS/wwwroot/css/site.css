@@ -1,37 +1,81 @@
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('/assets/fonts/roboto/static/Roboto-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('/assets/fonts/roboto/static/Roboto-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('/assets/fonts/roboto/static/Roboto-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('/assets/fonts/roboto/static/Roboto-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Roboto', Arial, sans-serif;
 }
 
+.nav-link:hover {
+    color: dodgerblue !important;
+}
+
+.nav-link {
+    color: white !important;
+}
+
+th {
+    background-color: darkcyan !important;
+    color: white !important;
+    letter-spacing: 1px;
+    font-weight: bold;
+}
+
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+    color: var(--bs-secondary-color);
+    text-align: end;
 }
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+    text-align: start;
 }
-/*book modal*/
 
-/* FORCE Bootstrap modal to behave correctly (jqGrid fix) */
 .modal {
     position: fixed !important;
     top: 0;
@@ -49,9 +93,9 @@ body {
     background-color: rgba(0, 0, 0, 0.6);
 }
 
-/* Custom Book Modal Styling */
+
 .custom-book-modal .modal-dialog {
-    max-width: 1100px; /* width like your screenshot */
+    max-width: 1100px;
 }
 
 .custom-book-modal .modal-content {
@@ -59,19 +103,16 @@ body {
     box-shadow: 0 8px 30px rgba(0,0,0,0.2);
 }
 
-/* Header styling */
 .custom-book-modal .modal-header {
     background: #0d6efd;
     color: #fff;
     padding: 14px 20px;
 }
 
-/* Body spacing */
 .custom-book-modal .modal-body {
     padding: 24px;
 }
 
-/* Footer alignment */
 .custom-book-modal .modal-footer {
     padding: 16px 24px;
 }
@@ -90,7 +131,7 @@ body {
     border: none;
     background-color: #008b8b;
     border-radius: 5px;
-    padding: 3px 14px;
+    padding: 5px 14px;
     color: white;
 }
 
@@ -99,6 +140,81 @@ body {
     }
 
 
-.download-icon{
+.download-icon {
     font-size: 20px;
 }
+
+.card {
+    --bs-card-border-color: white !important;
+}
+
+.me-auto {
+    margin-right: 20px !important;
+}
+
+
+.btn-menu {
+    height: 36px !important;
+}
+
+.navbar-nav .nav-link {
+    font-weight: bold !important;
+    text-align: center !important;
+    font-size: 0.9rem !important;
+}
+
+.navbar-brand {
+    font-size: 1.3rem !important;
+    margin-right: 80px !important;
+}
+
+
+.nav-item .nav-link.btn-logout {
+    color: #eb0b0b !important;
+    margin-right: -22px !important;
+}
+
+    .nav-item .nav-link.btn-logout:hover,
+    .nav-item .nav-link.btn-logout:focus {
+        color: #f62e2e !important;
+    }
+
+
+a.navbar-brand {
+    color: #0ecf21 !important;
+}
+
+    a.navbar-brand:hover {
+        color: #07dc1c !important;
+    }
+
+footer.footer {
+    margin-top: auto;
+}
+
+
+footer.footer {
+    background-color: #5c7358 !important;
+    color: white !important;
+}
+
+.nav-item {
+    margin-right: 10px !important;
+}
+
+.nav-link {
+    font-size: 1rem !important;
+}
+
+
+.ui-th-div {
+    font-size: 13px !important;
+    font-weight: bold !important;
+}
+
+.ui-jqgrid tr.jqgroup td, .ui-jqgrid tr.jqgrow td {
+    padding: 8px 5px !important;
+    font-size: 12px !important;
+}
+
+

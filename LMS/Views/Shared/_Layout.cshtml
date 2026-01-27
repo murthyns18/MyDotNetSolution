@@ -38,7 +38,7 @@
 <body class="d-flex flex-column min-vh-100">
 
     <header>
-        <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
             <div class="container-fluid d-flex align-items-center">
 
                 <a class="navbar-brand me-auto" asp-controller="Home" asp-action="Index">
@@ -70,7 +70,7 @@
 
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-warning" asp-controller="Login" asp-action="Logout">
+                            <a class="nav-link text-warning btn-logout" asp-controller="Login" asp-action="Logout">
                                 <i class="bi bi-box-arrow-right"></i> Logout
                             </a>
                         </li>
@@ -86,7 +86,7 @@
         @if (TempData["Message"] != null)
         {
             var type = TempData["Type"] ?? "success";
-            <div class="alert alert-@type notification text-center mx-auto" style="width:350px;">
+            <div class="alert alert-msg alert-@type notification text-center mx-auto mt-3">
                 @TempData["Message"]
             </div>
         }

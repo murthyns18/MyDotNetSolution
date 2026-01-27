@@ -59,7 +59,7 @@ function openEditPublisherModal(publisherId) {
         });
 }
 
-/* ---------------- DELETE ---------------- */
+
 function deletePublisher(id, name) {
     confirm(`Are you sure you want to delete "${name}"?`, function () {
         $.ajax({
@@ -85,7 +85,7 @@ function deletePublisher(id, name) {
     });
 }
 
-/* ---------------- EVENTS ---------------- */
+
 $(document).on('click', '.btn-edit', function () {
     openEditPublisherModal($(this).data('id'));
 });
@@ -94,7 +94,7 @@ $(document).on('click', '.btn-delete', function () {
     deletePublisher($(this).data('id'), $(this).data('name'));
 });
 
-/* ---------------- GRID ---------------- */
+
 $(function () {
 
     const colModels = [
