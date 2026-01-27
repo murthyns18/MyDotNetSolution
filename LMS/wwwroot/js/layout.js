@@ -16,9 +16,6 @@
     return encrypted.toString();
 }
 
-// ===============================
-// GLOBAL COMMON JS (layout.js)
-// ===============================
 var App = App || {};
 
 // ---------- ALERT & CONFIRM ----------
@@ -67,7 +64,8 @@ App.CallAjaxPOST = function (URL, params, async) {
     });
 };
 
-// ---------- JQGRID (VIRTUAL SCROLL + MULTISELECT) ----------
+
+//jqGrid
 App.CreateJQGrid = function (
     selector,
     url,
@@ -135,7 +133,7 @@ App.CreateJQGrid = function (
 
 
 
-/* ================= COMMON MODAL AJAX SUBMIT ================= */
+//Common ajx 
 function submitModalForm(options) {
 
     const {
@@ -215,3 +213,24 @@ function showNotification(message, type = 'success') {
         });
     }, 3000);
 }
+
+
+
+//Excel download
+var isExport = false;
+
+App.exportToExcel = function (gridId, fileName) {
+    isExport = true;
+    $("#" + gridId).jqGrid("exportToExcel", {
+        includeLabels: true,
+        includeGroupHeader: true,
+        includeFooter: true,
+        fileName: fileName + ".xlsx",
+        maxlength: 200
+    });
+    isExport = false;
+};
+
+$(document).on("click", "#excelDownload", function () {
+    App.exportToExcel($(this).data("grid"), $(this).data("file"));
+});

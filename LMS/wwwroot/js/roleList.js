@@ -12,8 +12,11 @@
         </div>`;
 }
 
-function statusFormatter(value) {
-    return value
+function statusFormatter(cellValue) {
+    if (isExport) {
+        return cellValue ? "Active" : "Inactive";
+    }
+    return cellValue
         ? "<span class='badge bg-success'>Active</span>"
         : "<span class='badge bg-danger'>Inactive</span>";
 }
@@ -27,12 +30,11 @@ function reloadRoleGrid() {
         .trigger('reloadGrid');
 }
 
-/* ---------------- ADD ---------------- */
+
 function openAddRoleModal() {
     $('#roleForm')[0].reset();
     $('#RoleID').val(0);
 
-    // HIDE status on Add
     $('#statusContainer').addClass('d-none');
 
     $('#roleModalTitle').text('Add Role');
@@ -40,7 +42,6 @@ function openAddRoleModal() {
 }
 
 
-/* ---------------- EDIT ---------------- */
 function openEditRoleModal(roleId) {
     $.get('/Role/EditRole', { roleID: roleId })
         .done(function (data) {
@@ -57,7 +58,6 @@ function openEditRoleModal(roleId) {
         });
 }
 
-/* ---------------- DELETE ---------------- */
 function deleteRole(roleId, name) {
     confirm(`Are you sure you want to delete "${name}"?`, function () {
         $.ajax({
@@ -84,7 +84,7 @@ function deleteRole(roleId, name) {
     });
 }
 
-/* ---------------- EVENTS ---------------- */
+
 $(document).on('click', '.btn-edit', function () {
     openEditRoleModal($(this).data('id'));
 });
@@ -93,7 +93,7 @@ $(document).on('click', '.btn-delete', function () {
     deleteRole($(this).data('id'), $(this).data('name'));
 });
 
-/* ---------------- GRID ---------------- */
+
 $(function () {
 
     const colModels = [
@@ -103,6 +103,7 @@ $(function () {
             width: 90,
             align: "center",
             sortable: false,
+            exportcol: false,
             search: false,
             formatter: actionFormatter
         },

@@ -1,11 +1,24 @@
 ﻿@model IList<LMS.Models.LoanHeader>
 
 <div class="container-fluid mt-4 px-4">
-    <div class="d-flex justify-content-between mb-3">
-        <h4>Loan List</h4>
-        <button class="btn btn-primary" onclick="openAddLoanModal()">
-            Add Loan
-        </button>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Loan List</h4>
+
+        <div class="d-flex align-items-center gap-2">
+            <button type="button"
+                    class="btn-excel"
+                    id="excelDownload"
+                    data-grid="loanGrid"
+                    data-file="LoanList"
+                    title="Excel Download">
+                <img src="~/assets/images/icons/excel.png" class="excel-icon" />
+                <i class="bi bi-download"></i>
+            </button>
+
+            <button class="btn btn-primary" onclick="openAddLoanModal()">
+                Add Loan
+            </button>
+        </div>
     </div>
 
     @Html.AntiForgeryToken()

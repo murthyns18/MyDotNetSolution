@@ -15,34 +15,62 @@ namespace LMS_API.Controllers
             _bookRepository = bookRepository;
         }
 
-       
         [HttpGet]
         public IActionResult BookList(int bookID)
         {
-            var list = _bookRepository.GetList(bookID);
-            return Ok(list);
+            try
+            {
+                var list = _bookRepository.GetList(bookID);
+                return Ok(list);
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to fetch book list." });
+            }
         }
 
         [HttpGet]
         public IActionResult GetBooksByPublisher(int publisherId)
         {
-            var list = _bookRepository.GetByPublisher(publisherId);
-            return Ok(list);
+            try
+            {
+                var list = _bookRepository.GetByPublisher(publisherId);
+                return Ok(list);
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to fetch books by publisher." });
+            }
         }
 
         [HttpPost]
         public IActionResult SaveBook(Book book)
         {
-            var message = _bookRepository.SaveBook(book);
-            return Ok(new { message });
+            if (!ModelState.IsValid) return BadRequest(new { message = "Invalid data." });
+
+            try
+            {
+                var message = _bookRepository.SaveBook(book);
+                return Ok(new { message });
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to save book." });
+            }
         }
 
-        [HttpPost]  
+        [HttpPost]
         public IActionResult DeleteBook([FromBody] int bookID)
         {
-            var message = _bookRepository.DeleteBook(bookID);
-            return Ok(new { message });
+            try
+            {
+                var message = _bookRepository.DeleteBook(bookID);
+                return Ok(new { message });
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to delete book." });
+            }
         }
-
     }
 }

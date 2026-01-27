@@ -1,19 +1,51 @@
-﻿function actionFormatter(cellValue, options, row) {
+﻿
+function actionFormatter(cellValue, options, row) {
 
-    return `
+    let html = `
         <div class="text-nowrap">
-            <button class="btn btn-sm btn-danger btn-delete"
-                    data-id="${row.loanId}">
+            <button class="btn btn-sm btn-danger btn-delete me-1"
+                    data-id="${row.loanId}" data-user="${row.userName}">
                 <i class="bi bi-trash"></i>
             </button>
-        </div>`;
+    `;
+
+    if (row.status === "Active") {
+        html += `
+            <button class="btn btn-sm btn-success btn-return"
+                    data-id="${row.loanId}" data-user="${row.userName}">
+                <i class="bi bi-arrow-return-left"></i>
+            </button>
+        `;
+    }
+
+    html += `</div>`;
+    return html;
 }
 
-function statusFormatter(value, options, row) {
-    return row.returnDate
-        ? "<span class='badge bg-secondary'>Returned</span>"
+function statusFormatter(value) {
+    if (isExport) {
+        return value;
+    }
+
+    return value === "Closed"
+        ? "<span class='badge bg-secondary'>Closed</span>"
         : "<span class='badge bg-success'>Active</span>";
 }
+
+
+function dateFormatter(cellValue) {
+    if (!cellValue) {
+        return "<span class='text-danger fw-semibold'>Not Returned</span>";
+    }
+
+    const d = new Date(cellValue);
+    if (isNaN(d)) {
+        return "<span class='text-danger fw-semibold'>Not Returned</span>";
+    }
+
+    return d.toLocaleDateString('en-GB');
+}
+
 
 function reloadLoanGrid() {
     $("#loanGrid")
@@ -21,9 +53,8 @@ function reloadLoanGrid() {
         .trigger('reloadGrid');
 }
 
-/* ---------- DELETE ---------- */
-function deleteLoan(loanId) {
-    confirm("Are you sure you want to delete this loan?", function () {
+function deleteLoan(loanId, loan) {
+    confirm(`Are you sure you want to delete this loan? "${loan}"`, function () {
         $.ajax({
             url: '/Loan/DeleteLoan',
             type: 'POST',
@@ -42,37 +73,81 @@ function deleteLoan(loanId) {
     });
 }
 
-/* ---------- EVENTS ---------- */
+function returnLoan(loanId, userName) {
+    confirm(`Return loan for "${userName}"?`, function () {
+        $.ajax({
+            url: '/Loan/ReturnLoan',
+            type: 'POST',
+            data: {
+                loanId: loanId,
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function (res) {
+                App.alert(res.message);
+                reloadLoanGrid();
+            },
+            error: function () {
+                App.alert("Return failed");
+            }
+        });
+    });
+}
+
 $(document).on('click', '.btn-delete', function () {
-    deleteLoan($(this).data('id'));
+    deleteLoan($(this).data('id'), $(this).data('user'));
 });
 
-/* ---------- GRID ---------- */
+$(document).on('click', '.btn-return', function () {
+    returnLoan($(this).data('id'), $(this).data('user'));
+});
+
 $(function () {
 
     const colModels = [
         {
             label: "Action",
             name: "action",
-            width: 80,
+            width: 120,
             align: "center",
             sortable: false,
             search: false,
+            exportcol: false,
             formatter: actionFormatter
         },
         { name: "loanId", key: true, hidden: true },
         { label: "User Name", name: "userName", width: 150 },
         { label: "Total Qty", name: "totalQty", width: 80, align: "right" },
-        { label: "Loan Date", name: "loanDate", width: 110, align: "center" },
-        { label: "Due Date", name: "dueDate", width: 110, align: "center" },
-        { label: "Return Date", name: "returnDate", width: 110, align: "center" },
+        {
+            label: "Loan Date",
+            name: "loanDate",
+            width: 110,
+            align: "center",
+            formatter: dateFormatter
+        },
+        {
+            label: "Due Date",
+            name: "dueDate",
+            width: 110,
+            align: "center",
+            formatter: dateFormatter
+        },
+        {
+            label: "Return Date",
+            name: "returnDate",
+            width: 130,
+            align: "center",
+            formatter: dateFormatter
+        },
         {
             label: "Status",
             name: "status",
-            width: 90,
+            width: 120,
             align: "center",
             formatter: statusFormatter,
-            search: false
+            stype: "select",
+            searchoptions: {
+                value: ":All;Active:Active;Closed:Closed"
+            }
         }
     ];
 
@@ -87,6 +162,12 @@ $(function () {
         false,
         "55vh"
     );
+
+    $("#loanGrid").jqGrid('filterToolbar', {
+        searchOnEnter: false,
+        defaultSearch: "cn",
+        stringResult: true
+    });
 });
 
 

@@ -1,6 +1,5 @@
 ﻿using LMS_API.Interfaces;
 using LMS_API.Models;
-using LMS_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LMS_API.Controllers
@@ -24,31 +23,40 @@ namespace LMS_API.Controllers
                 var list = _categoryRepository.GetList(categoryID);
                 return Ok(list);
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = "Unable to fetch category list." });
             }
         }
 
         [HttpPost]
         public IActionResult SaveCategory(Category category)
         {
+            if (!ModelState.IsValid) return BadRequest(new { message = "Invalid data." });
+
             try
             {
                 var message = _categoryRepository.SaveCategory(category);
                 return Ok(new { message });
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = "Unable to save category." });
             }
         }
 
         [HttpPost]
         public IActionResult DeleteCategory(int categoryID)
         {
-            var message = _categoryRepository.DeleteCategory(categoryID);
-            return Ok(new { message });
+            try
+            {
+                var message = _categoryRepository.DeleteCategory(categoryID);
+                return Ok(new { message });
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to delete category." });
+            }
         }
     }
 }

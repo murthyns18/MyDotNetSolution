@@ -1,5 +1,4 @@
-﻿
-$.ajaxSetup({
+﻿$.ajaxSetup({
     beforeSend: function (xhr) {
         if (typeof TOKEN !== "undefined" && TOKEN) {
             xhr.setRequestHeader("Authorization", "Bearer " + TOKEN);
@@ -9,14 +8,12 @@ $.ajaxSetup({
 
 let selectedBooks = [];
 
-
 function loadUsers() {
     $.ajax({
         url: apiURL + "User/UserList",
         type: "GET",
         data: { userID: -1 },
         success: function (data) {
-
             $("#ddlUser")
                 .empty()
                 .append(`<option value="">-- Select User --</option>`);
@@ -31,7 +28,6 @@ function loadUsers() {
 }
 
 $("#ddlUser").on("change", function () {
-
     const userID = $(this).val();
     if (!userID) return;
 
@@ -56,7 +52,6 @@ function loadPublishers() {
         type: "GET",
         data: { publisherID: -1 },
         success: function (data) {
-
             $("#ddlPublisher")
                 .empty()
                 .append(`<option value="">-- Select Publisher --</option>`);
@@ -70,8 +65,8 @@ function loadPublishers() {
     });
 }
 
-/* ================= BOOKS BY PUBLISHER ================= */
-$(document).on("change", "#ddlPublisher", function () {
+
+$("#ddlPublisher").on("change", function () {
 
     const publisherId = $(this).val();
 
@@ -104,7 +99,7 @@ $(document).on("change", "#ddlPublisher", function () {
     });
 });
 
-/* ================= ADD BOOK ================= */
+
 function addBook() {
 
     const bookId = $("#ddlBook").val();
@@ -123,7 +118,7 @@ function addBook() {
 
     if (selectedBooks.some(b => b.bookId == bookId)) {
         App.alert("Book already added");
-        return;     
+        return;
     }
 
     selectedBooks.push({
@@ -133,15 +128,20 @@ function addBook() {
     });
 
     renderSelectedBooks();
+
+    // reset dropdowns
+    $("#ddlPublisher").val("");
+    $("#ddlBook")
+        .empty()
+        .append(`<option value="">-- Select Book --</option>`);
 }
 
-/* ================= REMOVE BOOK ================= */
+
 function removeBook(bookId) {
     selectedBooks = selectedBooks.filter(b => b.bookId !== bookId);
     renderSelectedBooks();
 }
 
-/* ================= RENDER TABLE ================= */
 function renderSelectedBooks() {
 
     const tbody = $("#tblSelectedBooks tbody");
@@ -167,16 +167,15 @@ function renderSelectedBooks() {
                         <i class="bi bi-trash"></i>
                     </button>
                 </td>
-                <td>${b.bookName}</td>      
+                <td>${b.bookName}</td>
                 <td>${b.publisherName}</td>
                 <td class="text-center">1</td>
-                <td class="text-start">
             </tr>
         `);
     });
 }
 
-/* ================= SUBMIT ================= */
+
 function submitLoan() {
 
     const userID = $("#ddlUser").val();
@@ -191,10 +190,8 @@ function submitLoan() {
         return false;
     }
 
-    // bind UserId
     $("#UserId").val(userID);
 
-    // bind LoanDetails[]
     const container = $("#loanDetailsContainer");
     container.empty();
 
@@ -205,11 +202,10 @@ function submitLoan() {
         `);
     });
 
-    return true; // allow form submit
+    return true;
 }
 
 
-/* ================= INIT ================= */
 $(function () {
     loadUsers();
     loadPublishers();

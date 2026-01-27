@@ -40,77 +40,36 @@ namespace LMS.Controllers
                 return Json(new
                 {
                     success = false,
-                    errors = ModelState
-                        .Where(x => x.Value.Errors.Count > 0)
-                        .ToDictionary(
-                            x => x.Key,
-                            x => x.Value.Errors.First().ErrorMessage
-                        )
+                    errors = ModelState.Where(x => x.Value.Errors.Count > 0).ToDictionary(x => x.Key, x => x.Value.Errors.First().ErrorMessage)
                 });
             }
 
             try
             {
-                var result = API.Post(
-                    "Category/SaveCategory",
-                    HttpContext.Session.GetString("Token"),
-                    model
-                );
-
+                var result = API.Post("Category/SaveCategory", HttpContext.Session.GetString("Token"), model);
                 var message = JObject.Parse(result)["message"]?.ToString();
-
-                return Json(new
-                {
-                    success = true,
-                    message = message
-                });
+                return Json(new { success = true, message = message });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-
-                return Json(new
-                {
-                    success = false,
-                    errors = new Dictionary<string, string>
-            {
-                { "", "Error occurred while saving category." }
-            }
-                });
+                return Json(new { success = false, errors = new Dictionary<string, string> { { "", "Error occurred while saving category." } } });
             }
         }
 
         [HttpGet]
         public IActionResult CategoryList()
         {
-            //try
-            //{
-            //    var categories = JsonConvert.DeserializeObject<List<Category>>(API.Get("Category/CategoryList", HttpContext.Session.GetString("Token"), "categoryID=0")) ?? new List<Category>();
-                return View();
-            //}
-            //catch (Exception)
-            //{
-            //    TempData["Error"] = "Unable to load category list.";
-            //    return View(new List<Category>());
-            //}
+            return View();
         }
-
-
 
         [HttpGet]
         public IActionResult EditCategory(int categoryID)
         {
-            var category = JsonConvert.DeserializeObject<List<Category>>(
-                API.Get(
-                    "Category/CategoryList",
-                    HttpContext.Session.GetString("Token"),
-                    $"categoryID={categoryID}"
-                )
-            )?.FirstOrDefault();
+            var category = JsonConvert.DeserializeObject<List<Category>>(API.Get("Category/CategoryList", HttpContext.Session.GetString("Token"), $"categoryID={categoryID}"))
+                ?.FirstOrDefault();
 
-            if (category == null)
-                return NotFound();
-
+            if (category == null) return NotFound();
             return Json(category);
         }
 
@@ -122,20 +81,12 @@ namespace LMS.Controllers
             {
                 var result = API.Post($"Category/DeleteCategory?categoryID={categoryID}", HttpContext.Session.GetString("Token"), new { });
                 var message = JObject.Parse(result)["message"]?.ToString();
-                return Json(new
-                {
-                    success = true,
-                    message
-                });
+                return Json(new { success = true, message });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                return Json(new
-                {
-                    success = false,
-                    message = "Unable to delete category."
-                });
+                return Json(new { success = false, message = "Unable to delete category." });
             }
         }
     }

@@ -13,8 +13,11 @@
         </div>`;
 }
 
-function statusFormatter(value) {
-    return value
+function statusFormatter(cellValue) {
+    if (isExport) {
+        return cellValue ? "Active" : "Inactive";
+    }
+    return cellValue
         ? "<span class='badge bg-success'>Active</span>"
         : "<span class='badge bg-danger'>Inactive</span>";
 }
@@ -28,7 +31,6 @@ function reloadUserGrid() {
         .trigger('reloadGrid');
 }
 
-/* ---------------- ADD ---------------- */
 function openAddUserModal() {
     $('#userForm')[0].reset();
     $('#UserID').val(0);
@@ -42,7 +44,7 @@ function openAddUserModal() {
     $('#userModal').modal('show');
 }
 
-/* ---------------- EDIT ---------------- */
+
 function openEditUserModal(userId) {
     $.get('/User/EditUser', { userID: userId })
         .done(function (data) {
@@ -67,7 +69,7 @@ function openEditUserModal(userId) {
         });
 }
 
-/* ---------------- DELETE ---------------- */
+
 function deleteUser(userId, name) {
     confirm(`Are you sure you want to delete "${name}"?`, function () {
         $.ajax({
@@ -94,7 +96,7 @@ function deleteUser(userId, name) {
     });
 }
 
-/* ---------------- EVENTS ---------------- */
+
 $(document).on('click', '.btn-edit', function () {
     openEditUserModal($(this).data('id'));
 });
@@ -103,7 +105,7 @@ $(document).on('click', '.btn-delete', function () {
     deleteUser($(this).data('id'), $(this).data('name'));
 });
 
-/* ---------------- ROLE FILTER (same as Publisher/Category) ---------------- */
+
 function getRoleFilter() {
     let result = ":All";
     $.ajax({
@@ -122,7 +124,7 @@ function getRoleFilter() {
     return result;
 }
 
-/* ---------------- GRID ---------------- */
+
 $(function () {
 
     const colModels = [
@@ -131,6 +133,7 @@ $(function () {
             name: "action",
             width: 90,
             sortable: false,
+            exportcol: false,
             search: false,
             align: "center",
             formatter: actionFormatter

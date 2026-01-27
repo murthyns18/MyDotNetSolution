@@ -1,6 +1,5 @@
 ﻿using LMS_API.Interfaces;
 using LMS_API.Models;
-using LMS_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LMS_API.Controllers
@@ -21,33 +20,43 @@ namespace LMS_API.Controllers
         {
             try
             {
-                return Ok(_roleRepository.GetRoles(roleId));
+                var list = _roleRepository.GetRoles(roleId);
+                return Ok(list);
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = "Unable to fetch roles." });
             }
         }
 
         [HttpPost]
         public IActionResult SaveRole(Role role)
         {
+            if (!ModelState.IsValid) return BadRequest(new { message = "Invalid data." });
+
             try
             {
-                var msg = _roleRepository.SaveRole(role);
-                return Ok(new { message = msg });
+                var message = _roleRepository.SaveRole(role);
+                return Ok(new { message });
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = "Unable to save role." });
             }
         }
 
         [HttpPost]
         public IActionResult DeleteRole(int roleID)
         {
-            var message = _roleRepository.DeleteRole(roleID);
-            return Ok(new { message });
+            try
+            {
+                var message = _roleRepository.DeleteRole(roleID);
+                return Ok(new { message });
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to delete role." });
+            }
         }
     }
 }

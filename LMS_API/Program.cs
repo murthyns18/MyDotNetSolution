@@ -54,6 +54,8 @@ namespace WEBAPI
             //Role
             builder.Services.AddScoped<IRoleRepository>(m => new RoleRepository(connectionString));
             builder.Services.AddScoped<ILoanRepository>(m => new LoanRepository(connectionString));
+            builder.Services.AddScoped<IMenuRepository>(m => new MenuRepository(connectionString));
+            builder.Services.AddScoped<IMenuPermissionRepository>(m => new MenuPermissionRepository(connectionString));
 
 
 

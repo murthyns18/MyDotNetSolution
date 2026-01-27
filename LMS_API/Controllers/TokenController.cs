@@ -13,41 +13,45 @@ namespace LMS_API.Controllers
     {
         private readonly IUserRepository userRepository;
         private readonly IConfiguration configuration;
+
         public TokenController(IUserRepository userRepository, IConfiguration configuration)
         {
             this.userRepository = userRepository;
             this.configuration = configuration;
         }
+
         [HttpPost]
         public IActionResult Token(AuthenticateUser authenticateUser)
         {
-            var checkUser = userRepository.AuthenticateUser(authenticateUser);
-            if (checkUser != null)
+            if (!ModelState.IsValid) return BadRequest(new { message = "Invalid data." });
+
+            try
             {
-                var claims = new List<Claim> 
-                { 
-                    new Claim(ClaimTypes.Name,checkUser.Item1.UserName),
-                    new Claim("UserID",Convert.ToString(checkUser.Item1.UserID)) 
+                var checkUser = userRepository.AuthenticateUser(authenticateUser);
+                if (checkUser == null) return Unauthorized(new { message = "Invalid username or password." });
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, checkUser.Item1.UserName),
+                    new Claim("UserID", Convert.ToString(checkUser.Item1.UserID))
                 };
 
                 var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-                var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds);
+                var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddDays(1), signingCredentials: creds);
+
                 return Ok(new
                 {
                     User = checkUser.Item1,
                     MenuDetails = checkUser.Item2,
                     access_token = new JwtSecurityTokenHandler().WriteToken(token),
                     token_type = "bearer",
-                    expires_in = DateTime.Now.AddDays(1),
+                    expires_in = DateTime.Now.AddDays(1)
                 });
             }
-            else
+            catch
             {
-                return Unauthorized();
+                return StatusCode(500, new { message = "Unable to generate token." });
             }
         }
     }

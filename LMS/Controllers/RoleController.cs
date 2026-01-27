@@ -1,7 +1,6 @@
 ﻿using LMS.Services;
 using LMS_API.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -10,9 +9,9 @@ namespace LMS.Controllers
     [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class RoleController : Controller
     {
-        private readonly ILogger<BookController> _logger;
+        private readonly ILogger<RoleController> _logger;
 
-        public RoleController(ILogger<BookController> logger)
+        public RoleController(ILogger<RoleController> logger)
         {
             _logger = logger;
         }
@@ -38,44 +37,52 @@ namespace LMS.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return Json(new
-                {
-                    success = false,
-                    error = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .First().ErrorMessage
-                });
+                return Json(new { success = false, error = ModelState.Values.SelectMany(v => v.Errors).First().ErrorMessage });
             }
 
-            var result = API.Post("Role/SaveRole", HttpContext.Session.GetString("Token"), model);
-            var message = JObject.Parse(result)["message"]?.ToString();
-
-            return Json(new { success = true, message });
+            try
+            {
+                var result = API.Post("Role/SaveRole", HttpContext.Session.GetString("Token"), model);
+                var message = JObject.Parse(result)["message"]?.ToString();
+                return Json(new { success = true, message });
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                return Json(new { success = false, message = "Unable to save role." });
+            }
         }
-
 
         [HttpGet]
         public IActionResult RoleList()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                TempData["Error"] = "Unable to load role list.";
+                return RedirectToAction("Index", "Home");
+            }
         }
-
 
         [HttpGet]
         public IActionResult EditRole(int roleID)
         {
-            var role = JsonConvert.DeserializeObject<List<Role>>(
-                API.Get("Role/GetRoles",
-                HttpContext.Session.GetString("Token"),
-                $"roleId={roleID}")
-            )?.FirstOrDefault();
-
-            if (role == null)
-                return NotFound();
-
-            return Json(role);
+            try
+            {
+                var role = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), $"roleId={roleID}"))?.FirstOrDefault();
+                if (role == null) return NotFound();
+                return Json(role);
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                return StatusCode(500);
+            }
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -84,24 +91,13 @@ namespace LMS.Controllers
             try
             {
                 var result = API.Post($"Role/DeleteRole?RoleID={roleID}", HttpContext.Session.GetString("Token"), new { });
-
                 var message = JObject.Parse(result)["message"]?.ToString();
-
-                return Json(new
-                {
-                    success = true,
-                    message
-                });
+                return Json(new { success = true, message });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-
-                return Json(new
-                {
-                    success = false,
-                    message = "Unable to delete role."
-                });
+                return Json(new { success = false, message = "Unable to delete role." });
             }
         }
     }

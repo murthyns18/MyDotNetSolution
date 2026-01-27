@@ -11,9 +11,15 @@
         </div>`;
 }
 
-function statusFormatter(value) {
-    return value ? "<span class='badge bg-success'>Active</span>" : "<span class='badge bg-danger'>Inactive</span>";
+function statusFormatter(cellValue) {
+    if (isExport) {
+        return cellValue ? "Active" : "Inactive";
+    }
+    return cellValue
+        ? "<span class='badge bg-success'>Active</span>"
+        : "<span class='badge bg-danger'>Inactive</span>";
 }
+
 function reloadBookGrid() {
     $("#bookGrid")
         .jqGrid('setGridParam', {
@@ -141,6 +147,7 @@ $(function () {
             sortable: false,
             search: false,
             align: "center",
+            exportcol: false,
             formatter: actionFormatter
         },
         { name: "bookID", key: true, hidden: true },
@@ -165,12 +172,13 @@ $(function () {
             label: "Status",
             name: "isActive",
             width: 90,
+            align: "center",
             formatter: statusFormatter,
             stype: "select",
-            align: "center",
             searchoptions: { value: ":All;true:Active;false:Inactive", sopt: ["eq"] }
         }
     ];
+
 
     App.CreateJQGrid(
         '#bookGrid',
@@ -192,4 +200,25 @@ submitModalForm({
     onSuccess: function () {
         reloadBookGrid();
     }
+});
+
+var isExport = false;
+
+
+
+function exportToExcel(gridId, file) {
+    $("#" + gridId).jqGrid("exportToExcel", {
+        includeLabels: true,
+        includeGroupHeader: true,
+        includeFooter: true,
+        fileName: file + ".xlsx",
+        maxlength: 200
+    });
+}
+ 
+
+$(document).on("click", "#excelDownload", function () {
+    isExport = true;
+    exportToExcel("bookGrid", "BookList");
+    isExport = false;
 });

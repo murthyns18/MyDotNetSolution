@@ -6,61 +6,77 @@ using Newtonsoft.Json.Linq;
 
 namespace LMS.Controllers
 {
-
     public class LoanController : Controller
     {
-        
+        private readonly ILogger<LoanController> _logger;
+
+        public LoanController(ILogger<LoanController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public IActionResult LoanList()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                TempData["Error"] = "Unable to load loan list.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
-       
         [HttpGet]
         public IActionResult AddLoan()
         {
-            return View(new LoanHeader
+            try
             {
-                LoanDetails = new List<LoanDetails>()
-            });
+                return View(new LoanHeader { LoanDetails = new List<LoanDetails>() });
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                TempData["Error"] = "Unable to load Add Loan page.";
+                return RedirectToAction("LoanList");
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateLoan(LoanHeader loan)
         {
-            // ✅ DEBUGGER WILL HIT HERE
-            if (loan == null || loan.LoanDetails == null || !loan.LoanDetails.Any())
+            try
             {
-                TempData["Error"] = "Please select at least one book";
+                if (loan == null || loan.LoanDetails == null || !loan.LoanDetails.Any())
+                {
+                    TempData["Error"] = "Please select at least one book";
+                    return RedirectToAction("AddLoan");
+                }
+
+                loan.LoanDetails.ForEach(b => b.Qty = 1);
+                var response = API.Post("Loan/CreateLoan", HttpContext.Session.GetString("Token"), loan);
+
+                if (string.IsNullOrEmpty(response))
+                {
+                    TempData["Error"] = "Loan creation failed";
+                    return RedirectToAction("AddLoan");
+                }
+
+                var message = JObject.Parse(response)["message"]?.ToString();
+                TempData["Message"] = message;
+                return RedirectToAction("LoanList");
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                TempData["Error"] = "Error occurred while creating loan.";
                 return RedirectToAction("AddLoan");
             }
-
-            // force qty = 1
-            loan.LoanDetails.ForEach(b => b.Qty = 1);
-
-            var token = HttpContext.Session.GetString("Token");
-
-            var response = API.Post(
-                "Loan/CreateLoan",
-                HttpContext.Session.GetString("Token"),
-                loan
-            );
-
-            if (string.IsNullOrEmpty(response))
-            {
-                TempData["Error"] = "Loan creation failed";
-                return RedirectToAction("AddLoan");
-            }
-
-            var message = JObject.Parse(response)["message"]?.ToString();
-            TempData["Message"] = message;
-
-            return RedirectToAction("LoanList");
         }
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -68,37 +84,32 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post(
-                    "Loan/DeleteLoan",
-                    HttpContext.Session.GetString("Token"),
-                    loanId
-                );
-
+                var result = API.Post("Loan/DeleteLoan", HttpContext.Session.GetString("Token"), loanId);
                 var message = JObject.Parse(result)["message"]?.ToString();
                 return Ok(new { message });
             }
             catch (Exception ex)
             {
-                // SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 return Ok(new { message = "Unable to delete loan." });
             }
         }
 
-
-
-  
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ReturnLoan(int loanId)
         {
-            var response = API.Post("Loan/ReturnLoan", null, loanId);
-
-            var result = JsonConvert.DeserializeAnonymousType(response, new
+            try
             {
-                message = string.Empty
-            });
-
-            return Ok(new { message = result.message });
+                var response = API.Post("Loan/ReturnLoan", HttpContext.Session.GetString("Token"), loanId);
+                var result = JsonConvert.DeserializeAnonymousType(response, new { message = string.Empty });
+                return Ok(new { message = result.message });
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                return Ok(new { message = "Unable to return loan." });
+            }
         }
     }
 }

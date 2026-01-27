@@ -39,7 +39,7 @@
 
             <div class="floating-group">
                 @Html.TextBoxFor(m => m.Email, new {
-                @class = "floating-input", placeholder = " "})
+                @class = "floating-input", autofocus = "autofocus", placeholder = " "})
                 <label>Email</label>
                 <i class="bi bi-envelope input-icon"></i>
                 @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })

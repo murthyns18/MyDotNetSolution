@@ -1,7 +1,22 @@
 ﻿<div class="container-fluid mt-4 px-4">
-    <div class="d-flex justify-content-between mb-3">
-        <h4>Publisher List</h4>
-        <button class="btn btn-primary" onclick="openAddPublisherModal()">Add Publisher</button>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Publisher List</h4>
+
+        <div class="d-flex align-items-center gap-2">
+            <button type="button"
+                    class="btn-excel"
+                    id="excelDownload"
+                    data-grid="publisherGrid"
+                    data-file="PublisherList"
+                    title="Excel Download">
+                <img src="~/assets/images/icons/excel.png" class="excel-icon" />
+                <i class="bi bi-download"></i>
+            </button>
+
+            <button class="btn btn-primary" onclick="openAddPublisherModal()">
+                Add Publisher
+            </button>
+        </div>
     </div>
 
     <table id="publisherGrid"></table>
@@ -15,6 +30,6 @@
 @await Html.PartialAsync("_PublisherModal", new LMS.Models.Publisher())
 
 @section Scripts {
-    @* <partial name="_ValidationScriptsPartial" /> *@
+    <partial name="_ValidationScriptsPartial" />
     <script src="~/js/publisherList.js"></script>
 }

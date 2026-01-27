@@ -1,7 +1,6 @@
 ﻿using LMS.Models;
 using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -10,9 +9,9 @@ namespace LMS.Controllers
     [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class PublisherController : Controller
     {
-        private readonly ILogger<BookController> _logger;
+        private readonly ILogger<PublisherController> _logger;
 
-        public PublisherController(ILogger<BookController> logger)
+        public PublisherController(ILogger<PublisherController> logger)
         {
             _logger = logger;
         }
@@ -38,78 +37,54 @@ namespace LMS.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return Json(new
-                {
-                    success = false,
-                    errors = ModelState
-                        .Where(x => x.Value.Errors.Count > 0)
-                        .ToDictionary(
-                            x => x.Key,
-                            x => x.Value.Errors.First().ErrorMessage
-                        )
-                });
+                return Json(new { success = false, errors = ModelState.Where(x => x.Value.Errors.Count > 0).ToDictionary(x => x.Key, x => x.Value.Errors.First().ErrorMessage) });
             }
 
             try
             {
-                var result = API.Post(
-                    "Publisher/SavePublisher",
-                    HttpContext.Session.GetString("Token"),
-                    model
-                );
-
+                var result = API.Post("Publisher/SavePublisher", HttpContext.Session.GetString("Token"), model);
                 var message = JObject.Parse(result)["message"]?.ToString();
-
-                return Json(new
-                {
-                    success = true,
-                    message
-                });
+                return Json(new { success = true, message });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-
-                return Json(new
-                {
-                    success = false,
-                    errors = new Dictionary<string, string>
-            {
-                { "", "An error occurred while saving the publisher. Please try again." }
-            }
-                });
+                return Json(new { success = false, errors = new Dictionary<string, string> { { "", "An error occurred while saving the publisher. Please try again." } } });
             }
         }
 
         [HttpGet]
         public IActionResult PublisherList()
         {
-           
-
-            return View();
-
-          
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                TempData["Error"] = "Unable to load publisher list.";
+                return RedirectToAction("Index", "Home");
+            }
         }
-
-       
 
         [HttpGet]
         public IActionResult EditPublisher(int publisherID)
         {
-            var publisher = JsonConvert.DeserializeObject<List<Publisher>>(
-                API.Get(
-                    "Publisher/PublisherList",
-                    HttpContext.Session.GetString("Token"),
-                    $"publisherID={publisherID}"
-                )
-            )?.FirstOrDefault();
+            try
+            {
+                var publisher = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), $"publisherID={publisherID}"))
+                    ?.FirstOrDefault();
 
-            if (publisher == null)
-                return NotFound();
-
-            return Json(publisher);
+                if (publisher == null) return NotFound();
+                return Json(publisher);
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                return StatusCode(500);
+            }
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -119,20 +94,12 @@ namespace LMS.Controllers
             {
                 var result = API.Post("Publisher/DeletePublisher", HttpContext.Session.GetString("Token"), publisherID);
                 var message = JObject.Parse(result)["message"]?.ToString();
-                return Json(new
-                {
-                    success = true,
-                    message
-                });
+                return Json(new { success = true, message });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                return Json(new
-                {
-                    success = false,
-                    message = "Unable to delete publisher."
-                });
+                return Json(new { success = false, message = "Unable to delete publisher." });
             }
         }
     }

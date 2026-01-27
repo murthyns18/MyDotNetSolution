@@ -12,8 +12,11 @@
         </div>`;
 }
 
-function statusFormatter(value) {
-    return value
+function statusFormatter(cellValue) {
+    if (isExport) {
+        return cellValue ? "Active" : "Inactive";
+    }
+    return cellValue
         ? "<span class='badge bg-success'>Active</span>"
         : "<span class='badge bg-danger'>Inactive</span>";
 }
@@ -27,7 +30,7 @@ function reloadCategoryGrid() {
         .trigger('reloadGrid');
 }
 
-/* ---------- ADD ---------- */
+
 function openAddCategoryModal() {
     $('#categoryForm')[0].reset();
     $('#CategoryID').val(0);
@@ -38,7 +41,7 @@ function openAddCategoryModal() {
     $('#categoryModal').modal('show');
 }
 
-/* ---------- EDIT ---------- */
+
 function openEditCategoryModal(categoryId) {
     $.get('/Category/EditCategory', { categoryID: categoryId })
         .done(function (data) {
@@ -57,7 +60,6 @@ function openEditCategoryModal(categoryId) {
         });
 }
 
-/* ---------- DELETE ---------- */
 function deleteCategory(id, name) {
     confirm(`Are you sure you want to delete "${name}"?`, function () {
         $.ajax({
@@ -84,7 +86,7 @@ function deleteCategory(id, name) {
     });
 }
 
-/* ---------- EVENTS ---------- */
+
 $(document).on('click', '.btn-edit', function () {
     openEditCategoryModal($(this).data('id'));
 });
@@ -93,11 +95,11 @@ $(document).on('click', '.btn-delete', function () {
     deleteCategory($(this).data('id'), $(this).data('name'));
 });
 
-/* ---------- GRID ---------- */
+
 $(function () {
 
     const colModels = [
-        { label: "Action", name: "action", width: 90, align: "center", sortable: false, search: false, formatter: actionFormatter },
+        { label: "Action", name: "action", width: 90, align: "center", sortable: false, search: false, formatter: actionFormatter, exportcol: false },
         { name: "categoryID", key: true, hidden: true },
         { label: "Category Name", name: "categoryName", width: 220 },
         {

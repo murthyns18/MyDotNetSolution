@@ -18,29 +18,59 @@ namespace LMS_API.Controllers
         [HttpGet]
         public IActionResult LoanList(int loanId)
         {
-            var list = _loanRepository.GetList(loanId);
-            return Ok(list);
+            try
+            {
+                var list = _loanRepository.GetList(loanId);
+                return Ok(list);
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to fetch loan list." });
+            }
         }
 
         [HttpPost]
         public IActionResult CreateLoan([FromBody] LoanHeader loan)
         {
-            var message = _loanRepository.CreateLoan(loan);
-            return Ok(new { message });
+            if (!ModelState.IsValid) return BadRequest(new { message = "Invalid data." });
+
+            try
+            {
+                var message = _loanRepository.CreateLoan(loan);
+                return Ok(new { message });
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to create loan." });
+            }
         }
 
         [HttpPost]
         public IActionResult DeleteLoan([FromBody] int loanId)
         {
-            var message = _loanRepository.DeleteLoan(loanId);
-            return Ok(new { message });
+            try
+            {
+                var message = _loanRepository.DeleteLoan(loanId);
+                return Ok(new { message });
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to delete loan." });
+            }
         }
 
         [HttpPost]
         public IActionResult ReturnLoan([FromBody] int loanId)
         {
-            var message = _loanRepository.ReturnLoan(loanId);
-            return Ok(new { message });
+            try
+            {
+                var message = _loanRepository.ReturnLoan(loanId);
+                return Ok(new { message });
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to return loan." });
+            }
         }
     }
 }

@@ -3,22 +3,21 @@ using LMS.Services;
 using LMS_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Net;
 
 namespace LMS.Controllers
 {
     [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class UserController : Controller
     {
-        private readonly ILogger<BookController> _logger;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(ILogger<BookController> logger)
+        public UserController(ILogger<UserController> logger)
         {
             _logger = logger;
         }
+
         private List<Role> LoadRoles()
         {
             try
@@ -44,8 +43,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var model = new User { RoleList = GetRoleSelectList() };
-                return View(model);
+                return View(new User { RoleList = GetRoleSelectList() });
             }
             catch (Exception ex)
             {
@@ -59,10 +57,8 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddUser(User model)
         {
-            // For dropdown (if needed later)
             model.RoleList = GetRoleSelectList();
 
-            // Edit mode → remove password validation
             if (model.UserID > 0)
             {
                 ModelState.Remove(nameof(model.Password));
@@ -71,88 +67,60 @@ namespace LMS.Controllers
 
             if (!ModelState.IsValid)
             {
-                return Json(new
-                {
-                    success = false,
-                    errors = ModelState
-                        .Where(x => x.Value.Errors.Count > 0)
-                        .ToDictionary(
-                            x => x.Key,
-                            x => x.Value.Errors.First().ErrorMessage
-                        )
-                });
+                return Json(new { success = false, errors = ModelState.Where(x => x.Value.Errors.Count > 0).ToDictionary(x => x.Key, x => x.Value.Errors.First().ErrorMessage) });
             }
 
-            // Optional: set password null in edit
-            if (model.UserID > 0 && string.IsNullOrWhiteSpace(model.Password))
-            {
-                model.Password = null;
-            }
+            if (model.UserID > 0 && string.IsNullOrWhiteSpace(model.Password)) model.Password = null;
 
             try
             {
-                var result = API.Post(
-                    "User/SaveUser",
-                    HttpContext.Session.GetString("Token"),
-                    model
-                );
-
+                var result = API.Post("User/SaveUser", HttpContext.Session.GetString("Token"), model);
                 var message = JObject.Parse(result)["message"]?.ToString();
 
                 if (message == "Email already exists.")
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        errors = new Dictionary<string, string>
-                {
-                    { "Email", message }
-                }
-                    });
+                    return Json(new { success = false, errors = new Dictionary<string, string> { { "Email", message } } });
                 }
 
-                return Json(new
-                {
-                    success = true,
-                    message
-                });
+                return Json(new { success = true, message });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-
-                return Json(new
-                {
-                    success = false,
-                    errors = new Dictionary<string, string>
-            {
-                { "", "An error occurred while saving the user. Please try again." }
-            }
-                });
+                return Json(new { success = false, errors = new Dictionary<string, string> { { "", "An error occurred while saving the user. Please try again." } } });
             }
         }
-
 
         [HttpGet]
         public IActionResult ListUser()
         {
-            ViewBag.Roles = GetRoleSelectList();
-            return View();
+            try
+            {
+                ViewBag.Roles = GetRoleSelectList();
+                return View();
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                TempData["Error"] = "Unable to load user list.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]
         public IActionResult EditUser(int userID)
         {
-            var user = JsonConvert.DeserializeObject<List<User>>(
-               API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={userID}")
-               )?.FirstOrDefault();
-
-
-            if (user == null)
-                return NotFound();
-
-            return Json(user);
-
+            try
+            {
+                var user = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={userID}"))?.FirstOrDefault();
+                if (user == null) return NotFound();
+                return Json(user);
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                return StatusCode(500);
+            }
         }
 
         [HttpPost]
@@ -161,22 +129,15 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post(
-                    $"User/DeleteUser?userID={id}",
-                    HttpContext.Session.GetString("Token"),
-                    new { }
-                );
-
+                var result = API.Post($"User/DeleteUser?userID={id}", HttpContext.Session.GetString("Token"), new { });
                 var message = JObject.Parse(result)["message"]?.ToString();
-
-                return Json(new {success = true, message });
+                return Json(new { success = true, message });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                return Json(new {success = false, message = "Unable to delete user." });
+                return Json(new { success = false, message = "Unable to delete user." });
             }
         }
-
     }
 }

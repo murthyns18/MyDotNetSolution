@@ -80,3 +80,25 @@ body {
 .bg-primary {
     background-color: #008b8b !important;
 }
+
+.excel-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.btn-excel {
+    border: none;
+    background-color: #008b8b;
+    border-radius: 5px;
+    padding: 3px 14px;
+    color: white;
+}
+
+    .btn-excel:hover {
+        background-color: #1d9f9f;
+    }
+
+
+.download-icon{
+    font-size: 20px;
+}

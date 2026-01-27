@@ -1,6 +1,5 @@
 ﻿using LMS_API.Interfaces;
 using LMS_API.Models;
-using LMS_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LMS_API.Controllers
@@ -24,32 +23,40 @@ namespace LMS_API.Controllers
                 var list = _publisherRepository.GetList(publisherID);
                 return Ok(list);
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, new { error = ex.Message });
+                return StatusCode(500, new { message = "Unable to fetch publisher list." });
             }
         }
 
         [HttpPost]
         public IActionResult SavePublisher(Publisher publisher)
         {
+            if (!ModelState.IsValid) return BadRequest(new { message = "Invalid data." });
+
             try
             {
                 var message = _publisherRepository.SavePublisher(publisher);
                 return Ok(new { message });
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, new { error = ex.Message });
+                return StatusCode(500, new { message = "Unable to save publisher." });
             }
         }
-
 
         [HttpPost]
         public IActionResult DeletePublisher([FromBody] int publisherID)
         {
-            var message = _publisherRepository.DeletePublisher(publisherID);
-            return Ok(new { message });
+            try
+            {
+                var message = _publisherRepository.DeletePublisher(publisherID);
+                return Ok(new { message });
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to delete publisher." });
+            }
         }
     }
 }

@@ -64,8 +64,8 @@
     "sourceMap": true
   },
   {
-    "outputFileName": "wwwroot/js/loan.min.js",
-    "inputFiles": [ "wwwroot/js/loan.js" ],
+    "outputFileName": "wwwroot/js/loanList.min.js",
+    "inputFiles": [ "wwwroot/js/loanList.js" ],
     "minify": {
       "enabled": true,
       "renameLocals": true
@@ -84,6 +84,24 @@
   {
     "outputFileName": "wwwroot/js/addLoan.min.js",
     "inputFiles": [ "wwwroot/js/addLoan.js" ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": true
+  },
+  {
+    "outputFileName": "wwwroot/js/menuList.min.js",
+    "inputFiles": [ "wwwroot/js/menuList.js" ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": true
+  },
+  {
+    "outputFileName": "wwwroot/js/menuPermissionList.min.js",
+    "inputFiles": [ "wwwroot/js/menuPermissionList.js" ],
     "minify": {
       "enabled": true,
       "renameLocals": true

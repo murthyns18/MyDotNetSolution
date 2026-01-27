@@ -18,22 +18,45 @@ namespace LMS_API.Controllers
         [HttpGet]
         public IActionResult UserList(int userID)
         {
-            var list = _userRepository.GetList(userID);
-            return Ok(list);
+            try
+            {
+                var list = _userRepository.GetList(userID);
+                return Ok(list);
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to fetch user list." });
+            }
         }
 
         [HttpPost]
         public IActionResult SaveUser(User user)
         {
-            var message = _userRepository.SaveUser(user);
-            return Ok(new { message });
+            if (!ModelState.IsValid) return BadRequest(new { message = "Invalid data." });
+
+            try
+            {
+                var message = _userRepository.SaveUser(user);
+                return Ok(new { message });
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to save user." });
+            }
         }
 
         [HttpPost]
         public IActionResult DeleteUser(int userID)
         {
-            var message = _userRepository.DeleteUser(userID);
-            return Ok(new { message });
+            try
+            {
+                var message = _userRepository.DeleteUser(userID);
+                return Ok(new { message });
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to delete user." });
+            }
         }
     }
 }

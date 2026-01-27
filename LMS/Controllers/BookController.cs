@@ -79,9 +79,6 @@ namespace LMS.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddBook(Book model)
         {
-            // NOTE:
-            // We DO NOT need PublisherList / CategoryList anymore
-            // because we are not returning View()
 
             if (!ModelState.IsValid)
             {
@@ -99,45 +96,28 @@ namespace LMS.Controllers
 
             try
             {
-                var result = API.Post(
-                    "Book/SaveBook",
-                    HttpContext.Session.GetString("Token"),
-                    model
-                );
+                var result = API.Post("Book/SaveBook", HttpContext.Session.GetString("Token"),model);
 
                 var message = JObject.Parse(result)["message"]?.ToString();
 
-                // Handle duplicate ISBN
                 if (message == "Book already exists with ISBN")
                 {
-                    return Json(new
+                    return Json(new { success = false, errors = new Dictionary<string, string>
                     {
-                        success = false,
-                        errors = new Dictionary<string, string>
-                {
-                    { "ISBN", message }
-                }
-                    });
+                        { "ISBN", message }
+                    }});
                 }
 
-                return Json(new
-                {
-                    success = true,
-                    message = message
-                });
+                return Json(new{  success = true,  message = message});
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
 
-                return Json(new
+                return Json(new{ success = false, errors = new Dictionary<string, string>
                 {
-                    success = false,
-                    errors = new Dictionary<string, string>
-            {
-                { "", "An error occurred while saving the book. Please try again." }
-            }
-                });
+                    { "", "An error occurred while saving the book. Please try again." }
+                }});
             }
         }
 
@@ -170,11 +150,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post(
-                    "Book/DeleteBook",
-                    HttpContext.Session.GetString("Token"),
-                    bookID
-                );
+                var result = API.Post("Book/DeleteBook", HttpContext.Session.GetString("Token"), bookID );
 
                 var message = JObject.Parse(result)["message"]?.ToString();
                 return Json(new { success = true, message });

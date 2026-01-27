@@ -12,8 +12,11 @@
         </div>`;
 }
 
-function statusFormatter(value) {
-    return value
+function statusFormatter(cellValue) {
+    if (isExport) {
+        return cellValue ? "Active" : "Inactive";
+    }
+    return cellValue
         ? "<span class='badge bg-success'>Active</span>"
         : "<span class='badge bg-danger'>Inactive</span>";
 }
@@ -27,7 +30,7 @@ function reloadPublisherGrid() {
         .trigger('reloadGrid');
 }
 
-/* ---------------- ADD ---------------- */
+
 function openAddPublisherModal() {
     $('#publisherForm')[0].reset();
     $('#PublisherID').val(0);
@@ -36,7 +39,6 @@ function openAddPublisherModal() {
     $('#publisherModal').modal('show');
 }
 
-/* ---------------- EDIT ---------------- */
 function openEditPublisherModal(publisherId) {
     $.get('/Publisher/EditPublisher', { publisherID: publisherId })
         .done(function (data) {
@@ -46,7 +48,7 @@ function openEditPublisherModal(publisherId) {
 
             $('input[name="IsActive"][value="' + data.isActive + '"]').prop('checked', true);
 
-            // ✅ show status on edit
+      
             $('#statusContainer').removeClass('d-none');
 
             $('#publisherModalTitle').text('Edit Publisher');
@@ -101,6 +103,7 @@ $(function () {
             name: "action",
             width: 90,
             align: "center",
+            exportcol: false,
             sortable: false,
             search: false,
             formatter: actionFormatter
