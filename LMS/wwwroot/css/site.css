@@ -218,3 +218,49 @@ footer.footer {
 }
 
 
+/* dropdowns*/
+
+.location-menu {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.menu-column {
+    width: 180px;
+    border-right: 1px solid #eee;
+}
+
+    .menu-column:last-child {
+        border-right: none;
+    }
+
+.menu-title {
+    background: #f8f9fa;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border-bottom: 1px solid #ddd;
+}
+
+.menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+    .menu-list li {
+        padding: 6px 10px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+        .menu-list li:hover,
+        .menu-list li.active {
+            background-color: #0d6efd;
+            color: #fff;
+        }

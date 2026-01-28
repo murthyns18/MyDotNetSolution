@@ -9,13 +9,40 @@
         public string Email { get; set; } = "";
 
         public string MobileNumber { get; set; } = "";
-        
+
         public string Address { get; set; } = "";
 
         public short? RoleID { get; set; }
 
         public string? RoleName { get; set; } = "";
+
         public bool Status { get; set; }
+
         public string? Password { get; set; }
+
+        public string? Gender { get; set; }
+
+        public List<string> LanguagesKnown { get; set; } = new();
+
+        public bool TermsAccepted { get; set; }
+
+        public int? CountryId { get; set; }
+
+        public string? CountryName { get; set; }
+
+        public int? StateId { get; set; }
+
+        public string? StateName { get; set; }
+
+        public int? CityId { get; set; }
+
+        public string? CityName { get; set; }
+
+        public string? ProfilePicPath { get; set; }
+
+        public string? AadharPath { get; set; }
+
+        public DateTime? DOB { get; set; }
+        public List<string> InterestedCategories { get; set; } = new();
     }
 }

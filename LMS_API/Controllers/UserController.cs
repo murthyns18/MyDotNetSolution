@@ -32,7 +32,8 @@ namespace LMS_API.Controllers
         [HttpPost]
         public IActionResult SaveUser(User user)
         {
-            if (!ModelState.IsValid) return BadRequest(new { message = "Invalid data." });
+            if (!ModelState.IsValid)
+                return BadRequest(new { message = "Invalid data." });
 
             try
             {
@@ -58,5 +59,48 @@ namespace LMS_API.Controllers
                 return StatusCode(500, new { message = "Unable to delete user." });
             }
         }
+
+        [HttpGet]
+        public IActionResult GetCountries()
+        {
+            try
+            {
+                var list = _userRepository.GetCountries();
+                return Ok(list);
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to fetch countries." });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetStates(int countryId)
+        {
+            try
+            {
+                var list = _userRepository.GetStatesByCountry(countryId);
+                return Ok(list);
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to fetch states." });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetCities(int stateId)
+        {
+            try
+            {
+                var list = _userRepository.GetCitiesByState(stateId);
+                return Ok(list);
+            }
+            catch
+            {
+                return StatusCode(500, new { message = "Unable to fetch cities." });
+            }
+        }
     }
 }
+    

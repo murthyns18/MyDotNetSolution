@@ -58,7 +58,7 @@ namespace LMS.Controllers
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Message"] = "Something went wrong. Please try again.";
+                TempData["Message"] = ex;
                 TempData["Messageclass"] = "alert-danger";
                 return View(loginViewModel);
             }

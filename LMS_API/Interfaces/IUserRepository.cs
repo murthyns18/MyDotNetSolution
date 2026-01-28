@@ -30,5 +30,11 @@ namespace LMS_API.Interfaces
         /// <param name="authenticateUser"></param>
         /// <returns></returns>
         Tuple<User, IEnumerable<Menu>> AuthenticateUser(AuthenticateUser authenticateUser);
+
+        IEnumerable<User> GetCountries();
+
+        IEnumerable<User> GetStatesByCountry(int countryId);
+
+        IEnumerable<User> GetCitiesByState(int stateId);
     }
 }

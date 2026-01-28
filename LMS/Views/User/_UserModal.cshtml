@@ -1,81 +1,208 @@
 ﻿@model LMS.Models.User
 
 <div class="modal fade" id="userModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
 
-            <form id="userForm" method="post" action="/User/AddUser">
+            <form id="userForm" method="post" action="/User/AddUser" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
-                @Html.HiddenFor(m => m.UserID, new { id = "UserID" })
+                @Html.HiddenFor(m => m.UserID)
 
+                <!-- HEADER -->
                 <div class="modal-header bg-primary text-white py-2">
                     <h6 class="modal-title" id="userModalTitle">Add User</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
 
+                <!-- BODY -->
                 <div class="modal-body py-2">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-1 small"></div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
 
-                    <div class="row g-2">
+                    <div class="row g-3">
 
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.UserName, new { @class = "form-label small mb-1" }) <span class="text-danger">*</span>
-                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control form-control-sm", id = "UserName" })
+                        <!-- USER NAME -->
+                        <div class="col-md-3">
+                            @Html.LabelFor(m => m.UserName, new { @class = "form-label small" })
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control form-control-sm" })
                             <span asp-validation-for="UserName" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.Email, new { @class = "form-label small mb-1" }) <span class="text-danger">*</span>
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-sm", id = "Email" })
+                        <!-- EMAIL -->
+                        <div class="col-md-3">
+                            @Html.LabelFor(m => m.Email, new { @class = "form-label small" })
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-sm" })
                             <span asp-validation-for="Email" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.MobileNumber, new { @class = "form-label small mb-1" }) <span class="text-danger">*</span>
-                            @Html.TextBoxFor(m => m.MobileNumber, new { @class = "form-control form-control-sm", id = "MobileNumber" })
+                        <!-- MOBILE -->
+                        <div class="col-md-3">
+                            @Html.LabelFor(m => m.MobileNumber, new { @class = "form-label small" })
+                            @Html.TextBoxFor(m => m.MobileNumber, new { @class = "form-control form-control-sm" })
                             <span asp-validation-for="MobileNumber" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-6">
-                            @Html.LabelFor(m => m.RoleID, new { @class = "form-label small mb-1" }) <span class="text-danger">*</span>
-                            @Html.DropDownListFor(m => m.RoleID, Model.RoleList, "-- Select Role --", new { @class = "form-control form-control-sm", id = "RoleID" })
+                        <!-- ROLE -->
+                        <div class="col-md-3">
+                            @Html.LabelFor(m => m.RoleID, new { @class = "form-label small" })
+                            @Html.DropDownListFor(m => m.RoleID, Model.RoleList, "-- Select --",
+                            new { @class = "form-control form-control-sm" })
                             <span asp-validation-for="RoleID" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-12">
-                            @Html.LabelFor(m => m.Address, new { @class = "form-label small mb-1" })
-                            @Html.TextAreaFor(m => m.Address, new { @class = "form-control form-control-sm", rows = 2, id = "Address" })
+                        <!-- GENDER -->
+                        <div class="col-md-3">
+                            <label class="form-label small">Gender</label>
+                            <div class="border rounded p-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" asp-for="Gender" value="Male" /> Male
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" asp-for="Gender" value="Female" /> Female
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" asp-for="Gender" value="Other" /> Other
+                                </div>
+                            </div>
+                            <span asp-validation-for="Gender" class="text-danger small"></span>
+                        </div>
+
+                        <!-- LANGUAGES -->
+                        <div class="col-md-3">
+                            <label class="form-label small">Languages Known</label>
+
+                            <div class="border rounded p-2">
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="LanguagesKnown"
+                                           value="English"
+                                           @(Model.LanguagesKnown?.Contains("English") == true ? "checked" : "") />
+                                    English
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="LanguagesKnown"
+                                           value="Kannada"
+                                           @(Model.LanguagesKnown?.Contains("Kannada") == true ? "checked" : "") />
+                                    Kannada
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="LanguagesKnown"
+                                           value="Hindi"
+                                           @(Model.LanguagesKnown?.Contains("Hindi") == true ? "checked" : "") />
+                                    Hindi
+                                </div>
+                            </div>
+
+                            <span asp-validation-for="LanguagesKnown" class="text-danger small"></span>
+                        </div>
+
+
+                        <!-- LOCATION -->
+                        <div class="col-md-3">
+                            <label class="form-label small">Location</label>
+
+                            <div id="locationMenu" class="location-menu">
+                                <div class="menu-column">
+                                    <div class="menu-title">Country</div>
+                                    <ul id="countryList" class="menu-list"></ul>
+                                </div>
+
+                                <div class="menu-column d-none" id="stateColumn">
+                                    <div class="menu-title">State</div>
+                                    <ul id="stateList" class="menu-list"></ul>
+                                </div>
+
+                                <div class="menu-column d-none" id="cityColumn">
+                                    <div class="menu-title">City</div>
+                                    <ul id="cityList" class="menu-list"></ul>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="CountryId" id="CountryId" />
+                            <input type="hidden" name="StateId" id="StateId" />
+                            <input type="hidden" name="CityId" id="CityId" />
+                        </div>
+
+                        <!-- DOB -->
+                        <div class="col-md-3">
+                            @Html.LabelFor(m => m.DOB, new { @class = "form-label small" })
+                            @Html.TextBoxFor(m => m.DOB, "{0:yyyy-MM-dd}",
+                                                        new { @class = "form-control form-control-sm", type = "date" })
+                            <span asp-validation-for="DOB" class="text-danger small"></span>
+                        </div>
+
+                        <!-- INTERESTED CATEGORIES -->
+                        <div class="col-md-3">
+                            <label class="form-label small">Interested Categories</label>
+                            <select asp-for="InterestedCategories" multiple class="form-control form-control-sm">
+                                <option value="Books">Books</option>
+                                <option value="Music">Music</option>
+                                <option value="Sports">Sports</option>
+                            </select>
+                            <span asp-validation-for="InterestedCategories" class="text-danger small"></span>
+                        </div>
+
+                        <!-- ADDRESS -->
+                        <div class="col-md-3">
+                            @Html.LabelFor(m => m.Address, new { @class = "form-label small" })
+                            @Html.TextAreaFor(m => m.Address,
+                                                        new { @class = "form-control form-control-sm", rows = 2 })
                             <span asp-validation-for="Address" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-6" id="passwordContainer">
-                            @Html.LabelFor(m => m.Password, new { @class = "form-label small mb-1" }) <span class="text-danger">*</span>
+                        <!-- PASSWORD -->
+                        <div class="col-md-3" id="passwordContainer">
+                            @Html.LabelFor(m => m.Password, new { @class = "form-label small" })
                             @Html.PasswordFor(m => m.Password, new { @class = "form-control form-control-sm" })
                             <span asp-validation-for="Password" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-6" id="confirmPasswordContainer">
-                            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label small mb-1" }) <span class="text-danger">*</span>
+                        <!-- CONFIRM PASSWORD -->
+                        <div class="col-md-3" id="confirmPasswordContainer">
+                            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label small" })
                             @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control form-control-sm" })
                             <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-6 d-none small" id="statusContainer">
-                            <label class="form-label mb-1">Status</label><br />
-                            <input type="radio" name="Status" value="true" /> Active
-                            <input type="radio" name="Status" value="false" class="ms-3" /> Inactive
+                        <!-- STATUS (EDIT MODE) -->
+                        <div class="col-md-3 d-none" id="statusContainer">
+                            <label class="form-label small">Status</label>
+                            <div class="border rounded p-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="Status" value="true" /> Active
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="Status" value="false" /> Inactive
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TERMS -->
+                        <div class="col-md-12 text-center mt-2">
+                            <input type="hidden" name="TermsAccepted" value="false" />
+                            <input type="checkbox" name="TermsAccepted" value="true"
+                                   @(Model?.TermsAccepted == true ? "checked" : "") />
+                            <label class="small ms-1">I accept Terms & Conditions</label>
+                            <br />
+                            <span asp-validation-for="TermsAccepted" class="text-danger small"></span>
                         </div>
 
                     </div>
                 </div>
 
+                <!-- FOOTER -->
                 <div class="modal-footer py-2">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary btn-sm">Submit</button>
                 </div>
 
             </form>
-
         </div>
     </div>
 </div>

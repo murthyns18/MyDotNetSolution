@@ -18,12 +18,20 @@ namespace LMS.Controllers
             _logger = logger;
         }
 
+        /* ================= ROLE LOAD ================= */
+
         private List<Role> LoadRoles()
         {
             try
             {
-                var response = API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), "roleId=0");
-                return JsonConvert.DeserializeObject<List<Role>>(response) ?? new List<Role>();
+                var response = API.Get(
+                    "Role/GetRoles",
+                    HttpContext.Session.GetString("Token"),
+                    "roleId=0"
+                );
+
+                return JsonConvert.DeserializeObject<List<Role>>(response)
+                       ?? new List<Role>();
             }
             catch (Exception ex)
             {
@@ -35,15 +43,24 @@ namespace LMS.Controllers
 
         private IEnumerable<SelectListItem> GetRoleSelectList()
         {
-            return LoadRoles().Select(r => new SelectListItem { Text = r.RoleName, Value = r.RoleID.ToString() });
+            return LoadRoles().Select(r => new SelectListItem
+            {
+                Text = r.RoleName,
+                Value = r.RoleID.ToString()
+            });
         }
+
+        /* ================= ADD USER ================= */
 
         [HttpGet]
         public IActionResult AddUser()
         {
             try
             {
-                return View(new User { RoleList = GetRoleSelectList() });
+                return View(new User
+                {
+                    RoleList = GetRoleSelectList()
+                });
             }
             catch (Exception ex)
             {
@@ -59,6 +76,7 @@ namespace LMS.Controllers
         {
             model.RoleList = GetRoleSelectList();
 
+            // Edit mode → Password optional
             if (model.UserID > 0)
             {
                 ModelState.Remove(nameof(model.Password));
@@ -67,34 +85,77 @@ namespace LMS.Controllers
 
             if (!ModelState.IsValid)
             {
-                return Json(new { success = false, errors = ModelState.Where(x => x.Value.Errors.Count > 0).ToDictionary(x => x.Key, x => x.Value.Errors.First().ErrorMessage) });
+                return Json(new
+                {
+                    success = false,
+                    errors = ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .ToDictionary(
+                            x => x.Key,
+                            x => x.Value.Errors.First().ErrorMessage
+                        )
+                });
             }
 
-            if (model.UserID > 0 && string.IsNullOrWhiteSpace(model.Password)) model.Password = null;
+            // Edit without password change
+            if (model.UserID > 0 && string.IsNullOrWhiteSpace(model.Password))
+            {
+                model.Password = null;
+            }
 
             try
             {
-                var result = API.Post("User/SaveUser", HttpContext.Session.GetString("Token"), model);
+                var result = API.Post(
+                    "User/SaveUser",
+                    HttpContext.Session.GetString("Token"),
+                    model
+                );
+
                 var message = JObject.Parse(result)["message"]?.ToString();
 
                 if (message == "Email already exists.")
                 {
-                    return Json(new { success = false, errors = new Dictionary<string, string> { { "Email", message } } });
+                    return Json(new
+                    {
+                        success = false,
+                        errors = new Dictionary<string, string>
+                        {
+                            { "Email", message }
+                        }
+                    });
                 }
 
-                //return Json(new { success = true, message });
-                var savedUser = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={model.UserID}")
-                    )?.FirstOrDefault();
+                // Fetch saved user for jqGrid update
+                var savedUser = JsonConvert.DeserializeObject<List<User>>(
+                    API.Get(
+                        "User/UserList",
+                        HttpContext.Session.GetString("Token"),
+                        $"userId={model.UserID}"
+                    )
+                )?.FirstOrDefault();
 
-                return Json(new{ success = true, message, data = savedUser });
-
+                return Json(new
+                {
+                    success = true,
+                    message,
+                    data = savedUser
+                });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                return Json(new { success = false, errors = new Dictionary<string, string> { { "", "An error occurred while saving the user. Please try again." } } });
+                return Json(new
+                {
+                    success = false,
+                    errors = new Dictionary<string, string>
+                    {
+                        { "", "An error occurred while saving the user. Please try again." }
+                    }
+                });
             }
         }
+
+        /* ================= LIST ================= */
 
         [HttpGet]
         public IActionResult ListUser()
@@ -112,13 +173,24 @@ namespace LMS.Controllers
             }
         }
 
+        /* ================= EDIT ================= */
+
         [HttpGet]
         public IActionResult EditUser(int userID)
         {
             try
             {
-                var user = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={userID}"))?.FirstOrDefault();
-                if (user == null) return NotFound();
+                var user = JsonConvert.DeserializeObject<List<User>>(
+                    API.Get(
+                        "User/UserList",
+                        HttpContext.Session.GetString("Token"),
+                        $"userId={userID}"
+                    )
+                )?.FirstOrDefault();
+
+                if (user == null)
+                    return NotFound();
+
                 return Json(user);
             }
             catch (Exception ex)
@@ -128,20 +200,36 @@ namespace LMS.Controllers
             }
         }
 
+        /* ================= DELETE ================= */
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteUser(int id)
         {
             try
             {
-                var result = API.Post($"User/DeleteUser?userID={id}", HttpContext.Session.GetString("Token"), new { });
+                var result = API.Post(
+                    $"User/DeleteUser?userID={id}",
+                    HttpContext.Session.GetString("Token"),
+                    new { }
+                );
+
                 var message = JObject.Parse(result)["message"]?.ToString();
-                return Json(new { success = true, message });
+
+                return Json(new
+                {
+                    success = true,
+                    message
+                });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                return Json(new { success = false, message = "Unable to delete user." });
+                return Json(new
+                {
+                    success = false,
+                    message = "Unable to delete user."
+                });
             }
         }
     }
