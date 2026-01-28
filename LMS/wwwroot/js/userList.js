@@ -5,9 +5,7 @@
                 <i class="bi bi-pencil-square"></i>
             </button>
 
-            <button class="btn btn-sm btn-danger btn-delete"
-                    data-id="${row.userID}"
-                    data-name="${row.userName}">
+            <button class="btn btn-sm btn-danger btn-delete" data-id="${row.userID}" data-name="${row.userName}">
                 <i class="bi bi-trash"></i>
             </button>
         </div>`;
@@ -26,11 +24,9 @@ function statusFormatter(cellValue) {
 function openAddUserModal() {
     $('#userForm')[0].reset();
     $('#UserID').val(0);
-
     $('#passwordContainer').removeClass('d-none');
     $('#confirmPasswordContainer').removeClass('d-none');
     $('#statusContainer').addClass('d-none');
-
     $('#userModalTitle').text('Add User');
     $('#userForm').attr('action', '/User/AddUser');
     $('#userModal').modal('show');
@@ -46,13 +42,10 @@ function openEditUserModal(userId) {
             $('#MobileNumber').val(data.mobileNumber);
             $('#Address').val(data.address);
             $('#RoleID').val(data.roleID);
-
             $('input[name="Status"][value="' + data.status + '"]').prop('checked', true);
-
             $('#passwordContainer').addClass('d-none');
             $('#confirmPasswordContainer').addClass('d-none');
             $('#statusContainer').removeClass('d-none');
-
             $('#userModalTitle').text('Edit User');
             $('#userModal').modal('show');
         })
@@ -174,7 +167,18 @@ $(function () {
 submitModalForm({
     formSelector: '#userForm',
     modalSelector: '#userModal',
-    onSuccess: function () {
-        reloadUserGrid();
+    onSuccess: function (res) {
+
+        if (!res.data) return;
+
+        const userId = res.data.userID;
+
+        if ($('#UserID').val() == 0) {
+            $("#userGrid").jqGrid('addRowData', userId, res.data, "first");
+        }
+        else { 
+            $("#userGrid").jqGrid('setRowData', userId, res.data);
+        }
     }
+
 });

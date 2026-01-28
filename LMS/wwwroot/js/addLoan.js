@@ -45,7 +45,7 @@ $("#ddlUser").on("change", function () {
     });
 });
 
-/* ================= PUBLISHERS ================= */
+
 function loadPublishers() {
     $.ajax({
         url: apiURL + "Publisher/PublisherList",
@@ -61,6 +61,9 @@ function loadPublishers() {
                     `<option value="${p.publisherID}">${p.publisherName}</option>`
                 );
             });
+        },
+        error: function () {
+            App.alert("Failed to load publishers.");
         }
     });
 }

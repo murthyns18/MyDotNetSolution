@@ -82,7 +82,12 @@ namespace LMS.Controllers
                     return Json(new { success = false, errors = new Dictionary<string, string> { { "Email", message } } });
                 }
 
-                return Json(new { success = true, message });
+                //return Json(new { success = true, message });
+                var savedUser = JsonConvert.DeserializeObject<List<User>>(API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={model.UserID}")
+                    )?.FirstOrDefault();
+
+                return Json(new{ success = true, message, data = savedUser });
+
             }
             catch (Exception ex)
             {
