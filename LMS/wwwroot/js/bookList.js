@@ -76,7 +76,8 @@ function deleteBook(bookId, title) {
                 if (result.success) {
                     $("#bookGrid").jqGrid("delRowData", bookId);
                     App.alert(result.message);
-                } else {
+                }
+                else {
                     App.alert(result.message);
                 }
             },
@@ -151,6 +152,7 @@ $(function () {
             label: "Publisher",
             name: "publisherName",
             width: 150,
+            sortable: false,
             stype: "select",
             searchoptions: { value: getPublisherFilter(), sopt: ["eq"] }
         },
@@ -158,6 +160,7 @@ $(function () {
             label: "Category",
             name: "categoryName",
             width: 150,
+            sortable: false,
             stype: "select",
             searchoptions: { value: getCategoryFilter(), sopt: ["eq"] }
         },
@@ -165,6 +168,7 @@ $(function () {
             label: "Status",
             name: "isActive",
             width: 90,
+            sortable: false,
             align: "center",
             formatter: statusFormatter,
             stype: "select",

@@ -72,8 +72,6 @@ namespace LMS_API.Repositories
             return parameters.Get<string>("@Result");
         }
 
-
-
         public string DeleteBook(int bookID)
         {
             var parameters = new DynamicParameters();

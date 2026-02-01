@@ -228,19 +228,21 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post(
-                    $"User/DeleteUser?userID={userID}",
-                    HttpContext.Session.GetString("Token"),
-                    new { });
+                var response = API.Post( $"User/DeleteUser?userID={userID}",HttpContext.Session.GetString("Token"),new { });
 
-                var message = JObject.Parse(result)["message"]?.ToString();
-                return Json(new { success = true, message });
+                var json = JObject.Parse(response);
+
+                return Json(new
+                {
+                    success = json["success"].Value<bool>(),
+                    message = json["message"].ToString()
+                });
             }
-            catch (Exception ex)
+            catch
             {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 return Json(new { success = false, message = "Unable to delete user." });
             }
         }
+
     }
 }

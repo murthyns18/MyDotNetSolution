@@ -150,17 +150,21 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post("Book/DeleteBook", HttpContext.Session.GetString("Token"), bookID );
+                var response = API.Post("Book/DeleteBook",
+                    HttpContext.Session.GetString("Token"), bookID);
 
-                var message = JObject.Parse(result)["message"]?.ToString();
-                return Json(new { success = true, message });
+                var json = JObject.Parse(response);
+
+                return json["success"].Value<bool>()
+                    ? Json(new { success = true, message = json["message"].ToString() })
+                    : Json(new { success = false, message = json["message"].ToString() });
             }
-            catch (Exception ex)
+            catch
             {
-                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
                 return Json(new { success = false, message = "Unable to delete the book." });
             }
         }
+
 
     }
 }

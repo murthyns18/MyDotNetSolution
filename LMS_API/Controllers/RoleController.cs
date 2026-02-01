@@ -51,12 +51,15 @@ namespace LMS_API.Controllers
             try
             {
                 var message = _roleRepository.DeleteRole(roleID);
-                return Ok(new { message });
+                var success = message.Contains("successfully");
+
+                return success ? Ok(new { success = true, message }): BadRequest(new { success = false, message });
             }
             catch
             {
-                return StatusCode(500, new { message = "Unable to delete role." });
+                return StatusCode(500, new { success = false, message = "Unable to delete role." });
             }
         }
+
     }
 }

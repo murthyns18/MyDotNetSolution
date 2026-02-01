@@ -38,7 +38,7 @@ namespace LMS.Controllers
 
                 if (string.IsNullOrEmpty(response))
                 {
-                    TempData["Message"] = "Invalid email or password";
+                    TempData["Message"] = "Invalid email or password!";
                     TempData["Messageclass"] = "alert-danger";
                     return View(loginViewModel);
                 }
@@ -62,7 +62,7 @@ namespace LMS.Controllers
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Message"] = "Wrong password or email";
+                TempData["Message"] = "Invalid email or password!";
                 TempData["Messageclass"] = "alert-danger";
                 return View(loginViewModel);
             }

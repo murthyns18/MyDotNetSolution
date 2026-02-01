@@ -1,4 +1,4 @@
-
+﻿
 @font-face {
     font-family: 'Roboto';
     src: url('/assets/fonts/roboto/static/Roboto-Regular.ttf') format('truetype');
@@ -272,3 +272,15 @@ footer.footer {
 .book-icon {
     color: white;
 }
+
+
+#welcomeAlert {
+    display: none;
+    font-family: math;
+    border-radius: 2px;
+    width: 200px;
+    text-align: center;
+    margin: auto;
+    color: darkred;
+}
+

@@ -104,6 +104,7 @@ $(function () {
             label: "Status",
             name: "isActive",
             width: 30,
+            sortable: false,
             align: "center",
             formatter: statusFormatter,
             stype: "select",

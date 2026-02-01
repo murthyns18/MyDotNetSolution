@@ -8,15 +8,17 @@
         <h4 class="mb-0">Book List</h4>
 
         <div class="d-flex align-items-center gap-2">
-            <button type="button"
-                    class="btn-excel"
-                    id="excelDownload"
-                    data-grid="bookGrid"
-                    data-file="BookList"
-                    title="Excel Download">
-                <i class="bi bi-file-earmark-excel text-success fs-4"></i>
-               Excel
-            </button>
+           <div class="excel-btn">
+                <button type="button"
+                        class="btn-excel"
+                        id="excelDownload"
+                        data-grid="bookGrid"
+                        data-file="BookList"
+                        title="Excel Download">
+                    <i class="bi bi-file-earmark-excel text-success fs-4"></i>
+                    Excel
+                </button>
+           </div>
 
             <button class="btn btn-primary" onclick="openAddModal()">Add Book</button>
         </div>

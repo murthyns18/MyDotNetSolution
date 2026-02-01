@@ -51,12 +51,15 @@ namespace LMS_API.Controllers
             try
             {
                 var message = _publisherRepository.DeletePublisher(publisherID);
-                return Ok(new { message });
+                var success = message.Contains("successfully");
+
+                return success ? Ok(new { success = true, message }): BadRequest(new { success = false, message });
             }
             catch
             {
-                return StatusCode(500, new { message = "Unable to delete publisher." });
+                return StatusCode(500, new { success = false, message = "Unable to delete publisher." });
             }
         }
+
     }
 }

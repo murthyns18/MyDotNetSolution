@@ -29,12 +29,12 @@
 
         @if (TempData["Message"] != null)
         {
-            <div class="alert @TempData["Messageclass"]">
+            <div class="alert notification @TempData["Messageclass"]">
                 @TempData["Message"]
             </div>
         }
 
-        @using (Html.BeginForm("Login", "Login", FormMethod.Post))
+        @using (Html.BeginForm("Login", "Login", FormMethod.Post, new { autocomplete = "off" }))
         {
             @Html.AntiForgeryToken()
 
@@ -66,5 +66,9 @@
     <script src="@Url.Content("~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js")"></script>
     <script src="@Url.Content("~/lib/bootstrap/dist/js/bootstrap.bundle.min.js")"></script>
     <script src="@Url.Content("~/js/login.min.js")"></script>
+    <script>
+        sessionStorage.removeItem("welcomeAlertShown");
+    </script>
+
 </body>
 </html>

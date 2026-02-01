@@ -1,5 +1,7 @@
 ﻿$(document).ready(function () {
 
+    $(".notification").delay(3000).fadeOut("slow");
+
     $("#togglePassword").on("click", function () {
 
         const input = $("#Password");

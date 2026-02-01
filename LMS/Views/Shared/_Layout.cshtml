@@ -83,7 +83,7 @@
                                aria-expanded="false">
 
                                 <i class="bi bi-person-circle fs-5 me-1"></i>
-                                <span class="fw-semibold">@userName</span>
+                                
                             </a>
 
                             <ul class="dropdown-menu dropdown-menu-end shadow"
@@ -124,6 +124,10 @@
                 @TempData["Message"]
             </div>
         } 
+        <div id="welcomeAlert" class="text-center shadow-sm mt-3">
+            <h5 class="mb-0">👋 Welcome, <strong>@userName</strong></h5>
+        </div>
+
 
         <main role="main" class="pb-3">
             @RenderBody()
