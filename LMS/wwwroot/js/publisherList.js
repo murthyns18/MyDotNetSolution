@@ -72,8 +72,9 @@ function deletePublisher(id, name) {
             success: function (result) {
 
                 if (result.success) {
+                    $("#publisherGrid").jqGrid("delRowData", id);
                     App.alert(result.message);
-                    reloadPublisherGrid();
+                   
                 } else {
                     App.alert(result.message);
                 }
@@ -101,7 +102,7 @@ $(function () {
         {
             label: "Action",
             name: "action",
-            width: 90,
+            width: 30,
             align: "center",
             exportcol: false,
             sortable: false,
@@ -109,12 +110,13 @@ $(function () {
             formatter: actionFormatter
         },
         { name: "publisherID", key: true, hidden: true },
-        { label: "Publisher Name", name: "publisherName", width: 200 },
+        { label: "Publisher Name", name: "publisherName", width: 100 },
         {
             label: "Status",
             name: "isActive",
-            width: 100,
+            width: 30,
             align: "center",
+            sortable: false,
             formatter: statusFormatter,
             stype: "select",
             searchoptions: {

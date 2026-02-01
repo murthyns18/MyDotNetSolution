@@ -29,8 +29,6 @@ function reloadBookGrid() {
         .trigger('reloadGrid');
 }
 
-
-//modal for add
 function openAddModal() {
     $('#bookForm')[0].reset();
     $('#BookId').val(0);
@@ -64,8 +62,6 @@ function openEditModal(bookId) {
 }
 
 
-
-// delete using confirm
 function deleteBook(bookId, title) {
     confirm(`Are you sure you want to delete this book? "${title}"`, function () {
         $.ajax({
@@ -78,9 +74,8 @@ function deleteBook(bookId, title) {
             success: function (result) {
 
                 if (result.success) {
+                    $("#bookGrid").jqGrid("delRowData", bookId);
                     App.alert(result.message);
-
-                    reloadBookGrid();
                 } else {
                     App.alert(result.message);
                 }
@@ -92,7 +87,6 @@ function deleteBook(bookId, title) {
     });
 }
 
-// events for edit delete
 $(document).on('click', '.btn-edit', function () {
     openEditModal($(this).data('id'));
 });
@@ -137,7 +131,6 @@ function getCategoryFilter() {
     return result;
 }
 
-// grid
 $(function () {
     const colModels = [
         {

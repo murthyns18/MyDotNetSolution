@@ -1,8 +1,8 @@
 
 using LMS_API.Interfaces;
 using LMS_API.Repositories;
+using LMS_API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Text;
@@ -13,6 +13,14 @@ namespace WEBAPI
     {
         public static void Main(string[] args)
         {
+
+            //string conn ="Server=.;Database=LMS;Trusted_Connection=True;TrustServerCertificate=True";
+
+            //string encrypted = AesEncryptionHelper.Encrypt(conn);
+
+            //Console.WriteLine("Encrypted value:");
+            //Console.WriteLine(encrypted);
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -38,8 +46,11 @@ namespace WEBAPI
                 });
             });
 
-            //DB connection 
-            string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            string encryptedConn = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            //DB connection  -- decrypt
+            string connectionString = AesEncryptionHelper.Decrypt(encryptedConn);
 
             //DI
 
@@ -50,7 +61,15 @@ namespace WEBAPI
             //Publisher
             builder.Services.AddScoped<IPublisherRepository>(m => new PublisherRepository(connectionString));
             //User
-            builder.Services.AddScoped<IUserRepository>(m => new UserRepository(connectionString));
+            builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddScoped<IUserRepository>(sp =>
+                new UserRepository(
+                    connectionString,
+                    sp.GetRequiredService<IHttpContextAccessor>()
+                )
+            );
+
             //Role
             builder.Services.AddScoped<IRoleRepository>(m => new RoleRepository(connectionString));
             builder.Services.AddScoped<ILoanRepository>(m => new LoanRepository(connectionString));
@@ -58,7 +77,7 @@ namespace WEBAPI
             builder.Services.AddScoped<IMenuPermissionRepository>(m => new MenuPermissionRepository(connectionString));
 
 
-
+            builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {

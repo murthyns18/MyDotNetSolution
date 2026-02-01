@@ -34,9 +34,9 @@
                                     <span class="text-danger">*</span>
                                     @Html.DropDownListFor(
                                     m => m.PublisherID,
-                                                                Model.PublisherList,
-                                                                "-- Select Publisher --",
-                                                                new { @class = "form-control" })
+                                    Model.PublisherList,
+                                    "-- Select Publisher --",
+                                    new { @class = "form-control" })
                                 <span asp-validation-for="PublisherID" class="text-danger small"></span>
                             </div>
 
@@ -44,10 +44,10 @@
                                 @Html.LabelFor(m => m.CategoryID)
                                 <span class="text-danger">*</span>
                                 @Html.DropDownListFor(
-                                                                m => m.CategoryID,
-                                                                Model.CategoryList,
-                                                                "-- Select Category --",
-                                                                new { @class = "form-control" })
+                                m => m.CategoryID,
+                                Model.CategoryList,
+                                "-- Select Category --",
+                                new { @class = "form-control" })
                                 <span asp-validation-for="CategoryID" class="text-danger small"></span>
                             </div>
                         </div>

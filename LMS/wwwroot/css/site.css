@@ -128,16 +128,21 @@ th {
 }
 
 .btn-excel {
-    border: none;
-    background-color: #008b8b;
+    background-color: white;
+    border: 1px solid #706262;
     border-radius: 5px;
-    padding: 5px 14px;
-    color: white;
+    padding: 0 10px;
+    color: #5a5151;
 }
 
-    .btn-excel:hover {
-        background-color: #1d9f9f;
-    }
+.bi-file-earmark-excel::before {
+    content: "\f368";
+    font-size: 18px !important;
+}
+
+.btn-excel:hover {
+    background-color: #f2eded;
+}
 
 
 .download-icon {
@@ -160,7 +165,7 @@ th {
 .navbar-nav .nav-link {
     font-weight: bold !important;
     text-align: center !important;
-    font-size: 0.9rem !important;
+    font-size: 0.6rem !important;
 }
 
 .navbar-brand {
@@ -181,7 +186,7 @@ th {
 
 
 a.navbar-brand {
-    color: #0ecf21 !important;
+    color: #0edd2b !important;
 }
 
     a.navbar-brand:hover {
@@ -208,13 +213,12 @@ footer.footer {
 
 
 .ui-th-div {
-    font-size: 13px !important;
-    font-weight: bold !important;
+    font-size: 12px !important;
 }
 
 .ui-jqgrid tr.jqgroup td, .ui-jqgrid tr.jqgrow td {
-    padding: 8px 5px !important;
-    font-size: 12px !important;
+    padding: 6px 4px !important;
+    font-size: 11px !important;
 }
 
 
@@ -253,14 +257,18 @@ footer.footer {
     overflow-y: auto;
 }
 
-    .menu-list li {
-        padding: 6px 10px;
-        cursor: pointer;
-        font-size: 13px;
-    }
+.menu-list li {
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 13px;
+}
 
-        .menu-list li:hover,
-        .menu-list li.active {
-            background-color: #0d6efd;
-            color: #fff;
-        }
+.menu-list li:hover,
+.menu-list li.active {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.book-icon {
+    color: white;
+}

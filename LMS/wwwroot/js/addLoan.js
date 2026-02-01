@@ -102,7 +102,6 @@ $("#ddlPublisher").on("change", function () {
     });
 });
 
-
 function addBook() {
 
     const bookId = $("#ddlBook").val();

@@ -8,7 +8,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - LMS</title>
+    <title>LMS - @ViewData["Title"]</title>
+    <link rel="icon" type="image/jpg" href="@Url.Content("~/images/favbook.jpg")" />
 
     <link rel="stylesheet" href="@Url.Content("~/lib/bootstrap/dist/css/bootstrap.min.css")" asp-append-version="true" />
     <link rel="stylesheet" href="@Url.Content("~/lib/bootstrap-icons/bootstrap-icons.css")" />
@@ -54,6 +55,9 @@
 
             <button type="submit" class="btn btn-primary w-100 btn-login">Login</button>
         }
+        <div style=" margin-top: 10px">
+            <a href="/Login/ForgotPassword">Forgot password?</a>
+           </div>
 
     </div>
 

@@ -8,9 +8,9 @@ namespace LMS.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly ILogger<BookController> _logger;
+        private readonly ILogger<LoginController> _logger;
 
-        public LoginController(ILogger<BookController> logger)
+        public LoginController(ILogger<LoginController> logger)
         {
             _logger = logger;
         }
@@ -53,12 +53,16 @@ namespace LMS.Controllers
                 HttpContext.Session.SetString("Token", data.access_token);
                 HttpContext.Session.SetString("MenuDetails", JsonConvert.SerializeObject(data.menuDetails));
 
+                HttpContext.Session.SetString("UserName", data.user.UserName);
+            
+                HttpContext.Session.SetString("UserId", data.user.UserID.ToString());
+
                 return RedirectToAction("BookList", "Book");
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Message"] = ex;
+                TempData["Message"] = "Wrong password or email";
                 TempData["Messageclass"] = "alert-danger";
                 return View(loginViewModel);
             }
@@ -78,5 +82,57 @@ namespace LMS.Controllers
                 return RedirectToAction("Login", "Login");
             }
         }
+
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            API.Post("Account/ForgotPassword", null, model);
+
+            TempData["Message"] = "Please check your email, reset link has been sent.";
+            TempData["Messageclass"] = "alert-success";
+
+            return View();
+        }
+
+
+
+        [HttpGet]
+        public IActionResult ResetPassword(string email, string token)
+        {
+            return View(new ResetPasswordViewModel {Email = email, Token = token });
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var response = API.Post("Account/ResetPassword", null, model);
+
+            if (string.IsNullOrEmpty(response))
+            {
+                TempData["Message"] = "Invalid or expired reset link";
+                TempData["Messageclass"] = "alert-danger";
+                return View(model);
+            }
+
+            TempData["Message"] = "Password reset successful";
+            TempData["Messageclass"] = "alert-success";
+
+            return RedirectToAction("Login");
+        }
+
+
     }
 }

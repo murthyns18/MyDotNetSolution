@@ -42,7 +42,7 @@
         @if (TempData["Message"] != null)
         {
             var type = TempData["Type"] ?? "success";
-            <div id="notification" class="alert alert-@type text-center mx-auto" style="width:300px; margin-bottom:10px;">
+            <div id="notification" class="alert alert-@type text-center mx-auto" style="margin-top:10px;">
                 @Convert.ToString(TempData["Message"])
             </div>
         }

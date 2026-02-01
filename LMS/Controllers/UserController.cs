@@ -1,10 +1,13 @@
-﻿using LMS.Models;
+﻿using LMS.Helpers;
+using LMS.Models;
 using LMS.Services;
 using LMS_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Net.Http.Headers;
 
 namespace LMS.Controllers
 {
@@ -18,39 +21,25 @@ namespace LMS.Controllers
             _logger = logger;
         }
 
-        /* ================= ROLE LOAD ================= */
-
-        private List<Role> LoadRoles()
+        private IEnumerable<SelectListItem> GetRoleSelectList()
         {
             try
             {
-                var response = API.Get(
-                    "Role/GetRoles",
-                    HttpContext.Session.GetString("Token"),
-                    "roleId=0"
-                );
+                var response = API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), "roleId=0" );
 
-                return JsonConvert.DeserializeObject<List<Role>>(response)
-                       ?? new List<Role>();
+                var roles = JsonConvert.DeserializeObject<List<Role>>(response) ?? new();
+                return roles.Select(r => new SelectListItem
+                {
+                    Text = r.RoleName,
+                    Value = r.RoleID.ToString()
+                });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to load roles.";
-                return new List<Role>();
+                return new List<SelectListItem>();
             }
         }
-
-        private IEnumerable<SelectListItem> GetRoleSelectList()
-        {
-            return LoadRoles().Select(r => new SelectListItem
-            {
-                Text = r.RoleName,
-                Value = r.RoleID.ToString()
-            });
-        }
-
-        /* ================= ADD USER ================= */
 
         [HttpGet]
         public IActionResult AddUser()
@@ -65,97 +54,132 @@ namespace LMS.Controllers
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to load Add User page.";
-                return RedirectToAction("ListUser");
+                return View();
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddUser(User model)
+        public IActionResult AddUser(User model, IFormFile ProfilePic, IFormFile AadharDoc)
         {
-            model.RoleList = GetRoleSelectList();
-
-            // Edit mode → Password optional
-            if (model.UserID > 0)
-            {
-                ModelState.Remove(nameof(model.Password));
-                ModelState.Remove(nameof(model.ConfirmPassword));
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return Json(new
-                {
-                    success = false,
-                    errors = ModelState
-                        .Where(x => x.Value.Errors.Count > 0)
-                        .ToDictionary(
-                            x => x.Key,
-                            x => x.Value.Errors.First().ErrorMessage
-                        )
-                });
-            }
-
-            // Edit without password change
-            if (model.UserID > 0 && string.IsNullOrWhiteSpace(model.Password))
-            {
-                model.Password = null;
-            }
-
             try
             {
-                var result = API.Post(
+                model.RoleList = GetRoleSelectList();
+                bool isEdit = model.UserID > 0;
+
+                if (isEdit)
+                {
+                    ModelState.Remove(nameof(model.Password));
+                    ModelState.Remove(nameof(model.ConfirmPassword));
+                }
+
+                if (!isEdit)
+                {
+                    var profileError = FileValidationHelper.ValidateProfile(ProfilePic);
+                    if (profileError != null)
+                        ModelState.AddModelError("ProfilePic", profileError);
+
+                    var aadharError = FileValidationHelper.ValidateAadhar(AadharDoc);
+                    if (aadharError != null)
+                        ModelState.AddModelError("AadharDoc", aadharError);
+                }
+
+                if (!model.TermsAccepted)
+                    ModelState.AddModelError(nameof(model.TermsAccepted), "Please accept Terms & Conditions.");
+
+                if (!ModelState.IsValid)
+                    return View(model);
+
+                string? profilePath = null;
+                string? aadharPath = null;
+
+                if (ProfilePic != null)
+                {
+                    var profileDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/profile");
+                    Directory.CreateDirectory(profileDir);
+
+                    var originalName = Path.GetFileName(ProfilePic.FileName);
+                    var fileName = $"{Guid.NewGuid()}_{originalName}";
+                    var fullPath = Path.Combine(profileDir, fileName);
+
+                    using var fs = new FileStream(fullPath, FileMode.Create);
+                    ProfilePic.CopyTo(fs);
+
+                    profilePath = "/uploads/profile/" + fileName;
+                }
+
+                if (AadharDoc != null)
+                {
+                    var aadharDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/aadhar");
+                    Directory.CreateDirectory(aadharDir);
+
+                    var originalName = Path.GetFileName(AadharDoc.FileName);
+                    var fileName = $"{Guid.NewGuid()}_{originalName}";
+                    var fullPath = Path.Combine(aadharDir, fileName);
+
+                    using var fs = new FileStream(fullPath, FileMode.Create);
+                    AadharDoc.CopyTo(fs);
+
+                    aadharPath = "/uploads/aadhar/" + fileName;
+                }
+
+                var form = new MultipartFormDataContent();
+
+                void Add(string key, string? value)
+                {
+                    if (!string.IsNullOrWhiteSpace(value))
+                        form.Add(new StringContent(value), key);
+                }
+
+                Add("UserID", model.UserID.ToString());
+                Add("UserName", model.UserName);
+                Add("Email", model.Email);
+                Add("MobileNumber", model.MobileNumber);
+                Add("Address", model.Address);
+                Add("RoleID", model.RoleID?.ToString());
+                Add("Gender", model.Gender);
+                Add("CountryId", model.CountryId?.ToString());
+                Add("StateId", model.StateId?.ToString());
+                Add("CityId", model.CityId?.ToString());
+                Add("DOB", model.DOB?.ToString("yyyy-MM-dd"));
+                Add("Status", model.Status.ToString());
+                Add("TermsAccepted", model.TermsAccepted.ToString());
+                Add("Password", model.Password);
+
+                Add("ProfilePicPath", profilePath);
+                Add("AadharPath", aadharPath);
+                Add("LoggedInUserId", HttpContext.Session.GetString("UserId"));
+
+                Add("LanguagesKnownCsv", model.LanguagesKnownCsv);
+                Add("InterestedCategoriesCsv", model.InterestedCategoriesCsv);
+
+                var result = API.PostMultipart(
                     "User/SaveUser",
                     HttpContext.Session.GetString("Token"),
-                    model
+                    form
                 );
 
                 var message = JObject.Parse(result)["message"]?.ToString();
 
                 if (message == "Email already exists.")
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        errors = new Dictionary<string, string>
-                        {
-                            { "Email", message }
-                        }
-                    });
+                    ModelState.AddModelError(nameof(model.Email), message);
+                    return View(model);
                 }
 
-                // Fetch saved user for jqGrid update
-                var savedUser = JsonConvert.DeserializeObject<List<User>>(
-                    API.Get(
-                        "User/UserList",
-                        HttpContext.Session.GetString("Token"),
-                        $"userId={model.UserID}"
-                    )
-                )?.FirstOrDefault();
+                TempData["Message"] = message ?? "User saved successfully";
+                TempData["Type"] = "success";
 
-                return Json(new
-                {
-                    success = true,
-                    message,
-                    data = savedUser
-                });
+                return RedirectToAction("ListUser");
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                return Json(new
-                {
-                    success = false,
-                    errors = new Dictionary<string, string>
-                    {
-                        { "", "An error occurred while saving the user. Please try again." }
-                    }
-                });
+                TempData["Message"] = "Something went wrong.";
+                TempData["Type"] = "error";
+                return View(model);
             }
         }
-
-        /* ================= LIST ================= */
 
         [HttpGet]
         public IActionResult ListUser()
@@ -168,12 +192,9 @@ namespace LMS.Controllers
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                TempData["Error"] = "Unable to load user list.";
-                return RedirectToAction("Index", "Home");
+                return View();
             }
         }
-
-        /* ================= EDIT ================= */
 
         [HttpGet]
         public IActionResult EditUser(int userID)
@@ -191,45 +212,34 @@ namespace LMS.Controllers
                 if (user == null)
                     return NotFound();
 
-                return Json(user);
+                user.RoleList = GetRoleSelectList();
+                return View("AddUser", user);
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                return StatusCode(500);
+                return RedirectToAction("ListUser");
             }
         }
 
-        /* ================= DELETE ================= */
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteUser(int id)
+        public IActionResult DeleteUser(int userID)
         {
             try
             {
                 var result = API.Post(
-                    $"User/DeleteUser?userID={id}",
+                    $"User/DeleteUser?userID={userID}",
                     HttpContext.Session.GetString("Token"),
-                    new { }
-                );
+                    new { });
 
                 var message = JObject.Parse(result)["message"]?.ToString();
-
-                return Json(new
-                {
-                    success = true,
-                    message
-                });
+                return Json(new { success = true, message });
             }
             catch (Exception ex)
             {
                 SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
-                return Json(new
-                {
-                    success = false,
-                    message = "Unable to delete user."
-                });
+                return Json(new { success = false, message = "Unable to delete user." });
             }
         }
     }

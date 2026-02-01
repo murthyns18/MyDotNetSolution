@@ -31,10 +31,43 @@ namespace LMS_API.Interfaces
         /// <returns></returns>
         Tuple<User, IEnumerable<Menu>> AuthenticateUser(AuthenticateUser authenticateUser);
 
+
+        /// <summary>
+        /// to get countries
+        /// </summary>
+        /// <returns>returns countries</returns>
         IEnumerable<User> GetCountries();
 
+        /// <summary>
+        /// to get states by country
+        /// </summary>
+        /// <param name="countryId"></param>
+        /// <returns>returns sates</returns>
         IEnumerable<User> GetStatesByCountry(int countryId);
 
+        /// <summary>
+        /// to get cities by state
+        /// </summary>
+        /// <param name="stateId"></param>
+        /// <returns>returns cities</returns>
         IEnumerable<User> GetCitiesByState(int stateId);
+
+        /// <summary>
+        /// to generate reset token for forgot password
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>return token</returns>
+        string GenerateResetToken(string email);
+
+
+        /// <summary>
+        /// to reset the password
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="token"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
+        bool ResetPassword(string email, string token, string newPassword);
+        
     }
 }

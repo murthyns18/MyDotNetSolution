@@ -30,7 +30,6 @@ function reloadCategoryGrid() {
         .trigger('reloadGrid');
 }
 
-
 function openAddCategoryModal() {
     $('#categoryForm')[0].reset();
     $('#CategoryID').val(0);
@@ -40,7 +39,6 @@ function openAddCategoryModal() {
     $('#categoryModalTitle').text('Add Category');
     $('#categoryModal').modal('show');
 }
-
 
 function openEditCategoryModal(categoryId) {
     $.get('/Category/EditCategory', { categoryID: categoryId })
@@ -72,9 +70,9 @@ function deleteCategory(id, name) {
             success: function (result) {
 
                 if (result.success) {
+                    $("#categoryGrid").jqGrid("delRowData", id);
                     App.alert(result.message);
 
-                    reloadCategoryGrid();
                 } else {
                     App.alert(result.message);
                 }
@@ -99,13 +97,13 @@ $(document).on('click', '.btn-delete', function () {
 $(function () {
 
     const colModels = [
-        { label: "Action", name: "action", width: 90, align: "center", sortable: false, search: false, formatter: actionFormatter, exportcol: false },
+        { label: "Action", name: "action", width: 30, align: "center", sortable: false, search: false, formatter: actionFormatter, exportcol: false },
         { name: "categoryID", key: true, hidden: true },
-        { label: "Category Name", name: "categoryName", width: 220 },
+        { label: "Category Name", name: "categoryName", width: 100 },
         {
             label: "Status",
             name: "isActive",
-            width: 90,
+            width: 30,
             align: "center",
             formatter: statusFormatter,
             stype: "select",

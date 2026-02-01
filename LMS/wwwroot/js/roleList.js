@@ -70,9 +70,9 @@ function deleteRole(roleId, name) {
             success: function (result) {
 
                 if (result.success) {
+                    $("#roleGrid").jqGrid("delRowData", roleId);
                     App.alert(result.message);
 
-                    reloadRoleGrid();
                 } else {
                     App.alert(result.message);
                 }
@@ -100,7 +100,7 @@ $(function () {
         {
             label: "Action",
             name: "action",
-            width: 90,
+            width: 30,
             align: "center",
             sortable: false,
             exportcol: false,
@@ -108,11 +108,11 @@ $(function () {
             formatter: actionFormatter
         },
         { name: "roleID", key: true, hidden: true },
-        { label: "Role Name", name: "roleName", width: 200 },
+        { label: "Role Name", name: "roleName", width: 100 },
         {
             label: "Status",
             name: "isActive",
-            width: 100,
+            width: 30,
             align: "center",
             formatter: statusFormatter,
             stype: "select",

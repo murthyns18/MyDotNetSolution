@@ -1,4 +1,7 @@
-﻿@model IList< Book >
+﻿@{
+    ViewData["Title"] = "Book List";
+}
+@model IList< Book >
 
 <div class="container-fluid mt-4 px-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -11,11 +14,9 @@
                     data-grid="bookGrid"
                     data-file="BookList"
                     title="Excel Download">
-                <img src="~/assets/images/icons/excel.png" class="excel-icon" />
-                <i class="bi bi-download"></i>
+                <i class="bi bi-file-earmark-excel text-success fs-4"></i>
+               Excel
             </button>
-
-
 
             <button class="btn btn-primary" onclick="openAddModal()">Add Book</button>
         </div>

@@ -6,7 +6,7 @@ namespace LMS.Models
 {
     public class User
     {
-        /* ================= BASIC INFO ================= */
+   
 
         [Key]
         public int UserID { get; set; }
@@ -30,7 +30,6 @@ namespace LMS.Models
         [Required(ErrorMessage = "Please enter Address.")]
         public string Address { get; set; } = string.Empty;
 
-        /* ================= ROLE ================= */
 
         [Display(Name = "Role")]
         [Required(ErrorMessage = "Please select Role.")]
@@ -43,22 +42,28 @@ namespace LMS.Models
         public IEnumerable<SelectListItem> RoleList { get; set; }
             = new List<SelectListItem>();
 
-        /* ================= PERSONAL DETAILS ================= */
+
+        [Required(ErrorMessage = "Please select at least one Language.")]
+        public string? LanguagesKnownCsv { get; set; }
+
+        [Required(ErrorMessage = "Please select at least one Category.")]
+        public string? InterestedCategoriesCsv { get; set; }
+
+        [ValidateNever]
+        public List<string> LanguagesKnown =>
+            string.IsNullOrWhiteSpace(LanguagesKnownCsv)? new() : LanguagesKnownCsv.Split(',').Select(x => x.Trim()).ToList();
+
+        [ValidateNever]
+        public List<string> InterestedCategories =>
+            string.IsNullOrWhiteSpace(InterestedCategoriesCsv) ? new() : InterestedCategoriesCsv.Split(',').Select(x => x.Trim()).ToList();
+
 
         [Required(ErrorMessage = "Please select Gender.")]
         public string? Gender { get; set; }
 
-        [Display(Name = "Languages Known")]
-        [MinLength(1, ErrorMessage = "Please select at least one Language.")]
-        public List<string> LanguagesKnown { get; set; } = new();
+        [Required(ErrorMessage = "You must accept Terms & Conditions.")]
+        public bool TermsAccepted { get; set; }
 
-
-        [Display(Name = "Accept Terms & Conditions")]
-        [Range(typeof(bool), "true", "true",
-            ErrorMessage = "You must accept Terms & Conditions.")]
-        public bool? TermsAccepted { get; set; }
-
-        /* ================= LOCATION ================= */
 
         [Display(Name = "Country")]
         [Required(ErrorMessage = "Please select Country.")]
@@ -81,44 +86,38 @@ namespace LMS.Models
         [ValidateNever]
         public string? CityName { get; set; }
 
-        /* ================= DOCUMENTS ================= */
-
-        [Required(ErrorMessage = "Please upload Profile Picture.")]
+  
         [ValidateNever]
+        public IFormFile? ProfilePic { get; set; }
+
+        [ValidateNever]
+        public IFormFile? AadharDoc { get; set; }
+
         public string? ProfilePicPath { get; set; }
 
-        [Required(ErrorMessage = "Please upload Aadhar document.")]
-        [ValidateNever]
         public string? AadharPath { get; set; }
 
-        /* ================= OTHER DETAILS ================= */
-
+     
         [Display(Name = "Date of Birth")]
         [Required(ErrorMessage = "Please select Date of Birth.")]
         [DataType(DataType.Date)]
         public DateTime? DOB { get; set; }
 
-        [Display(Name = "Interested Categories")]
-        [MinLength(1, ErrorMessage = "Please select at least one Category.")]
-        public List<string> InterestedCategories { get; set; } = new();
-
 
         [Required(ErrorMessage = "Please select Status.")]
         public bool Status { get; set; } = true;
 
-        /* ================= SECURITY ================= */
+        
 
         [Required(ErrorMessage = "Please enter Password.")]
-        [StringLength(20, MinimumLength = 6,
-            ErrorMessage = "Password must be between 6 and 20 characters.")]
+        [StringLength(20, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 20 characters.")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 
         [Display(Name = "Confirm Password")]
         [Required(ErrorMessage = "Please enter Confirm Password.")]
         [DataType(DataType.Password)]
-        [Compare("Password",
-            ErrorMessage = "Password and Confirm Password do not match.")]
+        [Compare("Password", ErrorMessage = "Password and Confirm Password do not match.")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 }

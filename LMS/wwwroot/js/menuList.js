@@ -61,7 +61,7 @@ function deleteMenu(menuId, menuName) {
             __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
         }, function (res) {
             App.alert(res.message);
-            reloadMenuGrid();
+            $("#menuGrid").jqGrid("delRowData", menuId);
         });
     });
 }
@@ -99,6 +99,7 @@ $(function () {
             name: "isActive",
             width: 90,
             align: "center",
+            sortable: false,
             formatter: statusFormatter,
             stype: "select",
             searchoptions: { value: ":All;true:Active;false:Inactive" }

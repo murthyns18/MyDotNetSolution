@@ -9,9 +9,9 @@ namespace LMS.Controllers
     [ServiceFilter(typeof(EncryptedActionParameterFilter))]
     public class CategoryController : Controller
     {
-        private readonly ILogger<BookController> _logger;
+        private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(ILogger<BookController> logger)
+        public CategoryController(ILogger<CategoryController> logger)
         {
             _logger = logger;
         }

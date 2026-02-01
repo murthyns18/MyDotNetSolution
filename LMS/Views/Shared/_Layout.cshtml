@@ -7,6 +7,8 @@
 
     var menuJson = Context.Session.GetString("MenuDetails");
     var menuDetails = string.IsNullOrEmpty(menuJson) ? new List<Menu>() : JsonConvert.DeserializeObject<List<Menu>>(menuJson);
+
+    var userName = Context.Session.GetString("UserName") ?? "Guest";
 }
 
 <!DOCTYPE html>
@@ -15,7 +17,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>@ViewData["Title"] - LMS</title>
+    <title>LMS - @ViewData["Title"]</title>
+
+    <link rel="icon" type="image/jpg" href="@Url.Content("~/images/favbook.jpg")" />
+
 
     <link href="@Url.Content("~/assets/plugins/jqGrid/css/jquery-ui.min.css")" rel="stylesheet" />
     <link href="@Url.Content("~/assets/plugins/jqGrid/css/ui.jqgrid.min.css")" rel="stylesheet" />
@@ -24,11 +29,11 @@
     <link rel="stylesheet" href="@Url.Content("~/lib/bootstrap/dist/css/bootstrap.min.css")" />
     <link rel="stylesheet" href="@Url.Content("~/css/site.min.css")" asp-append-version="true" />
     <link rel="stylesheet" href="@Url.Content("~/css/custom.min.css")" asp-append-version="true" />
-    <link rel="stylesheet" href="@Url.Content("~/css/home.min.css")" asp-append-version="true" />
     <link rel="stylesheet" href="@Url.Content("~/lib/bootstrap-icons/bootstrap-icons.css")" />
 
 
     <script>
+        var ROOT = '@Url.Content("~/")';
         var TOKEN = '@Context.Session.GetString("Token")';
         var apiURL = '@configuration.GetSection("API")["URL"]';
     </script>
@@ -42,7 +47,7 @@
             <div class="container-fluid d-flex align-items-center">
 
                 <a class="navbar-brand me-auto" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-book-fill"></i> Library Management System
+                    <i class="bi bi-book-fill book-icon"></i> Library Management System
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -59,8 +64,7 @@
                             foreach (var menu in menuDetails.Where(m => m.IsRead).OrderBy(m => m.DisplayOrder))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link"
-                                       href="@Url.Content(menu.MenuURL)">
+                                    <a class="nav-link" href="@Url.Content(menu.MenuURL)">
                                         @menu.DisplayName
                                     </a>
                                 </li>
@@ -69,12 +73,42 @@
                     </ul>
 
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link text-warning btn-logout" asp-controller="Login" asp-action="Logout">
-                                <i class="bi bi-box-arrow-right"></i> Logout
+                        <li class="nav-item dropdown">
+
+                            <a class="nav-link dropdown-toggle d-flex align-items-center"
+                               href="#"
+                               id="userDropdown"
+                               role="button"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">
+
+                                <i class="bi bi-person-circle fs-5 me-1"></i>
+                                <span class="fw-semibold">@userName</span>
                             </a>
+
+                            <ul class="dropdown-menu dropdown-menu-end shadow"
+                                aria-labelledby="userDropdown">
+
+                                <li class="dropdown-item-text text-muted small">
+                                    Signed in as <br />
+                                    <strong>@userName</strong>
+                                </li>
+
+                                <li><hr class="dropdown-divider" /></li>
+
+                                <li>
+                                    <a class="dropdown-item text-danger"
+                                       asp-controller="Login"
+                                       asp-action="Logout">
+                                        <i class="bi bi-box-arrow-right me-1"></i>
+                                        Logout
+                                    </a>
+                                </li>
+                            </ul>
+
                         </li>
                     </ul>
+
 
                 </div>
             </div>
@@ -86,10 +120,10 @@
         @if (TempData["Message"] != null)
         {
             var type = TempData["Type"] ?? "success";
-            <div class="alert alert-msg alert-@type notification text-center mx-auto mt-3">
+            <div class="alert alert-msg alert-@type notification text-center mx-auto mt-2" style=" width:350px;">
                 @TempData["Message"]
             </div>
-        }
+        } 
 
         <main role="main" class="pb-3">
             @RenderBody()

@@ -1,10 +1,10 @@
 using LMS.Common;
+using LMS.Filters;
 using LMS.Models;
 using Microsoft.AspNetCore.ResponseCompression;
-using System.IO.Compression;
 using Serilog;
 using Serilog.Events;
-using LMS.Filters;
+using System.IO.Compression;
 
 
 
@@ -47,6 +47,9 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 {
     options.Level = CompressionLevel.Fastest;
 });
+
+
+
 
 
 //OnExceptionAttribute globally

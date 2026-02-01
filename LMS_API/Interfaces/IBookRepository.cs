@@ -26,6 +26,11 @@ namespace LMS_API.Interfaces
         /// <returns>Return msg book deleted successfully</returns>
         string DeleteBook(int bookID);
 
+        /// <summary>
+        /// to get book by publisher
+        /// </summary>
+        /// <param name="publisherId"></param>
+        /// <returns>returns books of specific publisher</returns>
         IEnumerable<Book> GetByPublisher(int publisherId);
 
     }

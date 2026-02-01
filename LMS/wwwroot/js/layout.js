@@ -18,7 +18,7 @@
 
 var App = App || {};
 
-// ---------- ALERT & CONFIRM ----------
+
 App.alert = function (message) {
     $("#alertpopup").modal('show');
     $('#popupmesssage').html(message);
@@ -32,10 +32,9 @@ window.confirm = function (msg, func) {
     }
 };
 
-// ---------- GLOBAL VARIABLES ----------
+
 App.outputArrayMultiselect = [];
 
-// ---------- AJAX HELPERS ----------
 App.CallAjaxGET = function (URL, params, async) {
     $.ajax({
         type: "GET",
@@ -65,7 +64,6 @@ App.CallAjaxPOST = function (URL, params, async) {
 };
 
 
-//jqGrid
 App.CreateJQGrid = function (
     selector,
     url,
@@ -130,25 +128,22 @@ App.CreateJQGrid = function (
     $('.ui-jqgrid-bdiv').css({ 'max-height': maxheight });
 };
 
-
-
-
-//Common ajx 
 function submitModalForm(options) {
 
     const {
         formSelector,
         modalSelector,
-        onSuccess,          // callback
-        clearOnOpen = true  // optional
+        onSuccess,
+        clearOnOpen = true
     } = options;
 
+    $(document).off('submit', formSelector);
+
     $(document).on('submit', formSelector, function (e) {
-        e.preventDefault();
+        e.preventDefault(); 
 
         const form = $(this);
 
-        // Clear old errors
         form.find('span.text-danger').text('');
 
         $.ajax({
@@ -165,12 +160,11 @@ function submitModalForm(options) {
                     }
 
                     if (typeof onSuccess === 'function') {
-                        onSuccess(res);
+                        onSuccess(res); 
                     }
                 }
                 else if (res.errors) {
                     $.each(res.errors, function (key, value) {
-
                         if (key) {
                             form
                                 .find('span[data-valmsg-for="' + key + '"]')
@@ -187,8 +181,9 @@ function submitModalForm(options) {
         });
     });
 
-    // Optional: clear errors when modal opens
+   
     if (clearOnOpen && modalSelector) {
+        $(document).off('show.bs.modal', modalSelector);
         $(document).on('show.bs.modal', modalSelector, function () {
             $(this).find('span.text-danger').text('');
         });
@@ -196,15 +191,14 @@ function submitModalForm(options) {
 }
 
 
-//Notification
 function showNotification(message, type = 'success') {
 
     const alertHtml = `
-        <div class="alert alert-${type} notification text-center mx-auto" style="width:350px;">
+        <div class="alert alert-${type} mt-2 notification text-center mx-auto" style="width:350px;">
             ${message}
         </div>`;
 
-    $('.notification').remove(); // remove old message
+    $('.notification').remove();
     $('.container.flex-fill').prepend(alertHtml);
 
     setTimeout(() => {
@@ -214,9 +208,6 @@ function showNotification(message, type = 'success') {
     }, 3000);
 }
 
-
-
-//Excel download
 var isExport = false;
 
 App.exportToExcel = function (gridId, fileName) {
@@ -225,6 +216,7 @@ App.exportToExcel = function (gridId, fileName) {
         includeLabels: true,
         includeGroupHeader: true,
         includeFooter: true,
+        exportUnformatted: true,  
         fileName: fileName + ".xlsx",
         maxlength: 200
     });
@@ -234,3 +226,4 @@ App.exportToExcel = function (gridId, fileName) {
 $(document).on("click", "#excelDownload", function () {
     App.exportToExcel($(this).data("grid"), $(this).data("file"));
 });
+

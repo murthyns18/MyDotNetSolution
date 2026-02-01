@@ -2,6 +2,7 @@
 using LMS_API.Interfaces;
 using LMS_API.Models;
 using Microsoft.Data.SqlClient;
+using System;
 using System.Data;
 
 namespace LMS_API.Repositories
@@ -9,10 +10,12 @@ namespace LMS_API.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly IDbConnection dbConnection;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserRepository(string? connectionString)
+        public UserRepository(string? connectionString, IHttpContextAccessor httpContextAccessor)
         {
             dbConnection = new SqlConnection(connectionString);
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IEnumerable<User> GetList(int userId = 0)
@@ -30,41 +33,46 @@ namespace LMS_API.Repositories
 
         public string SaveUser(User user)
         {
-            var parameters = new DynamicParameters();
+            var p = new DynamicParameters();
 
-            parameters.Add("UserID", user.UserID);
-            parameters.Add("UserName", user.UserName);
-            parameters.Add("Email", user.Email);
-            parameters.Add("MobileNumber", user.MobileNumber);
-            parameters.Add("Address", user.Address);
-            parameters.Add("RoleID", user.RoleID);
-            parameters.Add("Gender", user.Gender);
-            parameters.Add("LanguagesKnown", user.LanguagesKnown);
-            parameters.Add("CountryId", user.CountryId);
-            parameters.Add("StateId", user.StateId);
-            parameters.Add("CityId", user.CityId);
-            parameters.Add("DOB", user.DOB);
-            parameters.Add("InterestedCategories", user.InterestedCategories);
-            parameters.Add("TermsAccepted", user.TermsAccepted);
-            parameters.Add("Status", user.Status);
-            parameters.Add("Password", user.Password);
+            string? hashedPassword = null;
 
-            parameters.Add(
-                "Result",
-                dbType: DbType.String,
-                direction: ParameterDirection.Output,
-                size: 500
-            );
+            if (!string.IsNullOrWhiteSpace(user.Password))
+            {
+                hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            }
 
-            dbConnection.Execute(
-                "User_InsertUpdate",
-                parameters,
-                commandType: CommandType.StoredProcedure,
-                commandTimeout: 600
-            );
+            p.Add("UserID", user.UserID);
+            p.Add("UserName", user.UserName);
+            p.Add("Email", user.Email);
+            p.Add("MobileNumber", user.MobileNumber);
+            p.Add("Address", user.Address);
+            p.Add("RoleID", user.RoleID);
+            p.Add("Gender", user.Gender);
+            p.Add("LanguagesKnown", string.Join(",", user.LanguagesKnown));
+            p.Add("CountryId", user.CountryId);
+            p.Add("StateId", user.StateId);
+            p.Add("CityId", user.CityId);
+            p.Add("DOB", user.DOB);
+            p.Add("LoggedInUserId", _httpContextAccessor.HttpContext?.Session.GetString("UserName"));
+            p.Add("InterestedCategories", string.Join(",", user.InterestedCategories));
+            p.Add("TermsAccepted", user.TermsAccepted);
+            p.Add("Status", user.Status);
 
-            return parameters.Get<string>("Result");
+            p.Add("Password", hashedPassword);
+
+            p.Add("ProfilePicPath", user.ProfilePicPath);
+            p.Add("AadharPath", user.AadharPath);
+
+            p.Add("Result", dbType: DbType.String,
+                direction: ParameterDirection.Output, size: 500);
+
+            dbConnection.Execute("User_InsertUpdate", p,
+                commandType: CommandType.StoredProcedure);
+
+            return p.Get<string>("Result");
         }
+
 
         public string DeleteUser(int userId)
         {
@@ -82,8 +90,7 @@ namespace LMS_API.Repositories
         public Tuple<User, IEnumerable<Menu>> AuthenticateUser(AuthenticateUser authenticateUser)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("Email", authenticateUser.Email);
-            parameters.Add("Password", authenticateUser.Password);
+            parameters.Add("@Email", authenticateUser.Email);
 
             var result = dbConnection.QueryMultiple(
                 "User_AuthenticateUser",
@@ -96,6 +103,12 @@ namespace LMS_API.Repositories
             var menus = result.Read<Menu>();
 
             if (user == null)
+                return null;
+
+            // BCrypt password verification
+            bool isValidPassword = BCrypt.Net.BCrypt.Verify(authenticateUser.Password, user.Password );
+
+            if (!isValidPassword)
                 return null;
 
             return new Tuple<User, IEnumerable<Menu>>(user, menus);
@@ -135,5 +148,42 @@ namespace LMS_API.Repositories
                 commandTimeout: 600
             );
         }
+
+
+        public string GenerateResetToken(string email)
+        {
+            string token = Guid.NewGuid().ToString();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("Email", email);
+            parameters.Add("Token", token);
+
+            dbConnection.Execute(
+                "User_ForgotPassword",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return token; 
+        }
+
+
+        public bool ResetPassword(string email, string token, string newPassword)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("Email", email);
+            parameters.Add("Token", token);
+            parameters.Add("NewPassword", BCrypt.Net.BCrypt.HashPassword(newPassword));
+
+            int result = dbConnection.QuerySingle<int>(
+                "User_ResetPassword",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result == 1;
+        }
+
+
     }
 }

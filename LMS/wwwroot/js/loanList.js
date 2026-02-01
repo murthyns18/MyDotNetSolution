@@ -32,21 +32,33 @@ function statusFormatter(value) {
         : "<span class='badge bg-success'>Active</span>";
 }
 
+function reloadLoanGrid() {
+    $("#loanGrid")
+        .jqGrid('setGridParam', {
+            datatype: 'json',
+            page: 1
+        })
+        .trigger('reloadGrid');
+}
 
 function dateFormatter(cellValue) {
+
     if (!cellValue) {
-        return "<span class='text-danger fw-semibold'>Not Returned</span>";
+        return isExport
+            ? "Not Returned"   
+            : "<span class='text-danger fw-semibold'>Not Returned</span>";
     }
 
     const d = new Date(cellValue);
+
     if (isNaN(d)) {
-        return "<span class='text-danger fw-semibold'>Not Returned</span>";
+        return isExport
+            ? "Not Returned"
+            : "<span class='text-danger fw-semibold'>Not Returned</span>";
     }
 
     return d.toLocaleDateString('en-GB');
 }
-
-
 
 function deleteLoan(loanId, loan) {
     confirm(`Are you sure you want to delete this loan? "${loan}"`, function () {
@@ -58,8 +70,9 @@ function deleteLoan(loanId, loan) {
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
             },
             success: function (res) {
+                $("#loanGrid").jqGrid("delRowData", loanId);
                 App.alert(res.message);
-                reloadLoanGrid();
+               
             },
             error: function () {
                 App.alert("Delete failed");
@@ -131,6 +144,7 @@ $(function () {
             name: "returnDate",
             width: 130,
             align: "center",
+            search: false,
             formatter: dateFormatter
         },
         {
@@ -138,6 +152,7 @@ $(function () {
             name: "status",
             width: 120,
             align: "center",
+            sortable: false,
             formatter: statusFormatter,
             stype: "select",
             searchoptions: {

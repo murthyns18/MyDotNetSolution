@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Menu Permissions";
+    ViewData["Title"] = "Menu Permission List";
 }
 
 @Html.AntiForgeryToken()
@@ -16,13 +16,11 @@
                     data-grid="menuPermissionGrid"
                     data-file="MenuPermissions"
                     title="Excel Download">
-                <img src="~/assets/images/icons/excel.png" class="excel-icon" />
-                <i class="bi bi-download"></i>
+                <i class="bi bi-file-earmark-excel text-success fs-4"></i>
+                Excel
             </button>
 
-            <button type="button"
-                    class="btn btn-sm btn-primary btn-menu"
-                    onclick="openAddMenuPermissionModal()">
+            <button type="button"  class="btn btn-sm btn-primary btn-menu" onclick="openAddMenuPermissionModal()">
                 Add Permission
             </button>
         </div>

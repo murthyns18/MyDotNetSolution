@@ -83,6 +83,10 @@ $(document).on('click', '.btn-edit', function () {
 
 
 function booleanIconFormatter(value) {
+    if (isExport) {
+        return value ? "Yes" : "No";
+    }
+
     return value
         ? "<i class='bi bi-check-circle-fill text-success'></i>"
         : "<i class='bi bi-x-circle-fill text-danger'></i>";
@@ -96,8 +100,34 @@ $(function () {
         { label: "Permission ID", name: "menuRolePermissionID", key: true, width: 70, align: "right" },
         { label: "Menu ID", name: "menuId", width: 70, align: "right" },
         { label: "Role ID", name: "roleID", width: 70, align: "right" },
-        { label: "Read", name: "isRead", width: 60, formatter: booleanIconFormatter, search: false, align: "center" },
-        { label: "Write", name: "isWrite", width: 60, formatter: booleanIconFormatter, search: false, align: "center" }
+        {
+            label: "Read",
+            name: "isRead",
+            width: 60,
+            formatter: booleanIconFormatter,
+            unformat: function (cellvalue, options, cell) {
+                return $(cell).find('i').hasClass('bi-check-circle-fill')
+                    ? 'Yes'
+                    : 'No';
+            },
+            search: false,
+            align: "center"
+        },
+
+       {
+            label: "Write",
+            name: "isWrite",
+            width: 60,
+            formatter: booleanIconFormatter,
+            unformat: function (cellvalue, options, cell) {
+                return $(cell).find('i').hasClass('bi-check-circle-fill')
+                    ? 'Yes'
+                    : 'No';
+            },
+            search: false,
+            align: "center"
+        }
+
     ];
 
     App.CreateJQGrid(

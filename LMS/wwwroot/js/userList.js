@@ -1,124 +1,91 @@
-﻿/* ================= ACTION & STATUS FORMATTERS ================= */
-
-function actionFormatter(cellValue, options, row) {
+﻿function actionFormatter(cellValue, options, row) {
     return `
         <div class="text-nowrap">
-            <button class="btn btn-sm btn-warning me-1 btn-edit" data-id="${row.userID}">
+            <a href="/User/EditUser?q=${Encrypt('userID'+row.userID)}"
+               class="btn btn-sm btn-warning me-1">
                 <i class="bi bi-pencil-square"></i>
-            </button>
+            </a>
             <button class="btn btn-sm btn-danger btn-delete"
-                    data-id="${row.userID}" data-name="${row.userName}">
+                    data-id="${row.userID}"
+                    data-name="${row.userName}">
                 <i class="bi bi-trash"></i>
             </button>
         </div>`;
 }
+function dateFormatter(cellValue) {
+    if (!cellValue) return "-";
 
+    const date = new Date(cellValue);
+    return date.toLocaleDateString("en-GB");
+}
 function statusFormatter(cellValue) {
-    if (typeof isExport !== "undefined" && isExport) {
+    if (isExport) {
         return cellValue ? "Active" : "Inactive";
     }
+
     return cellValue
         ? "<span class='badge bg-success'>Active</span>"
         : "<span class='badge bg-danger'>Inactive</span>";
 }
 
-/* ================= MODAL HANDLING ================= */
+function arrayFormatter(cellValue) {
+    if (!cellValue) return "-";
 
-function openAddUserModal() {
-    $('#userForm')[0].reset();
-    $('#UserID').val(0);
+    if (Array.isArray(cellValue))
+        return cellValue.join(", ");
 
-    // Reset location
-    $('#CountryId, #StateId, #CityId').val('');
-    $('#stateColumn, #cityColumn').addClass('d-none');
-
-    loadCountries();
-
-    $('#passwordContainer, #confirmPasswordContainer').removeClass('d-none');
-    $('#statusContainer').addClass('d-none');
-
-    $('#userModalTitle').text('Add User');
-    $('#userModal').modal('show');
+    return cellValue;
 }
 
-function openEditUserModal(userId) {
-    $.get('/User/EditUser', { userID: userId })
-        .done(function (data) {
+function mobileFormatter(cellValue) {
+    if (!cellValue) return "";
 
-            $('#UserID').val(data.userID);
-            $('#UserName').val(data.userName);
-            $('#Email').val(data.email);
-            $('#MobileNumber').val(data.mobileNumber);
-            $('#Address').val(data.address);
-            $('#RoleID').val(data.roleID);
-            $('input[name="Status"][value="' + data.status + '"]').prop('checked', true);
-
-            // Reset location
-            $('#CountryId, #StateId, #CityId').val('');
-            $('#stateColumn, #cityColumn').addClass('d-none');
-            loadCountries();
-
-            // Drill-down selection
-            setTimeout(() => {
-                $('#countryList li[data-id="' + data.countryId + '"]').trigger('click');
-                setTimeout(() => {
-                    $('#stateList li[data-id="' + data.stateId + '"]').trigger('click');
-                    setTimeout(() => {
-                        $('#cityList li[data-id="' + data.cityId + '"]').addClass('active');
-                        $('#CityId').val(data.cityId);
-                    }, 300);
-                }, 300);
-            }, 300);
-
-            $('#passwordContainer, #confirmPasswordContainer').addClass('d-none');
-            $('#statusContainer').removeClass('d-none');
-
-            $('#userModalTitle').text('Edit User');
-            $('#userModal').modal('show');
-        })
-        .fail(() => App.alert('Failed to load user details.'));
+    return isExport
+        ? "'" + cellValue   
+        : cellValue;
 }
 
-/* ================= DELETE ================= */
+function deleteUser(userID, name) {
 
-function deleteUser(userId, name) {
     confirm(`Are you sure you want to delete "${name}"?`, function () {
+
         $.ajax({
             url: '/User/DeleteUser',
             type: 'POST',
             data: {
-                id: userId,
+                userID: userID,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
             },
-            success: res => {
-                App.alert(res.message);
-                $("#userGrid").jqGrid('delRowData', userId);
+            success: function (result) {
+
+                if (result.success) {
+                    $("#userGrid").jqGrid("delRowData", userID);
+
+                    App.alert(result.message);
+                } else {
+                    App.alert(result.message);
+                }
             },
-            error: () => App.alert("Delete failed")
+            error: function () {
+                App.alert("Delete failed");
+            }
         });
+
     });
 }
 
-/* ================= EVENTS ================= */
-
-$(document).on('click', '.btn-edit', function () {
-    openEditUserModal($(this).data('id'));
-});
 
 $(document).on('click', '.btn-delete', function () {
     deleteUser($(this).data('id'), $(this).data('name'));
 });
 
-/* ================= ROLE FILTER ================= */
-
 function getRoleFilter() {
     let result = ":All";
     $.ajax({
         url: apiURL + "Role/GetRoles",
-        data: { roleId: -1 },
         async: false,
         beforeSend: xhr => xhr.setRequestHeader("Authorization", "Bearer " + TOKEN),
-        success: data => {
+        success: function (data) {
             data.forEach(r => {
                 result += `;${r.roleName}:${r.roleName}`;
             });
@@ -127,23 +94,43 @@ function getRoleFilter() {
     return result;
 }
 
-/* ================= JQGRID ================= */
-
 $(function () {
+
+    if (!$('#userGrid').length) return;
+
     const colModels = [
-        { label: "Action", name: "action", width: 90, align: "center", formatter: actionFormatter, search: false },
+        { label: "Action", name: "action", width: 150, align: "center", formatter: actionFormatter, search: false, exportcol: false },
         { name: "userID", key: true, hidden: true },
         { label: "Name", name: "userName", width: 150 },
         { label: "Email", name: "email", width: 220 },
-        { label: "Mobile", name: "mobileNumber", width: 120, align: "right" },
         {
-            label: "Role",
-            name: "roleName",
-            width: 150,
-            stype: "select",
-            searchoptions: { value: getRoleFilter(), sopt: ["eq"] }
+            label: "DOB",
+            name: "dob",
+            width: 110,
+            align: "center",
+            formatter: dateFormatter
         },
-        { label: "Address", name: "address", width: 200 },
+        {
+            label: "Mobile",
+            name: "mobileNumber",
+            width: 120,
+            formatter: mobileFormatter
+        },
+        { label: "Address", name: "address", width: 150 },
+        {
+            label: "Languages",
+            name: "languagesKnown",
+            width: 180,
+            formatter: arrayFormatter,
+            search: false
+        },
+        {
+            label: "Categories",
+            name: "interestedCategories",
+            width: 200,
+            formatter: arrayFormatter,
+            search: false
+        },
         {
             label: "Status",
             name: "status",
@@ -168,26 +155,6 @@ $(function () {
     );
 });
 
-/* ================= FORM SUBMIT ================= */
-
-submitModalForm({
-    formSelector: '#userForm',
-    modalSelector: '#userModal',
-    onSuccess: function (res) {
-        if (!res.data) return;
-
-        const userId = res.data.userID;
-        if ($('#UserID').val() == 0) {
-            $("#userGrid").jqGrid('addRowData', userId, res.data, "first");
-        } else {
-            $("#userGrid").jqGrid('setRowData', userId, res.data);
-        }
-    }
-});
-
-/* ================= LOCATION MENU ================= */
-
-/* LOAD COUNTRIES */
 function loadCountries() {
     $.ajax({
         url: apiURL + "User/GetCountries",
@@ -202,7 +169,6 @@ function loadCountries() {
     });
 }
 
-/* COUNTRY → STATE */
 $('#countryList').on('click', 'li', function () {
     const countryId = $(this).data('id');
     $('#CountryId').val(countryId);
@@ -228,7 +194,6 @@ $('#countryList').on('click', 'li', function () {
     });
 });
 
-/* STATE → CITY */
 $('#stateList').on('click', 'li', function () {
     const stateId = $(this).data('id');
     $('#StateId').val(stateId);
@@ -253,9 +218,35 @@ $('#stateList').on('click', 'li', function () {
     });
 });
 
-/* FINAL CITY */
 $('#cityList').on('click', 'li', function () {
     $('#CityId').val($(this).data('id'));
     $('#cityList li').removeClass('active');
     $(this).addClass('active');
 });
+
+$(document).ready(function () {
+    if ($('#countryList').length) {
+        loadCountries();
+    }
+});
+
+function updateLanguages() {
+    const values = [];
+    $('.langChk:checked').each(function () {
+        values.push($(this).val());
+    });
+    $('#LanguagesKnownCsv').val(values.join(','));
+}
+
+$('.langChk').on('change', updateLanguages);
+
+$('#InterestedCategories').on('change', function () {
+    $('#InterestedCategoriesCsv').val($(this).val()?.join(','));
+});
+
+$(document).ready(function () {
+    updateLanguages();
+    $('#InterestedCategories').trigger('change');
+});
+
+

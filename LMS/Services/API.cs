@@ -196,5 +196,50 @@ namespace LMS.Services
                 return ex.Message;
             }
         }
+        public static string PostMultipart(
+           string URL,
+           string? token,
+           MultipartFormDataContent formData)
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    client.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("Bearer", token);
+                }
+
+                var response = client
+                    .PostAsync(apiBaseURL + URL, formData)
+                    .GetAwaiter()
+                    .GetResult();
+
+                var responseMessage = response.Content
+                    .ReadAsStringAsync()
+                    .GetAwaiter()
+                    .GetResult();
+
+                return responseMessage;
+            }
+            catch (HttpRequestException httpEx)
+                when (httpEx.InnerException is SocketException socketEx)
+            {
+                return socketEx.SocketErrorCode switch
+                {
+                    SocketError.NetworkDown => "The network is down.",
+                    SocketError.NetworkUnreachable => "Network unreachable.",
+                    SocketError.HostUnreachable => "Host unreachable.",
+                    SocketError.ConnectionRefused => "Connection refused.",
+                    SocketError.TimedOut => "Connection timed out.",
+                    _ => "Network error occurred."
+                };
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 }

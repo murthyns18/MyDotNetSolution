@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Menu Master";
+    ViewData["Title"] = "Menu List";
 }
 
 @Html.AntiForgeryToken()
@@ -16,13 +16,11 @@
                     data-grid="menuGrid"
                     data-file="MenuMaster"
                     title="Excel Download">
-                <img src="~/assets/images/icons/excel.png" class="excel-icon" />
-                <i class="bi bi-download"></i>
+                <i class="bi bi-file-earmark-excel text-success fs-4"></i>
+                Excel
             </button>
 
-            <button type="button"
-                    class="btn btn-sm btn-primary btn-menu"
-                    onclick="openAddMenuModal()">
+            <button type="button" class="btn btn-sm btn-primary btn-menu" onclick="openAddMenuModal()">
                 Add Menu
             </button>
         </div>
