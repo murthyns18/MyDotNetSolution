@@ -46,8 +46,8 @@ namespace LMS.Controllers
 
             try
             {
-                var result = API.Post("Category/SaveCategory", HttpContext.Session.GetString("Token"), model);
-                var message = JObject.Parse(result)["message"]?.ToString();
+                string result = API.Post("Category/SaveCategory", HttpContext.Session.GetString("Token"), model);
+                string? message = JObject.Parse(result)["message"]?.ToString();
                 return Json(new { success = true, message = message });
             }
             catch (Exception ex)
@@ -66,7 +66,7 @@ namespace LMS.Controllers
         [HttpGet]
         public IActionResult EditCategory(int categoryID)
         {
-            var category = JsonConvert.DeserializeObject<List<Category>>(API.Get("Category/CategoryList", HttpContext.Session.GetString("Token"), $"categoryID={categoryID}"))
+            Category? category = JsonConvert.DeserializeObject<List<Category>>(API.Get("Category/CategoryList", HttpContext.Session.GetString("Token"), $"categoryID={categoryID}"))
                 ?.FirstOrDefault();
 
             if (category == null) return NotFound();
@@ -79,9 +79,9 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Post( $"Category/DeleteCategory?categoryID={categoryID}",HttpContext.Session.GetString("Token"), new { });
+                string response = API.Post( $"Category/DeleteCategory?categoryID={categoryID}",HttpContext.Session.GetString("Token"), new { });
 
-                var json = JObject.Parse(response);
+                JObject json = JObject.Parse(response);
 
                 return Json(new
                 {

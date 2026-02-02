@@ -17,7 +17,7 @@ namespace LMS_API.Repositories
 
         public IEnumerable<MenuPermission> GetList(int roleId = 0)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@RoleId", roleId);
 
             return dbConnection.Query<MenuPermission>(
@@ -30,7 +30,7 @@ namespace LMS_API.Repositories
 
         public string SavePermission(MenuPermission permission)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
 
             parameters.Add("@MenuRolePermissionID", permission.MenuRolePermissionID);
             parameters.Add("@MenuId", permission.MenuId);
@@ -57,7 +57,7 @@ namespace LMS_API.Repositories
 
         public string DeletePermission(int menuRolePermissionId)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@MenuRolePermissionID", menuRolePermissionId);
 
             parameters.Add(

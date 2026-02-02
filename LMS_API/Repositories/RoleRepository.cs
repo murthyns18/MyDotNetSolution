@@ -47,7 +47,7 @@ namespace LMS_API.Repositories
 
         public string DeleteRole(int roleID)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@roleID", roleID);
 
             return _db.QuerySingle<string>(

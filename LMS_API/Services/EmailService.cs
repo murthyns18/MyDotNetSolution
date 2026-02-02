@@ -20,9 +20,9 @@ namespace LMS_API.Services
 
         public void SendEmail(string to, string subject, string body)
         {
-            var smtp = _configuration.GetSection("Smtp");
+            IConfigurationSection smtp = _configuration.GetSection("Smtp");
 
-            var client = new SmtpClient(smtp["Host"], int.Parse(smtp["Port"]))
+            SmtpClient client = new SmtpClient(smtp["Host"], int.Parse(smtp["Port"]))
             {
                 Credentials = new NetworkCredential(
                     smtp["User"],
@@ -31,7 +31,7 @@ namespace LMS_API.Services
                 EnableSsl = true
             };
 
-            var mail = new MailMessage
+            MailMessage mail = new MailMessage
             {
                 From = new MailAddress(smtp["From"]),
                 Subject = subject,

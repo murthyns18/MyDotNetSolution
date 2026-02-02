@@ -20,7 +20,7 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var list = _menuRepository.GetList(menuId);
+                IEnumerable<MenuMaster> list = _menuRepository.GetList(menuId);
                 return Ok(list);
             }
             catch
@@ -36,7 +36,7 @@ namespace LMS_API.Controllers
 
             try
             {
-                var message = _menuRepository.SaveMenu(menu);
+                string message = _menuRepository.SaveMenu(menu);
                 return Ok(new { message });
             }
             catch
@@ -50,7 +50,7 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var message = _menuRepository.DeleteMenu(menuId);
+                string message = _menuRepository.DeleteMenu(menuId);
                 return Ok(new { message });
             }
             catch

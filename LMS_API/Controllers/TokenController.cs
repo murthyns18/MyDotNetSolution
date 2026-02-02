@@ -27,18 +27,18 @@ namespace LMS_API.Controllers
 
             try
             {
-                var checkUser = userRepository.AuthenticateUser(authenticateUser);
+                Tuple<User, IEnumerable<Menu>> checkUser = userRepository.AuthenticateUser(authenticateUser);
                 if (checkUser == null) return Unauthorized(new { message = "Invalid username or password." });
 
-                var claims = new List<Claim>
+                List<Claim> claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, checkUser.Item1.UserName),
                     new Claim("UserID", Convert.ToString(checkUser.Item1.UserID))
                 };
 
-                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-                var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddDays(1), signingCredentials: creds);
+                SymmetricSecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+                SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+                JwtSecurityToken token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddDays(1), signingCredentials: creds);
 
                 return Ok(new
                 {

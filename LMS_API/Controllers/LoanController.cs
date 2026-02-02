@@ -20,7 +20,7 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var list = _loanRepository.GetList(loanId);
+                IEnumerable<LoanHeader> list = _loanRepository.GetList(loanId);
                 return Ok(list);
             }
             catch
@@ -36,7 +36,7 @@ namespace LMS_API.Controllers
 
             try
             {
-                var message = _loanRepository.CreateLoan(loan);
+                string message = _loanRepository.CreateLoan(loan);
                 return Ok(new { message });
             }
             catch
@@ -50,7 +50,7 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var message = _loanRepository.DeleteLoan(loanId);
+                string message = _loanRepository.DeleteLoan(loanId);
                 return Ok(new { message });
             }
             catch
@@ -64,7 +64,7 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var message = _loanRepository.ReturnLoan(loanId);
+                string message = _loanRepository.ReturnLoan(loanId);
                 return Ok(new { message });
             }
             catch

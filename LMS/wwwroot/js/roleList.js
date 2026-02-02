@@ -59,7 +59,7 @@ function openEditRoleModal(roleId) {
 }
 
 function deleteRole(roleId, name) {
-    confirm(`Are you sure you want to delete "${name}"?`, function () {
+    confirm(`Are you sure you want to delete this role "${name}"?`, function () {
         $.ajax({
             url: '/Role/DeleteRole',
             type: 'POST',
@@ -108,12 +108,13 @@ $(function () {
             formatter: actionFormatter
         },
         { name: "roleID", key: true, hidden: true },
-        { label: "Role Name", name: "roleName", width: 100 },
+        { label: "Role Name", name: "roleName", width: 50 },
         {
             label: "Status",
             name: "isActive",
             width: 30,
             align: "center",
+            sortable: false,
             formatter: statusFormatter,
             stype: "select",
             searchoptions: {

@@ -40,8 +40,8 @@ namespace LMS.Controllers
 
             try
             {
-                var result = API.Post("MenuPermission/SavePermission", HttpContext.Session.GetString("Token"), model);
-                var message = JObject.Parse(result)["message"]?.ToString();
+                string result = API.Post("MenuPermission/SavePermission", HttpContext.Session.GetString("Token"), model);
+                string? message = JObject.Parse(result)["message"]?.ToString();
 
                 if (message == "Menu Id does not exist")
                 {
@@ -63,8 +63,8 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post("MenuPermission/DeletePermission", HttpContext.Session.GetString("Token"), menuRolePermissionId);
-                var message = JObject.Parse(result)["message"]?.ToString();
+                string result = API.Post("MenuPermission/DeletePermission", HttpContext.Session.GetString("Token"), menuRolePermissionId);
+                string? message = JObject.Parse(result)["message"]?.ToString();
                 return Json(new { success = true, message });
             }
             catch (Exception ex)

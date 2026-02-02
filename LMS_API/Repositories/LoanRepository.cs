@@ -18,7 +18,7 @@ namespace LMS_API.Repositories
 
         public IEnumerable<LoanHeader> GetList(int loanId = 0)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@LoanId", loanId);
 
             return dbConnection.Query<LoanHeader>(
@@ -30,7 +30,7 @@ namespace LMS_API.Repositories
         }
         public string CreateLoan(LoanHeader loan)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
 
             parameters.Add("@UserId", loan.UserId);
 
@@ -59,7 +59,7 @@ namespace LMS_API.Repositories
 
         public string DeleteLoan(int loanId)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@LoanId", loanId);
 
             return dbConnection.QuerySingle<string>(
@@ -73,7 +73,7 @@ namespace LMS_API.Repositories
 
         public string ReturnLoan(int loanId)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@LoanId", loanId);
 
             parameters.Add(

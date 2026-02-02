@@ -61,7 +61,7 @@ function dateFormatter(cellValue) {
 }
 
 function deleteLoan(loanId, loan) {
-    confirm(`Are you sure you want to delete this loan? "${loan}"`, function () {
+    confirm(`Are you sure you want to delete this loan "${loan}?"`, function () {
         $.ajax({
             url: '/Loan/DeleteLoan',
             type: 'POST',
@@ -92,7 +92,7 @@ function returnLoan(loanId, userName) {
             },
             success: function (res) {
                 App.alert(res.message);
-                $("#loanGrid").jqGrid('delRowData', loanId);
+                reloadLoanGrid();
             },
             error: function () {
                 App.alert("Return failed");

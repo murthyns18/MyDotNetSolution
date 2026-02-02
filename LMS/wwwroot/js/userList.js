@@ -47,7 +47,7 @@ function mobileFormatter(cellValue) {
 
 function deleteUser(userID, name) {
 
-    confirm(`Are you sure you want to delete "${name}"?`, function () {
+    confirm(`Are you sure you want to delete this user "${name}"?`, function () {
 
         $.ajax({
             url: '/User/DeleteUser',
@@ -127,14 +127,14 @@ $(function () {
         {
             label: "Categories",
             name: "interestedCategories",
-            width: 200,
+            width: 180,
             formatter: arrayFormatter,
             search: false
         },
         {
             label: "Status",
             name: "status",
-            width: 90,
+            width: 100,
             align: "center",
             formatter: statusFormatter,
             stype: "select",

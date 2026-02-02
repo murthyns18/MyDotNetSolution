@@ -42,8 +42,8 @@ namespace LMS.Controllers
 
             try
             {
-                var result = API.Post("Role/SaveRole", HttpContext.Session.GetString("Token"), model);
-                var message = JObject.Parse(result)["message"]?.ToString();
+                string result = API.Post("Role/SaveRole", HttpContext.Session.GetString("Token"), model);
+                string? message = JObject.Parse(result)["message"]?.ToString();
                 return Json(new { success = true, message });
             }
             catch (Exception ex)
@@ -73,7 +73,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var role = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), $"roleId={roleID}"))?.FirstOrDefault();
+                Role? role = JsonConvert.DeserializeObject<List<Role>>(API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), $"roleId={roleID}"))?.FirstOrDefault();
                 if (role == null) return NotFound();
                 return Json(role);
             }
@@ -90,9 +90,9 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Post( $"Role/DeleteRole?RoleID={roleID}", HttpContext.Session.GetString("Token"),new { });
+                string? response = API.Post($"Role/DeleteRole?RoleID={roleID}", HttpContext.Session.GetString("Token"), new { });
 
-                var json = JObject.Parse(response);
+                JObject json = JObject.Parse(response);
 
                 return Json(new
                 {

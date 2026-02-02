@@ -17,7 +17,7 @@ namespace LMS_API.Repositories
 
         public IEnumerable<MenuMaster> GetList(int menuId = 0)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@MenuId", menuId);
 
             return dbConnection.Query<MenuMaster>(
@@ -30,7 +30,7 @@ namespace LMS_API.Repositories
 
         public string SaveMenu(MenuMaster menu)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
 
             parameters.Add("@MenuId", menu.MenuId);
             parameters.Add("@MenuName", menu.MenuName);
@@ -60,7 +60,7 @@ namespace LMS_API.Repositories
 
         public string DeleteMenu(int menuId)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@MenuId", menuId);
 
             parameters.Add(

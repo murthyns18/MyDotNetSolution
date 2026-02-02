@@ -8,7 +8,7 @@ using System.IO.Compression;
 
 
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -48,10 +48,6 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
     options.Level = CompressionLevel.Fastest;
 });
 
-
-
-
-
 //OnExceptionAttribute globally
 builder.Services.AddControllersWithViews(options =>
 {
@@ -74,7 +70,7 @@ builder.Services.AddScoped<EncryptedActionParameterFilter>();
 
 
 //Serilog configuraiton
-var logDirectory = @"C:\Errors";
+string logDirectory = @"C:\Errors";
 
 if (!Directory.Exists(logDirectory))
 {
@@ -97,7 +93,7 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

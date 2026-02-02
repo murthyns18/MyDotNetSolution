@@ -16,7 +16,7 @@ namespace LMS_API.Controllers
             get
             {
                 User account = new User();
-                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                ClaimsIdentity? identity = HttpContext.User.Identity as ClaimsIdentity;
                 IEnumerable<Claim> claims = identity.Claims;
                 account.UserID = Convert.ToInt32(claims.FirstOrDefault(c => c.Type == "UserID")?.Value);
                 return account;

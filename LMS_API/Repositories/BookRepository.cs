@@ -18,7 +18,7 @@ namespace LMS_API.Repositories
         
         public IEnumerable<Book> GetList(int bookId = 0)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@BookId", bookId);
 
             return dbConnection.Query<Book>(
@@ -31,7 +31,7 @@ namespace LMS_API.Repositories
 
         public IEnumerable<Book> GetByPublisher(int publisherId)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@PublisherId", publisherId);
 
             return dbConnection.Query<Book>(
@@ -44,7 +44,7 @@ namespace LMS_API.Repositories
 
         public string SaveBook(Book book)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
 
             parameters.Add("@BookId", book.BookID);
             parameters.Add("@Title", book.Title);
@@ -74,7 +74,7 @@ namespace LMS_API.Repositories
 
         public string DeleteBook(int bookID)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@BookId", bookID);
 
             return dbConnection.QuerySingle<string>(

@@ -42,8 +42,8 @@ namespace LMS.Controllers
 
             try
             {
-                var result = API.Post("Publisher/SavePublisher", HttpContext.Session.GetString("Token"), model);
-                var message = JObject.Parse(result)["message"]?.ToString();
+                string result = API.Post("Publisher/SavePublisher", HttpContext.Session.GetString("Token"), model);
+                string? message = JObject.Parse(result)["message"]?.ToString();
                 return Json(new { success = true, message });
             }
             catch (Exception ex)
@@ -73,7 +73,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var publisher = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), $"publisherID={publisherID}"))
+                Publisher? publisher = JsonConvert.DeserializeObject<List<Publisher>>(API.Get("Publisher/PublisherList", HttpContext.Session.GetString("Token"), $"publisherID={publisherID}"))
                     ?.FirstOrDefault();
 
                 if (publisher == null) return NotFound();
@@ -92,9 +92,9 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Post("Publisher/DeletePublisher",HttpContext.Session.GetString("Token"),publisherID );
+                string? response = API.Post("Publisher/DeletePublisher", HttpContext.Session.GetString("Token"), publisherID);
 
-                var json = JObject.Parse(response);
+                JObject json = JObject.Parse(response);
 
                 return Json(new
                 {

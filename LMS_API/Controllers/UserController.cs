@@ -20,7 +20,7 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var list = _userRepository.GetList(userID);
+                IEnumerable<User> list = _userRepository.GetList(userID);
                 return Ok(list);
             }
             catch
@@ -37,7 +37,7 @@ namespace LMS_API.Controllers
 
             try
             {
-                var message = _userRepository.SaveUser(user);
+                string message = _userRepository.SaveUser(user);
                 return Ok(new { message });
             }
             catch
@@ -51,8 +51,8 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var message = _userRepository.DeleteUser(userID);
-                var success = message.Contains("successfully");
+                string message = _userRepository.DeleteUser(userID);
+                bool success = message.Contains("successfully");
 
                 return success ? Ok(new { success = true, message }) : BadRequest(new { success = false, message });
             }

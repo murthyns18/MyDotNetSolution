@@ -20,7 +20,7 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var list = _roleRepository.GetRoles(roleId);
+                IEnumerable<Role> list = _roleRepository.GetRoles(roleId);
                 return Ok(list);
             }
             catch
@@ -36,7 +36,7 @@ namespace LMS_API.Controllers
 
             try
             {
-                var message = _roleRepository.SaveRole(role);
+                string message = _roleRepository.SaveRole(role);
                 return Ok(new { message });
             }
             catch
@@ -50,8 +50,8 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var message = _roleRepository.DeleteRole(roleID);
-                var success = message.Contains("successfully");
+                string message = _roleRepository.DeleteRole(roleID);
+                bool success = message.Contains("successfully");
 
                 return success ? Ok(new { success = true, message }): BadRequest(new { success = false, message });
             }

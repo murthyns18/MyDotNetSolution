@@ -20,7 +20,7 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var list = _permissionRepository.GetList(roleId);
+                IEnumerable<MenuPermission> list = _permissionRepository.GetList(roleId);
                 return Ok(list);
             }
             catch
@@ -36,7 +36,7 @@ namespace LMS_API.Controllers
 
             try
             {
-                var message = _permissionRepository.SavePermission(permission);
+                string message = _permissionRepository.SavePermission(permission);
                 return Ok(new { message });
             }
             catch
@@ -50,7 +50,7 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var message = _permissionRepository.DeletePermission(menuRolePermissionId);
+                string message = _permissionRepository.DeletePermission(menuRolePermissionId);
                 return Ok(new { message });
             }
             catch

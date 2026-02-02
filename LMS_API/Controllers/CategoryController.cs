@@ -20,7 +20,7 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var list = _categoryRepository.GetList(categoryID);
+                IEnumerable<Category> list = _categoryRepository.GetList(categoryID);
                 return Ok(list);
             }
             catch
@@ -36,7 +36,7 @@ namespace LMS_API.Controllers
 
             try
             {
-                var message = _categoryRepository.SaveCategory(category);
+                string message = _categoryRepository.SaveCategory(category);
                 return Ok(new { message });
             }
             catch
@@ -50,8 +50,8 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var message = _categoryRepository.DeleteCategory(categoryID);
-                var success = message.Contains("successfully");
+                string message = _categoryRepository.DeleteCategory(categoryID);
+                bool success = message.Contains("successfully");
 
                 return success ? Ok(new { success = true, message }): BadRequest(new { success = false, message });
             }

@@ -25,9 +25,9 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), "roleId=0" );
+                string response = API.Get("Role/GetRoles", HttpContext.Session.GetString("Token"), "roleId=0");
 
-                var roles = JsonConvert.DeserializeObject<List<Role>>(response) ?? new();
+                List<Role> roles = JsonConvert.DeserializeObject<List<Role>>(response) ?? new();
                 return roles.Select(r => new SelectListItem
                 {
                     Text = r.RoleName,
@@ -75,11 +75,11 @@ namespace LMS.Controllers
 
                 if (!isEdit)
                 {
-                    var profileError = FileValidationHelper.ValidateProfile(ProfilePic);
+                    string? profileError = FileValidationHelper.ValidateProfile(ProfilePic);
                     if (profileError != null)
                         ModelState.AddModelError("ProfilePic", profileError);
 
-                    var aadharError = FileValidationHelper.ValidateAadhar(AadharDoc);
+                    string? aadharError = FileValidationHelper.ValidateAadhar(AadharDoc);
                     if (aadharError != null)
                         ModelState.AddModelError("AadharDoc", aadharError);
                 }
@@ -95,14 +95,14 @@ namespace LMS.Controllers
 
                 if (ProfilePic != null)
                 {
-                    var profileDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/profile");
+                    string profileDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/profile");
                     Directory.CreateDirectory(profileDir);
 
-                    var originalName = Path.GetFileName(ProfilePic.FileName);
-                    var fileName = $"{Guid.NewGuid()}_{originalName}";
-                    var fullPath = Path.Combine(profileDir, fileName);
+                    string originalName = Path.GetFileName(ProfilePic.FileName);
+                    string fileName = $"{Guid.NewGuid()}_{originalName}";
+                    string fullPath = Path.Combine(profileDir, fileName);
 
-                    using var fs = new FileStream(fullPath, FileMode.Create);
+                    using FileStream fs = new FileStream(fullPath, FileMode.Create);
                     ProfilePic.CopyTo(fs);
 
                     profilePath = "/uploads/profile/" + fileName;
@@ -110,20 +110,20 @@ namespace LMS.Controllers
 
                 if (AadharDoc != null)
                 {
-                    var aadharDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/aadhar");
+                    string aadharDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/aadhar");
                     Directory.CreateDirectory(aadharDir);
 
-                    var originalName = Path.GetFileName(AadharDoc.FileName);
-                    var fileName = $"{Guid.NewGuid()}_{originalName}";
-                    var fullPath = Path.Combine(aadharDir, fileName);
+                    string originalName = Path.GetFileName(AadharDoc.FileName);
+                    string fileName = $"{Guid.NewGuid()}_{originalName}";
+                    string fullPath = Path.Combine(aadharDir, fileName);
 
-                    using var fs = new FileStream(fullPath, FileMode.Create);
+                    using FileStream fs = new FileStream(fullPath, FileMode.Create);
                     AadharDoc.CopyTo(fs);
 
                     aadharPath = "/uploads/aadhar/" + fileName;
                 }
 
-                var form = new MultipartFormDataContent();
+                MultipartFormDataContent form = new MultipartFormDataContent();
 
                 void Add(string key, string? value)
                 {
@@ -153,13 +153,13 @@ namespace LMS.Controllers
                 Add("LanguagesKnownCsv", model.LanguagesKnownCsv);
                 Add("InterestedCategoriesCsv", model.InterestedCategoriesCsv);
 
-                var result = API.PostMultipart(
+                string result = API.PostMultipart(
                     "User/SaveUser",
                     HttpContext.Session.GetString("Token"),
                     form
                 );
 
-                var message = JObject.Parse(result)["message"]?.ToString();
+                string? message = JObject.Parse(result)["message"]?.ToString();
 
                 if (message == "Email already exists.")
                 {
@@ -228,9 +228,9 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Post( $"User/DeleteUser?userID={userID}",HttpContext.Session.GetString("Token"),new { });
+                string response = API.Post($"User/DeleteUser?userID={userID}", HttpContext.Session.GetString("Token"), new { });
 
-                var json = JObject.Parse(response);
+                JObject json = JObject.Parse(response);
 
                 return Json(new
                 {

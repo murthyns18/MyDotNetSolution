@@ -23,10 +23,10 @@ namespace LMS_API.Controllers
         [HttpPost("ForgotPassword")]
         public IActionResult ForgotPassword(ForgotPasswordRequest model)
         {
-            var token = userRepository.GenerateResetToken(model.Email);
+            string token = userRepository.GenerateResetToken(model.Email);
 
-            var resetLink = $"{configuration["AppUrl"]}/Login/ResetPassword" + $"?email={Uri.EscapeDataString(model.Email)}&token={token}";
-            var body = $@"
+            string resetLink = $"{configuration["AppUrl"]}/Login/ResetPassword" + $"?email={Uri.EscapeDataString(model.Email)}&token={token}";
+            string body = $@"
                             <p>Hello,</p>
                             <p>Click the link below to reset your password:</p>
                             <p><a href='{resetLink}'>Reset Password</a></p>

@@ -17,7 +17,7 @@ namespace LMS_API.Repositories
 
         public IEnumerable<Category> GetList(int categoryId = 0)
         {
-            var dynamicParameters = new DynamicParameters();
+            DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("CategoryID", categoryId);
 
             return dbConnection.Query<Category>(
@@ -30,7 +30,7 @@ namespace LMS_API.Repositories
 
         public string SaveCategory(Category category)
         {
-            var dynamicParameters = new DynamicParameters();
+            DynamicParameters dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("CategoryID", category.CategoryID);
             dynamicParameters.Add("CategoryName", category.CategoryName);
             dynamicParameters.Add("IsActive", category.IsActive);
@@ -50,7 +50,7 @@ namespace LMS_API.Repositories
 
         public string DeleteCategory(int categoryID)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@CategoryID", categoryID);
 
             return dbConnection.QuerySingle<string>(

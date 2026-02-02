@@ -34,7 +34,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Post("Token", null, loginViewModel);
+                string response = API.Post("Token", null, loginViewModel);
 
                 if (string.IsNullOrEmpty(response))
                 {
@@ -118,7 +118,7 @@ namespace LMS.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var response = API.Post("Account/ResetPassword", null, model);
+            string response = API.Post("Account/ResetPassword", null, model);
 
             if (string.IsNullOrEmpty(response))
             {

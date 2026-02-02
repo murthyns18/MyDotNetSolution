@@ -57,8 +57,8 @@ namespace LMS.Controllers
 
             try
             {
-                var result = API.Post("Menu/SaveMenu", HttpContext.Session.GetString("Token"), model);
-                var message = JObject.Parse(result)["message"]?.ToString();
+                string result = API.Post("Menu/SaveMenu", HttpContext.Session.GetString("Token"), model);
+                string? message = JObject.Parse(result)["message"]?.ToString();
 
                 if (message == "Menu already exists")
                 {
@@ -79,7 +79,7 @@ namespace LMS.Controllers
         {
             try
             {
-                var menu = JsonConvert.DeserializeObject<List<MenuMaster>>(API.Get("Menu/MenuList", HttpContext.Session.GetString("Token"), $"menuId={menuId}"))?.FirstOrDefault();
+                MenuMaster? menu = JsonConvert.DeserializeObject<List<MenuMaster>>(API.Get("Menu/MenuList", HttpContext.Session.GetString("Token"), $"menuId={menuId}"))?.FirstOrDefault();
                 if (menu == null) return NotFound();
                 return Json(menu);
             }
@@ -96,8 +96,8 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post("Menu/DeleteMenu", HttpContext.Session.GetString("Token"), menuId);
-                var message = JObject.Parse(result)["message"]?.ToString();
+                string result = API.Post("Menu/DeleteMenu", HttpContext.Session.GetString("Token"), menuId);
+                string? message = JObject.Parse(result)["message"]?.ToString();
                 return Json(new { success = true, message });
             }
             catch (Exception ex)

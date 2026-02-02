@@ -58,7 +58,7 @@ namespace LMS.Controllers
                 }
 
                 loan.LoanDetails.ForEach(b => b.Qty = 1);
-                var response = API.Post("Loan/CreateLoan", HttpContext.Session.GetString("Token"), loan);
+                string response = API.Post("Loan/CreateLoan", HttpContext.Session.GetString("Token"), loan);
 
                 if (string.IsNullOrEmpty(response))
                 {
@@ -66,7 +66,7 @@ namespace LMS.Controllers
                     return RedirectToAction("AddLoan");
                 }
 
-                var message = JObject.Parse(response)["message"]?.ToString();
+                string? message = JObject.Parse(response)["message"]?.ToString();
                 TempData["Message"] = message;
                 return RedirectToAction("LoanList");
             }
@@ -84,8 +84,8 @@ namespace LMS.Controllers
         {
             try
             {
-                var result = API.Post("Loan/DeleteLoan", HttpContext.Session.GetString("Token"), loanId);
-                var message = JObject.Parse(result)["message"]?.ToString();
+                string result = API.Post("Loan/DeleteLoan", HttpContext.Session.GetString("Token"), loanId);
+                string? message = JObject.Parse(result)["message"]?.ToString();
                 return Ok(new { message });
             }
             catch (Exception ex)
@@ -101,9 +101,8 @@ namespace LMS.Controllers
         {
             try
             {
-                var response = API.Post("Loan/ReturnLoan", HttpContext.Session.GetString("Token"), loanId);
-                var result = JsonConvert.DeserializeAnonymousType(response, new { message = string.Empty });
-                return Ok(new { message = result.message });
+                string response = API.Post("Loan/ReturnLoan", HttpContext.Session.GetString("Token"), loanId);
+                return Ok(new { message = JsonConvert.DeserializeAnonymousType(response, new { message = string.Empty }).message });
             }
             catch (Exception ex)
             {

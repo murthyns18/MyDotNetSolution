@@ -63,7 +63,7 @@ function openEditModal(bookId) {
 
 
 function deleteBook(bookId, title) {
-    confirm(`Are you sure you want to delete this book? "${title}"`, function () {
+    confirm(`Are you sure you want to delete this book "${title}"?`, function () {
         $.ajax({
             url: '/Book/DeleteBook',
             type: 'POST',
@@ -146,8 +146,8 @@ $(function () {
         },
         { name: "bookID", key: true, hidden: true },
         { label: "Title", name: "title", width: 200 },
-        { label: "Price", name: "price", width: 80, align: "right" },
-        { label: "Quantity", name: "quantity", width: 80, align: "right" },
+        { label: "Price", name: "price", width: 80, align: "right", sorttype:"number" },
+        { label: "Quantity", name: "quantity", width: 80, align: "right", sorttype: "number" },
         {
             label: "Publisher",
             name: "publisherName",

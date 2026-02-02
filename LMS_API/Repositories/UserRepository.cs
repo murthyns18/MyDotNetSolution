@@ -20,7 +20,7 @@ namespace LMS_API.Repositories
 
         public IEnumerable<User> GetList(int userId = 0)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("UserID", userId);
 
             return dbConnection.Query<User>(
@@ -33,7 +33,7 @@ namespace LMS_API.Repositories
 
         public string SaveUser(User user)
         {
-            var p = new DynamicParameters();
+            DynamicParameters p = new DynamicParameters();
 
             string? hashedPassword = null;
 
@@ -76,7 +76,7 @@ namespace LMS_API.Repositories
 
         public string DeleteUser(int userId)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("UserID", userId);
 
             return dbConnection.QuerySingle<string>(
@@ -89,18 +89,18 @@ namespace LMS_API.Repositories
 
         public Tuple<User, IEnumerable<Menu>> AuthenticateUser(AuthenticateUser authenticateUser)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@Email", authenticateUser.Email);
 
-            var result = dbConnection.QueryMultiple(
+            SqlMapper.GridReader result = dbConnection.QueryMultiple(
                 "User_AuthenticateUser",
                 parameters,
                 commandType: CommandType.StoredProcedure,
                 commandTimeout: 600
             );
 
-            var user = result.ReadSingleOrDefault<User>();
-            var menus = result.Read<Menu>();
+            User? user = result.ReadSingleOrDefault<User>();
+            IEnumerable<Menu> menus = result.Read<Menu>();
 
             if (user == null)
                 return null;
@@ -125,7 +125,7 @@ namespace LMS_API.Repositories
 
         public IEnumerable<User> GetStatesByCountry(int countryId)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("CountryId", countryId);
 
             return dbConnection.Query<User>(
@@ -138,7 +138,7 @@ namespace LMS_API.Repositories
 
         public IEnumerable<User> GetCitiesByState(int stateId)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("StateId", stateId);
 
             return dbConnection.Query<User>(
@@ -154,7 +154,7 @@ namespace LMS_API.Repositories
         {
             string token = Guid.NewGuid().ToString();
 
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("Email", email);
             parameters.Add("Token", token);
 
@@ -170,7 +170,7 @@ namespace LMS_API.Repositories
 
         public bool ResetPassword(string email, string token, string newPassword)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("Email", email);
             parameters.Add("Token", token);
             parameters.Add("NewPassword", BCrypt.Net.BCrypt.HashPassword(newPassword));

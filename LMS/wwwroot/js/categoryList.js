@@ -59,7 +59,7 @@ function openEditCategoryModal(categoryId) {
 }
 
 function deleteCategory(id, name) {
-    confirm(`Are you sure you want to delete "${name}"?`, function () {
+    confirm(`Are you sure you want to delete this category "${name}"?`, function () {
         $.ajax({
             url: '/Category/DeleteCategory',
             type: 'POST',

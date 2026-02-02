@@ -21,7 +21,7 @@ namespace LMS_API.Repositories
 
         public string DeletePublisher(int publisherID)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@PublisherId", publisherID);
 
             return dbConnection.QuerySingle<string>(
@@ -34,7 +34,7 @@ namespace LMS_API.Repositories
 
         public IEnumerable<Publisher> GetList(int publisherId = 0)
         {
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("PublisherID", publisherId);
 
             return dbConnection.Query<Publisher>(
@@ -50,7 +50,7 @@ namespace LMS_API.Repositories
             if (publisher == null)
                 throw new ArgumentNullException(nameof(publisher));
 
-            var parameters = new DynamicParameters();
+            DynamicParameters parameters = new DynamicParameters();
             parameters.Add("PublisherID", publisher.PublisherID);
             parameters.Add("PublisherName", publisher.PublisherName);
             parameters.Add("IsActive", publisher.IsActive);

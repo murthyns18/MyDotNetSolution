@@ -20,7 +20,7 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var list = _publisherRepository.GetList(publisherID);
+                IEnumerable<Publisher> list = _publisherRepository.GetList(publisherID);
                 return Ok(list);
             }
             catch
@@ -36,7 +36,7 @@ namespace LMS_API.Controllers
 
             try
             {
-                var message = _publisherRepository.SavePublisher(publisher);
+                string message = _publisherRepository.SavePublisher(publisher);
                 return Ok(new { message });
             }
             catch
@@ -50,8 +50,8 @@ namespace LMS_API.Controllers
         {
             try
             {
-                var message = _publisherRepository.DeletePublisher(publisherID);
-                var success = message.Contains("successfully");
+                string message = _publisherRepository.DeletePublisher(publisherID);
+                bool success = message.Contains("successfully");
 
                 return success ? Ok(new { success = true, message }): BadRequest(new { success = false, message });
             }

@@ -55,7 +55,7 @@ function openEditMenuModal(menuId) {
 }
 
 function deleteMenu(menuId, menuName) {
-    confirm(`Are you sure you want to delete this menu? "${menuName}"`, function () {
+    confirm(`Are you sure you want to delete this menu "${menuName}?"`, function () {
         $.post('/Menu/DeleteMenu', {
             menuId: menuId,
             __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()

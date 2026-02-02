@@ -61,7 +61,7 @@ function openEditPublisherModal(publisherId) {
 
 
 function deletePublisher(id, name) {
-    confirm(`Are you sure you want to delete "${name}"?`, function () {
+    confirm(`Are you sure you want to delete this publisher "${name}"?`, function () {
         $.ajax({
             url: '/Publisher/DeletePublisher',
             type: 'POST',

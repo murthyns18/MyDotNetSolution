@@ -10,7 +10,7 @@
       
         setTimeout(function () {
             $welcome.fadeIn("slow");
-        }, 500);
+        }, 300);
 
         setTimeout(function () {
             $welcome.fadeOut("slow");
