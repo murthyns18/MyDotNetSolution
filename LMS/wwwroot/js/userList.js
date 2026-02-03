@@ -114,6 +114,7 @@ $(function () {
             label: "Mobile",
             name: "mobileNumber",
             width: 120,
+            align: "right",
             formatter: mobileFormatter
         },
         { label: "Address", name: "address", width: 150 },

@@ -1,30 +1,39 @@
 ﻿@{
     ViewData["Title"] = "Publisher List";
 }
-<div class="container-fluid mt-4 px-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0">Publisher List</h4>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-9 col-sm-12">
 
-        <div class="d-flex align-items-center gap-2">
-            <button type="button"
-                    class="btn btn-outline-success btn-sm"
-                    id="excelDownload"
-                    data-grid="publisherGrid"
-                    data-file="PublisherList"
-                    title="Excel Download">
-                <i class="bi bi-file-earmark-excel me-1"></i>
-                Excel
-            </button>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-building-fill me-1 text-primary"></i>
+                    Publisher List
+                </h5>
 
-            <button class="btn btn-primary btn-sm" onclick="openAddPublisherModal()">
-                Add Publisher
-            </button>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button"
+                            class="btn btn-outline-success btn-sm"
+                            id="excelDownload"
+                            data-grid="publisherGrid"
+                            data-file="PublisherList">
+                        <i class="bi bi-file-earmark-excel me-1"></i> Excel
+                    </button>
+
+                    <button class="btn btn-primary btn-sm" onclick="openAddPublisherModal()">
+                        Add Publisher
+                    </button>
+                </div>
+            </div>
+
+            <table id="publisherGrid"></table>
+            <div id="publisherPager"></div>
+
         </div>
     </div>
-
-    <table id="publisherGrid"></table>
-    <div id="publisherPager"></div>
 </div>
+
+
 
 <form method="post">
     @Html.AntiForgeryToken()
@@ -34,5 +43,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/publisherList.js"></script>
+    <script src="@Url.Content("~/js/publisherList.js")" asp-append-version="true"></script>
+
 }

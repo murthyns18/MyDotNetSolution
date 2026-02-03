@@ -10,7 +10,7 @@
 
 <div class="container-fluid mt-4 px-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0">User List</h4>
+        <h5 class="mb-0">      <i class="bi bi-people-fill me-1 text-primary"></i> User List</h5>
 
         <div class="d-flex align-items-center gap-2">
             <button type="button"
@@ -37,5 +37,6 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/userList.min.js"></script>
+    <script src="@Url.Content("~/js/userList.min.js")" asp-append-version="true"></script>
+
 }

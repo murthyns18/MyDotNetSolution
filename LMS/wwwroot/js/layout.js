@@ -32,7 +32,6 @@ window.confirm = function (msg, func) {
     }
 };
 
-
 App.outputArrayMultiselect = [];
 
 App.CallAjaxGET = function (URL, params, async) {
@@ -189,7 +188,6 @@ function submitModalForm(options) {
         });
     }
 }
-
 
 function showNotification(message, type = 'success') {
 

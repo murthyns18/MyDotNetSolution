@@ -202,11 +202,7 @@ namespace LMS.Controllers
             try
             {
                 var user = JsonConvert.DeserializeObject<List<User>>(
-                    API.Get(
-                        "User/UserList",
-                        HttpContext.Session.GetString("Token"),
-                        $"userId={userID}"
-                    )
+                    API.Get("User/UserList", HttpContext.Session.GetString("Token"), $"userId={userID}")
                 )?.FirstOrDefault();
 
                 if (user == null)

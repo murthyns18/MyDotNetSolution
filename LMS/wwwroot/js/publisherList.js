@@ -110,7 +110,7 @@ $(function () {
             formatter: actionFormatter
         },
         { name: "publisherID", key: true, hidden: true },
-        { label: "Publisher Name", name: "publisherName", width: 100 },
+        { label: "Publisher Name", name: "publisherName", width: 50 },
         {
             label: "Status",
             name: "isActive",

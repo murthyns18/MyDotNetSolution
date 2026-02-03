@@ -91,7 +91,7 @@ namespace LMS.Controllers
                             x => x.Value.Errors.First().ErrorMessage
                         )
                 });
-            }
+            }   
 
             try
             {
@@ -149,8 +149,7 @@ namespace LMS.Controllers
         {
             try
             {
-                string response = API.Post("Book/DeleteBook",
-                    HttpContext.Session.GetString("Token"), bookID);
+                string response = API.Post("Book/DeleteBook", HttpContext.Session.GetString("Token"), bookID);
 
                 JObject json = JObject.Parse(response);
 

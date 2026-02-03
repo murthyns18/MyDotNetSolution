@@ -21,11 +21,12 @@
 
     <div class="login-card text-center">
 
+    
         <div class="avatar mb-3">
             <i class="bi bi-person"></i>
         </div>
 
-        <h5 class="mb-4">Sign in</h5>
+        <h5 class="mb-4">Sign in to LMS</h5>
 
         @if (TempData["Message"] != null)
         {
@@ -55,9 +56,12 @@
 
             <button type="submit" class="btn btn-primary w-100 btn-login">Login</button>
         }
-        <div style=" margin-top: 10px">
-            <a href="/Login/ForgotPassword">Forgot password?</a>
-           </div>
+        <div style="margin-top: 10px">
+            <a href="/Login/ForgotPassword" style="text-decoration: none;">
+                Forgot password?
+            </a>
+        </div>
+
 
     </div>
 

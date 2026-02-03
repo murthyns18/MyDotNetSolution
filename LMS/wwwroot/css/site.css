@@ -186,12 +186,12 @@ th {
 
 
 a.navbar-brand {
-    color: #0edd2b !important;
+    color: lawngreen !important;
 }
 
-a.navbar-brand:hover {
-    color: #07dc1c !important;
-}
+    a.navbar-brand:hover {
+        color: #77e80a !important;
+    }
 
 footer.footer {
     margin-top: auto;
@@ -282,5 +282,75 @@ footer.footer {
     text-align: center;
     margin: auto;
     color: darkred;
+}
+
+
+.navbar-nav .nav-link {
+    position: relative;
+    color: #ffffff;
+    transition: color 0.3s ease;
+}
+
+
+.navbar-nav .nav-link.active {
+    color: #ffc107 !important; 
+    font-weight: 600;
+}
+
+.navbar-nav .nav-link.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #ffc107;
+    border-radius: 2px;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffc107;
+}
+
+.navbar-nav .nav-link:hover::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #ffc107;
+    opacity: 0.4;
+}
+
+
+.profile-nav > .nav-link,
+.profile-nav > .nav-link:hover,
+.profile-nav > .nav-link.active,
+.profile-nav.show > .nav-link {
+    color: #ffffff !important;
+    font-weight: normal !important;
+}
+
+.profile-nav > .nav-link::after,
+.profile-nav > .nav-link::before {
+    content: none !important;
+    display: none !important;
+}
+
+.profile-nav > .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+}
+
+
+/* Smooth arrow rotation */
+.profile-nav .dropdown-toggle::after {
+    transition: transform 0.25s ease;
+}
+
+/* Rotate arrow when dropdown is open */
+.profile-nav.show .dropdown-toggle::after {
+    transform: rotate(180deg);
 }
 

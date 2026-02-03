@@ -83,56 +83,92 @@ namespace LMS.Controllers
             }
         }
 
-
         [HttpGet]
         public IActionResult ForgotPassword()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                return View();
+            }
         }
 
         [HttpPost]
         public IActionResult ForgotPassword(ForgotPasswordViewModel model)
         {
-            if (!ModelState.IsValid)
+            try
+            {
+                if (!ModelState.IsValid)
+                    return View(model);
+
+                API.Post("Account/ForgotPassword", null, model);
+
+                TempData["Message"] = "Please check your email, reset link has been sent.";
+                TempData["Messageclass"] = "alert-success";
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                TempData["Message"] = "Something went wrong. Please try again.";
+                TempData["Messageclass"] = "alert-danger";
                 return View(model);
-
-            API.Post("Account/ForgotPassword", null, model);
-
-            TempData["Message"] = "Please check your email, reset link has been sent.";
-            TempData["Messageclass"] = "alert-success";
-
-            return View();
+            }
         }
-
-
 
         [HttpGet]
         public IActionResult ResetPassword(string email, string token)
         {
-            return View(new ResetPasswordViewModel {Email = email, Token = token });
+            try
+            {
+                return View(new ResetPasswordViewModel
+                {
+                    Email = email,
+                    Token = token
+                });
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                return View();
+            }
         }
 
         [HttpPost]
         public IActionResult ResetPassword(ResetPasswordViewModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            string response = API.Post("Account/ResetPassword", null, model);
-
-            if (string.IsNullOrEmpty(response))
+            try
             {
-                TempData["Message"] = "Invalid or expired reset link";
+                if (!ModelState.IsValid)
+                    return View(model);
+
+                string response = API.Post("Account/ResetPassword", null, model);
+
+                if (string.IsNullOrEmpty(response))
+                {
+                    TempData["Message"] = "Invalid or expired reset link";
+                    TempData["Messageclass"] = "alert-danger";
+                    return View(model);
+                }
+
+                TempData["Message"] = "Password reset successful";
+                TempData["Messageclass"] = "alert-success";
+
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                SerilogErrorHelper.LogDetailedError(_logger, ex, HttpContext);
+                TempData["Message"] = "Something went wrong. Please try again.";
                 TempData["Messageclass"] = "alert-danger";
                 return View(model);
             }
-
-            TempData["Message"] = "Password reset successful";
-            TempData["Messageclass"] = "alert-success";
-
-            return RedirectToAction("Login");
         }
-
 
     }
 }

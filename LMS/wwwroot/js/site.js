@@ -36,3 +36,20 @@
         });
 
 });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var currentPath = window.location.pathname.toLowerCase();
+
+    document.querySelectorAll(".navbar-nav .nav-link").forEach(function (link) {
+
+            var linkPath = link.getAttribute("href").toLowerCase();
+
+    if (currentPath === linkPath || currentPath.startsWith(linkPath + "/")) {
+        link.classList.add("active");
+            }
+        });
+
+    });
+

@@ -88,7 +88,7 @@ $(function () {
             sortable: false,
             align: "center"
         },
-        { label: "Menu ID", name: "menuId", width: 80, key: true },
+        { label: "Menu ID", name: "menuId", width: 80, key: true, align: "right" },
         { label: "Menu Name", name: "menuName", width: 180 },
         { label: "Display Name", name: "displayName", width: 180 },
         { label: "Menu Url", name: "menuUrl", width: 200 },

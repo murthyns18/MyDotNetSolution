@@ -99,7 +99,7 @@ $(function () {
     const colModels = [
         { label: "Action", name: "action", width: 30, align: "center", sortable: false, search: false, formatter: actionFormatter, exportcol: false },
         { name: "categoryID", key: true, hidden: true },
-        { label: "Category Name", name: "categoryName", width: 100 },
+        { label: "Category Name", name: "categoryName", width: 50 },
         {
             label: "Status",
             name: "isActive",

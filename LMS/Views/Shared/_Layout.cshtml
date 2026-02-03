@@ -20,12 +20,8 @@
     <title>LMS - @ViewData["Title"]</title>
 
     <link rel="icon" type="image/jpg" href="@Url.Content("~/images/favbook.jpg")" />
-
-
     <link href="@Url.Content("~/assets/plugins/jqGrid/css/jquery-ui.min.css")" rel="stylesheet" />
     <link href="@Url.Content("~/assets/plugins/jqGrid/css/ui.jqgrid.min.css")" rel="stylesheet" />
-
-
     <link rel="stylesheet" href="@Url.Content("~/lib/bootstrap/dist/css/bootstrap.min.css")" />
     <link rel="stylesheet" href="@Url.Content("~/css/site.min.css")" asp-append-version="true" />
     <link rel="stylesheet" href="@Url.Content("~/css/custom.min.css")" asp-append-version="true" />
@@ -72,8 +68,9 @@
                         }
                     </ul>
 
+
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown profile-nav">
 
                             <a class="nav-link dropdown-toggle d-flex align-items-center"
                                href="#"
@@ -83,7 +80,6 @@
                                aria-expanded="false">
 
                                 <i class="bi bi-person-circle fs-5 me-1"></i>
-                                
                             </a>
 
                             <ul class="dropdown-menu dropdown-menu-end shadow"
@@ -97,13 +93,12 @@
                                 <li><hr class="dropdown-divider" /></li>
 
                                 <li>
-                                    <a class="dropdown-item text-danger"
-                                       asp-controller="Login"
-                                       asp-action="Logout">
+                                    <a class="dropdown-item text-danger" asp-controller="Login"asp-action="Logout">
                                         <i class="bi bi-box-arrow-right me-1"></i>
                                         Logout
                                     </a>
                                 </li>
+
                             </ul>
 
                         </li>
@@ -141,7 +136,6 @@
         </div>
     </footer>
 
-    <!-- ALERT MODAL -->
     <div class="modal fade" id="alertpopup" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -157,7 +151,6 @@
         </div>
     </div>
 
-    <!-- CONFIRM MODAL -->
     <div class="modal fade" id="confirmpopup" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
