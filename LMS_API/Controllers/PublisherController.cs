@@ -1,6 +1,9 @@
 ﻿using LMS_API.Interfaces;
 using LMS_API.Models;
+using LMS_API.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace LMS_API.Controllers
 {
@@ -46,20 +49,32 @@ namespace LMS_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult DeletePublisher([FromBody] int publisherID)
+        public IActionResult DeletePublisher([FromBody] dynamic data)
         {
             try
             {
-                string message = _publisherRepository.DeletePublisher(publisherID);
-                bool success = message.Contains("successfully");
+                JsonElement json = (JsonElement)data;
 
-                return success ? Ok(new { success = true, message }): BadRequest(new { success = false, message });
+                int publisherID = json.GetProperty("publisherID").GetInt32();
+                bool forceDelete = json.GetProperty("forceDelete").GetBoolean();
+
+                var result = _publisherRepository.DeletePublisher(publisherID, forceDelete);
+
+                return Ok(new
+                {
+                    success = result.Success,
+                    hasBooks = result.HasBooks,
+                    message = result.Message
+                });
             }
             catch
             {
-                return StatusCode(500, new { success = false, message = "Unable to delete publisher." });
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Unable to delete publisher."
+                });
             }
         }
-
     }
 }

@@ -1,6 +1,7 @@
 ﻿using LMS_API.Interfaces;
 using LMS_API.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace LMS_API.Controllers
 {
@@ -46,20 +47,32 @@ namespace LMS_API.Controllers
         }
 
         [HttpPost]
-        public IActionResult DeleteCategory(int categoryID)
+        public IActionResult DeleteCategory([FromBody] dynamic data)
         {
             try
             {
-                string message = _categoryRepository.DeleteCategory(categoryID);
-                bool success = message.Contains("successfully");
+                JsonElement json = (JsonElement)data;
 
-                return success ? Ok(new { success = true, message }): BadRequest(new { success = false, message });
+                int categoryID = json.GetProperty("categoryID").GetInt32();
+                bool forceDelete = json.GetProperty("forceDelete").GetBoolean();
+
+                var result = _categoryRepository.DeleteCategory(categoryID, forceDelete);
+
+                return Ok(new
+                {
+                    success = result.Success,
+                    hasBooks = result.HasBooks,
+                    message = result.Message?.ToString()
+                });
             }
             catch
             {
-                return StatusCode(500, new { success = false, message = "Unable to delete category." });
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Unable to delete category."
+                });
             }
         }
-
     }
 }

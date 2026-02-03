@@ -1,7 +1,7 @@
 ﻿function actionFormatter(cellValue, options, row) {
     return `
         <div class="text-nowrap">
-            <a href="/User/EditUser?q=${Encrypt('userID'+row.userID)}"
+            <a href="/User/EditUser?q=${Encrypt('userID' + row.userID)}"
                class="btn btn-sm btn-warning me-1">
                 <i class="bi bi-pencil-square"></i>
             </a>
@@ -41,37 +41,35 @@ function mobileFormatter(cellValue) {
     if (!cellValue) return "";
 
     return isExport
-        ? "'" + cellValue   
+        ? "'" + cellValue
         : cellValue;
 }
 
-function deleteUser(userID, name) {
+async function deleteUser(userID, name) {
 
-    confirm(`Are you sure you want to delete this user "${name}"?`, function () {
+    const confirmDelete = await confirmAsync(`Are you sure you want to delete this user "${name}"?` );
 
-        $.ajax({
+    if (!confirmDelete) return;
+
+    try {
+        const result = await $.ajax({
             url: '/User/DeleteUser',
             type: 'POST',
             data: {
                 userID: userID,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (result) {
-
-                if (result.success) {
-                    $("#userGrid").jqGrid("delRowData", userID);
-
-                    App.alert(result.message);
-                } else {
-                    App.alert(result.message);
-                }
-            },
-            error: function () {
-                App.alert("Delete failed");
             }
         });
 
-    });
+        if (result.success) {
+            $("#userGrid").jqGrid("delRowData", userID);
+        }
+
+        App.alert(result.message);
+    }
+    catch {
+        App.alert("Delete failed");
+    }
 }
 
 

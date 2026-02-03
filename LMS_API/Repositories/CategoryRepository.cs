@@ -48,17 +48,20 @@ namespace LMS_API.Repositories
             return dynamicParameters.Get<string>("Result");
         }
 
-        public string DeleteCategory(int categoryID)
+        public dynamic DeleteCategory(int categoryID, bool forceDelete)
         {
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@CategoryID", categoryID);
+            parameters.Add("@CategoryId", categoryID);
+            parameters.Add("@ForceDelete", forceDelete);
 
-            return dbConnection.QuerySingle<string>(
+            return dbConnection.QuerySingle(
                 "Category_Delete",
                 parameters,
                 commandType: CommandType.StoredProcedure,
                 commandTimeout: 600
             );
         }
+
+
     }
 }

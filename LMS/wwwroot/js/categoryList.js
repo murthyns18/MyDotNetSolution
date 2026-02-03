@@ -58,32 +58,59 @@ function openEditCategoryModal(categoryId) {
         });
 }
 
-function deleteCategory(id, name) {
-    confirm(`Are you sure you want to delete this category "${name}"?`, function () {
-        $.ajax({
+async function deleteCategory(id, name) {
+
+    const firstConfirm = await confirmAsync(`Are you sure you want to delete category "${name}"?`);
+
+    if (!firstConfirm) return;
+
+    try {
+        const result = await $.ajax({
             url: '/Category/DeleteCategory',
             type: 'POST',
             data: {
                 categoryID: id,
+                forceDelete: false,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (result) {
-
-                if (result.success) {
-                    $("#categoryGrid").jqGrid("delRowData", id);
-                    App.alert(result.message);
-
-                } else {
-                    App.alert(result.message);
-                }
-            },
-            error: function () {
-                App.alert("Delete failed");
             }
         });
-    });
-}
 
+        if (!result.success && result.hasBooks) {
+
+            const secondConfirm = await confirmAsync(
+                'This category contains books. Do you want to delete the category and its books?'
+            );
+
+            if (!secondConfirm) return;
+
+            const finalResult = await $.ajax({
+                url: '/Category/DeleteCategory',
+                type: 'POST',
+                data: {
+                    categoryID: id,
+                    forceDelete: true,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                }
+            });
+
+            if (finalResult.success) {
+                $("#categoryGrid").jqGrid("delRowData", id);
+            }
+
+            App.alert(finalResult.message);
+        }
+        else if (result.success) {
+            $("#categoryGrid").jqGrid("delRowData", id);
+            App.alert(result.message);
+        }
+        else {
+            App.alert(result.message);
+        }
+    }
+    catch {
+        App.alert("Delete failed");
+    }
+}
 
 $(document).on('click', '.btn-edit', function () {
     openEditCategoryModal($(this).data('id'));

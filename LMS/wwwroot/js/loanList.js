@@ -60,46 +60,55 @@ function dateFormatter(cellValue) {
     return d.toLocaleDateString('en-GB');
 }
 
-function deleteLoan(loanId, loan) {
-    confirm(`Are you sure you want to delete this loan "${loan}?"`, function () {
-        $.ajax({
+
+async function deleteLoan(loanId, loan) {
+
+    const confirmDelete = await confirmAsync( `Are you sure you want to delete this loan "${loan}"?` );
+
+    if (!confirmDelete) return;
+
+    try {
+        const res = await $.ajax({
             url: '/Loan/DeleteLoan',
             type: 'POST',
             data: {
                 loanId: loanId,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (res) {
-                $("#loanGrid").jqGrid("delRowData", loanId);
-                App.alert(res.message);
-               
-            },
-            error: function () {
-                App.alert("Delete failed");
             }
         });
-    });
+
+        $("#loanGrid").jqGrid("delRowData", loanId);
+        App.alert(res.message);
+    }
+    catch {
+        App.alert("Delete failed");
+    }
 }
 
-function returnLoan(loanId, userName) {
-    confirm(`Return loan for "${userName}"?`, function () {
-        $.ajax({
+async function returnLoan(loanId, userName) {
+
+    const confirmReturn = await confirmAsync(`Return loan for "${userName}"?`);
+
+    if (!confirmReturn) return;
+
+    try {
+        const res = await $.ajax({
             url: '/Loan/ReturnLoan',
             type: 'POST',
             data: {
                 loanId: loanId,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (res) {
-                App.alert(res.message);
-                reloadLoanGrid();
-            },
-            error: function () {
-                App.alert("Return failed");
             }
         });
-    });
+
+        App.alert(res.message);
+        reloadLoanGrid();
+    }
+    catch {
+        App.alert("Return failed");
+    }
 }
+
 
 $(document).on('click', '.btn-delete', function () {
     deleteLoan($(this).data('id'), $(this).data('user'));

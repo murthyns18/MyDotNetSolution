@@ -88,17 +88,20 @@ namespace LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeletePublisher(int publisherID)
+        public IActionResult DeletePublisher(int publisherID, bool forceDelete)
         {
             try
             {
-                string? response = API.Post("Publisher/DeletePublisher", HttpContext.Session.GetString("Token"), publisherID);
+                string response = API.Post("Publisher/DeletePublisher", HttpContext.Session.GetString("Token"),
+                    new { publisherID, forceDelete }
+                );
 
                 JObject json = JObject.Parse(response);
 
                 return Json(new
                 {
                     success = json["success"].Value<bool>(),
+                    hasBooks = json["hasBooks"]?.Value<bool>() ?? false,
                     message = json["message"].ToString()
                 });
             }

@@ -25,7 +25,7 @@ namespace LMS_API.Interfaces
         /// </summary>
         /// <param name="categoryId"></param>
         /// <returns>Return msg category deleted successfully</returns>
-        string DeleteCategory(int categoryId);
+        dynamic DeleteCategory(int categoryId, bool forceDelete);
 
     }
 }

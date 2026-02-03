@@ -33,8 +33,6 @@
     </div>
 </div>
 
-
-
 <form method="post">
     @Html.AntiForgeryToken()
 </form>
@@ -43,6 +41,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="@Url.Content("~/js/publisherList.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/js/publisherList.min.js")" asp-append-version="true"></script>
 
 }

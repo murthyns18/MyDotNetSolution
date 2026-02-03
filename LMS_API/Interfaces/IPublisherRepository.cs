@@ -25,6 +25,6 @@ namespace LMS_API.Interfaces
         /// </summary>
         /// <param name="publisherID"></param>
         /// <returns>Return msg publisher deleted successfully</returns>
-        string DeletePublisher(int publisherID);
+        dynamic DeletePublisher(int publisherID, bool forceDelete);
     }
 }

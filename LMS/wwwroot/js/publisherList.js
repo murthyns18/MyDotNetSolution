@@ -57,33 +57,62 @@ function openEditPublisherModal(publisherId) {
         .fail(function () {
             App.alert('Failed to load publisher details.');
         });
+
 }
 
 
-function deletePublisher(id, name) {
-    confirm(`Are you sure you want to delete this publisher "${name}"?`, function () {
-        $.ajax({
+async function deletePublisher(id, name) {
+
+    const firstConfirm = await confirmAsync(`Are you sure you want to delete publisher "${name}"?`);
+
+    if (!firstConfirm) return;
+
+    try {
+        const result = await $.ajax({
             url: '/Publisher/DeletePublisher',
             type: 'POST',
             data: {
                 publisherID: id,
+                forceDelete: false,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (result) {
-
-                if (result.success) {
-                    $("#publisherGrid").jqGrid("delRowData", id);
-                    App.alert(result.message);
-                   
-                } else {
-                    App.alert(result.message);
-                }
-            },
-            error: function () {
-                App.alert("Delete failed");
             }
         });
-    });
+
+        if (!result.success && result.hasBooks) {
+
+            const secondConfirm = await confirmAsync(
+                'This publisher contains books. Do you want to delete the publisher and its books?'
+            );
+
+            if (!secondConfirm) return;
+
+            const finalResult = await $.ajax({
+                url: '/Publisher/DeletePublisher',
+                type: 'POST',
+                data: {
+                    publisherID: id,
+                    forceDelete: true,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                }
+            });
+
+            if (finalResult.success) {
+                $("#publisherGrid").jqGrid("delRowData", id);
+            }
+
+            App.alert(finalResult.message);
+        }
+        else if (result.success) {
+            $("#publisherGrid").jqGrid("delRowData", id);
+            App.alert(result.message);
+        }
+        else {
+            App.alert(result.message);
+        }
+    }
+    catch {
+        App.alert("Delete failed");
+    }
 }
 
 
@@ -146,4 +175,6 @@ submitModalForm({
         reloadPublisherGrid();
     }
 });
+
+
 

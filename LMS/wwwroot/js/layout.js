@@ -225,3 +225,44 @@ $(document).on("click", "#excelDownload", function () {
     App.exportToExcel($(this).data("grid"), $(this).data("file"));
 });
 
+
+
+// COMMON CONFIRM MODAL
+function confirmAsync(message) {
+
+    return new Promise(resolve => {
+
+        const modalEl = document.getElementById('confirmpopup');
+        const modal = new bootstrap.Modal(modalEl, {
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        document.getElementById('confirmpopupmesssage').innerText = message;
+
+        const okBtn = document.getElementById('ConfirmOKbutton');
+        const cancelBtn = document.getElementById('ConfirmCancelbutton');
+
+        const cleanUp = () => {
+            okBtn.removeEventListener('click', onOk);
+            cancelBtn.removeEventListener('click', onCancel);
+        };
+
+        const onOk = () => {
+            cleanUp();
+            modal.hide();
+            resolve(true);
+        };
+
+        const onCancel = () => {
+            cleanUp();
+            modal.hide();
+            resolve(false);
+        };
+
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+
+        modal.show();
+    });
+}

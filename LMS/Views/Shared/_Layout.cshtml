@@ -119,9 +119,20 @@
                 @TempData["Message"]
             </div>
         } 
-        <div id="welcomeAlert" class="text-center shadow-sm mt-3">
-            <h5 class="mb-0">👋 Welcome, <strong>@userName</strong></h5>
+        <div class="modal fade" id="loginSuccessModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-center shadow">
+                    <div class="modal-header bg-success text-white justify-content-center">
+                        <h5 class="modal-title">Login Successful</h5>
+                    </div>
+                    <div class="modal-body">
+                        <h6 class="mb-1">👋 Welcome, <strong>@userName</strong></h6>
+                        <small class="text-muted">You have successfully logged in.</small>
+                    </div>
+                </div>
+            </div>
         </div>
+
 
 
         <main role="main" class="pb-3">
@@ -159,12 +170,13 @@
                 </div>
                 <div class="modal-body" id="confirmpopupmesssage"></div>
                 <div class="modal-footer">
-                    <button id="ConfirmOKbutton" class="btn btn-danger" data-bs-dismiss="modal">Yes</button>
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button id="ConfirmOKbutton" class="btn btn-danger">Yes</button>
+                    <button id="ConfirmCancelbutton" class="btn btn-secondary">No</button>
                 </div>
             </div>
         </div>
     </div>
+
 
     <script src="@Url.Content("~/lib/jquery/dist/jquery.min.js")"></script>
     <script src="@Url.Content("~/lib/bootstrap/dist/js/bootstrap.bundle.min.js")"></script>

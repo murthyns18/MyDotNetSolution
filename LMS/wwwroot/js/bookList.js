@@ -61,32 +61,33 @@ function openEditModal(bookId) {
         });
 }
 
+async function deleteBook(bookId, title) {
 
-function deleteBook(bookId, title) {
-    confirm(`Are you sure you want to delete this book "${title}"?`, function () {
-        $.ajax({
+    const confirmDelete = await confirmAsync(`Are you sure you want to delete this book "${title}"?`);
+
+    if (!confirmDelete) return;
+
+    try {
+        const result = await $.ajax({
             url: '/Book/DeleteBook',
             type: 'POST',
             data: {
                 bookID: bookId,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (result) {
-
-                if (result.success) {
-                    $("#bookGrid").jqGrid("delRowData", bookId);
-                    App.alert(result.message);
-                }
-                else {
-                    App.alert(result.message);
-                }
-            },
-            error: function () {
-                App.alert("Delete failed");
             }
         });
-    });
+
+        if (result.success) {
+            $("#bookGrid").jqGrid("delRowData", bookId);
+        }
+
+        App.alert(result.message);
+    }
+    catch {
+        App.alert("Delete failed");
+    }
 }
+
 
 $(document).on('click', '.btn-edit', function () {
     openEditModal($(this).data('id'));
@@ -146,7 +147,7 @@ $(function () {
         },
         { name: "bookID", key: true, hidden: true },
         { label: "Title", name: "title", width: 200 },
-        { label: "Price", name: "price", width: 80, align: "right", sorttype:"number" },
+        { label: "Price", name: "price", width: 80, align: "right", sorttype: "number" },
         { label: "Quantity", name: "quantity", width: 80, align: "right", sorttype: "number" },
         {
             label: "Publisher",

@@ -75,17 +75,20 @@ namespace LMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteCategory(int categoryID)
+        public IActionResult DeleteCategory(int categoryID, bool forceDelete)
         {
             try
             {
-                string response = API.Post( $"Category/DeleteCategory?categoryID={categoryID}",HttpContext.Session.GetString("Token"), new { });
+                string response = API.Post("Category/DeleteCategory", HttpContext.Session.GetString("Token"),
+                    new { categoryID, forceDelete }
+                );
 
                 JObject json = JObject.Parse(response);
 
                 return Json(new
                 {
                     success = json["success"].Value<bool>(),
+                    hasBooks = json["hasBooks"]?.Value<bool>() ?? false,
                     message = json["message"].ToString()
                 });
             }
@@ -94,6 +97,5 @@ namespace LMS.Controllers
                 return Json(new { success = false, message = "Unable to delete category." });
             }
         }
-
     }
 }

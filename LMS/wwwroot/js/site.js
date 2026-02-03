@@ -1,55 +1,51 @@
 ﻿$(document).ready(function () {
 
-    const welcomeKey = "welcomeAlertShown";
+    const welcomeKey = "welcomeModalShown";
 
     if (!sessionStorage.getItem(welcomeKey)) {
 
-        const $welcome = $("#welcomeAlert");
+        const modalEl = document.getElementById('loginSuccessModal');
 
-        $welcome.hide();
-      
-        setTimeout(function () {
-            $welcome.fadeIn("slow");
-        }, 300);
+        if (modalEl) {
+            const modal = new bootstrap.Modal(modalEl, {
+                backdrop: 'static',
+                keyboard: false
+            });
 
-        setTimeout(function () {
-            $welcome.fadeOut("slow");
-        }, 3000);
+            modal.show();
 
-     
-        sessionStorage.setItem(welcomeKey, "true");
+            setTimeout(function () {
+                modal.hide();
+            }, 3000);
 
-    } else {
-       
-        $("#welcomeAlert").hide();
+            sessionStorage.setItem(welcomeKey, "true");
+        }
     }
-
+    
     $(".notification").delay(3000).fadeOut("slow");
 
-    
-    $('input[name="Price"], input[name="Quantity"], input[name="MenuRolePermissionID"], input[name="MenuId"], input[name="MenuLevel"], input[name="DisplayOrder"] ')
+    $('input[name="Price"], input[name="Quantity"], input[name="MenuRolePermissionID"], input[name="MenuId"], input[name="MenuLevel"], input[name="DisplayOrder"]')
         .addClass('text-end')
         .on('focus', function () {
             if ($(this).val() === '0') {
                 $(this).val('');
             }
         });
-
 });
 
 
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-        var currentPath = window.location.pathname.toLowerCase();
+    var currentPath = window.location.pathname.toLowerCase();
 
     document.querySelectorAll(".navbar-nav .nav-link").forEach(function (link) {
 
-            var linkPath = link.getAttribute("href").toLowerCase();
+        var linkPath = link.getAttribute("href").toLowerCase();
 
-    if (currentPath === linkPath || currentPath.startsWith(linkPath + "/")) {
-        link.classList.add("active");
-            }
-        });
-
+        if (currentPath === linkPath || currentPath.startsWith(linkPath + "/")) {
+            link.classList.add("active");
+        }
     });
+
+});
 

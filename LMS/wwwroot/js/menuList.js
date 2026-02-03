@@ -54,16 +54,24 @@ function openEditMenuModal(menuId) {
         });
 }
 
-function deleteMenu(menuId, menuName) {
-    confirm(`Are you sure you want to delete this menu "${menuName}?"`, function () {
-        $.post('/Menu/DeleteMenu', {
+async function deleteMenu(menuId, menuName) {
+
+    const confirmDelete = await confirmAsync(`Are you sure you want to delete this menu "${menuName}"?`);
+
+    if (!confirmDelete) return;
+
+    try {
+        const res = await $.post('/Menu/DeleteMenu', {
             menuId: menuId,
             __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-        }, function (res) {
-            App.alert(res.message);
-            $("#menuGrid").jqGrid("delRowData", menuId);
         });
-    });
+
+        App.alert(res.message);
+        $("#menuGrid").jqGrid("delRowData", menuId);
+    }
+    catch {
+        App.alert("Delete failed");
+    }
 }
 
 $(document).on('click', '.btn-edit', function () {
@@ -73,7 +81,6 @@ $(document).on('click', '.btn-edit', function () {
 $(document).on('click', '.btn-delete', function () {
     deleteMenu($(this).data('id'), $(this).data('name'));
 });
-
 
 
 $(function () {

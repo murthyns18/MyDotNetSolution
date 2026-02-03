@@ -58,30 +58,32 @@ function openEditRoleModal(roleId) {
         });
 }
 
-function deleteRole(roleId, name) {
-    confirm(`Are you sure you want to delete this role "${name}"?`, function () {
-        $.ajax({
+
+async function deleteRole(roleId, name) {
+
+    const firstConfirm = await confirmAsync( `Are you sure you want to delete this role "${name}"?`);
+
+    if (!firstConfirm) return;
+
+    try {
+        const result = await $.ajax({
             url: '/Role/DeleteRole',
             type: 'POST',
             data: {
                 roleID: roleId,
                 __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-            },
-            success: function (result) {
-
-                if (result.success) {
-                    $("#roleGrid").jqGrid("delRowData", roleId);
-                    App.alert(result.message);
-
-                } else {
-                    App.alert(result.message);
-                }
-            },
-            error: function () {
-                App.alert("Delete failed");
             }
         });
-    });
+
+        if (result.success) {
+            $("#roleGrid").jqGrid("delRowData", roleId);
+        }
+
+        App.alert(result.message);
+    }
+    catch {
+        App.alert("Delete failed");
+    }
 }
 
 
