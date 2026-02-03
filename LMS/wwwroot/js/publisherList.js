@@ -63,7 +63,7 @@ function openEditPublisherModal(publisherId) {
 
 async function deletePublisher(id, name) {
 
-    const firstConfirm = await confirmAsync(`Are you sure you want to delete publisher "${name}"?`);
+    const firstConfirm = await confirmAsync(`Are you sure you want to delete the publisher "${name}"?`);
 
     if (!firstConfirm) return;
 
@@ -81,7 +81,7 @@ async function deletePublisher(id, name) {
         if (!result.success && result.hasBooks) {
 
             const secondConfirm = await confirmAsync(
-                'This publisher contains books. Do you want to delete the publisher and its books?'
+                `The publisher "${name}"  has books. Do you want to delete the publisher along with its books?`
             );
 
             if (!secondConfirm) return;

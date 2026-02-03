@@ -47,7 +47,7 @@ function mobileFormatter(cellValue) {
 
 async function deleteUser(userID, name) {
 
-    const confirmDelete = await confirmAsync(`Are you sure you want to delete this user "${name}"?` );
+    const confirmDelete = await confirmAsync(`Are you sure you want to delete the user "${name}"?` );
 
     if (!confirmDelete) return;
 

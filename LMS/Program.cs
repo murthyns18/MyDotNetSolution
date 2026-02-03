@@ -110,7 +110,7 @@ app.UseSession();
 app.UseAuthorization();
 
 app.MapStaticAssets();
-app.UseResponseCompression();
+//app.UseResponseCompression();
 app.MapControllerRoute(
     name: "default",
     //pattern: "{controller=Home}/{action=Index}/{id?}")

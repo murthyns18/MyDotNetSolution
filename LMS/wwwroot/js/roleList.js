@@ -61,7 +61,7 @@ function openEditRoleModal(roleId) {
 
 async function deleteRole(roleId, name) {
 
-    const firstConfirm = await confirmAsync( `Are you sure you want to delete this role "${name}"?`);
+    const firstConfirm = await confirmAsync( `Are you sure you want to delete the role "${name}"?`);
 
     if (!firstConfirm) return;
 

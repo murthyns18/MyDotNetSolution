@@ -63,7 +63,7 @@ function dateFormatter(cellValue) {
 
 async function deleteLoan(loanId, loan) {
 
-    const confirmDelete = await confirmAsync( `Are you sure you want to delete this loan "${loan}"?` );
+    const confirmDelete = await confirmAsync( `Are you sure you want to delete the loan "${loan}"?` );
 
     if (!confirmDelete) return;
 
@@ -87,7 +87,7 @@ async function deleteLoan(loanId, loan) {
 
 async function returnLoan(loanId, userName) {
 
-    const confirmReturn = await confirmAsync(`Return loan for "${userName}"?`);
+    const confirmReturn = await confirmAsync(`Are you sure you want to return the loan for "${userName}"?`);
 
     if (!confirmReturn) return;
 

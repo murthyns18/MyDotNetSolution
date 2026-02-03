@@ -63,7 +63,7 @@ function openEditModal(bookId) {
 
 async function deleteBook(bookId, title) {
 
-    const confirmDelete = await confirmAsync(`Are you sure you want to delete this book "${title}"?`);
+    const confirmDelete = await confirmAsync(`Are you sure you want to delete the book "${title}"?`);
 
     if (!confirmDelete) return;
 

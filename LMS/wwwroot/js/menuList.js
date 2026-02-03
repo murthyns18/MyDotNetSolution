@@ -56,7 +56,7 @@ function openEditMenuModal(menuId) {
 
 async function deleteMenu(menuId, menuName) {
 
-    const confirmDelete = await confirmAsync(`Are you sure you want to delete this menu "${menuName}"?`);
+    const confirmDelete = await confirmAsync(`Are you sure you want to delete the menu "${menuName}"?`);
 
     if (!confirmDelete) return;
 

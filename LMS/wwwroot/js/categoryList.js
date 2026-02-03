@@ -60,7 +60,7 @@ function openEditCategoryModal(categoryId) {
 
 async function deleteCategory(id, name) {
 
-    const firstConfirm = await confirmAsync(`Are you sure you want to delete category "${name}"?`);
+    const firstConfirm = await confirmAsync(`Are you sure you want to delete the category "${name}"?`);
 
     if (!firstConfirm) return;
 
@@ -78,7 +78,7 @@ async function deleteCategory(id, name) {
         if (!result.success && result.hasBooks) {
 
             const secondConfirm = await confirmAsync(
-                'This category contains books. Do you want to delete the category and its books?'
+                `The category "${name}" has books. Do you want to delete the category along with its books?`
             );
 
             if (!secondConfirm) return;
