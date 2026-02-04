@@ -36,14 +36,17 @@ namespace LMS.Controllers
         public IActionResult AddPublisher(Publisher model)
         {
             if (!ModelState.IsValid)
-            {
-                return Json(new { success = false, errors = ModelState.Where(x => x.Value.Errors.Count > 0).ToDictionary(x => x.Key, x => x.Value.Errors.First().ErrorMessage) });
-            }
+                return Json(new { success = false, errors = ModelState.Where(x => x.Value.Errors.Count > 0)
+                    .ToDictionary(x => x.Key, x => x.Value.Errors.First().ErrorMessage) });
 
             try
             {
                 string result = API.Post("Publisher/SavePublisher", HttpContext.Session.GetString("Token"), model);
                 string? message = JObject.Parse(result)["message"]?.ToString();
+
+                if (message == "Publisher already exists")   
+                    return Json(new { success = false, errors = new Dictionary<string, string> { { "PublisherName", message } } });
+
                 return Json(new { success = true, message });
             }
             catch (Exception ex)
