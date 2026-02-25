@@ -49,9 +49,9 @@ namespace LMS_API.Controllers
                     expires_in = DateTime.Now.AddDays(1)
                 });
             }
-            catch
+            catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Unable to generate token." });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }

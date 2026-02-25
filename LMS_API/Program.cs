@@ -13,9 +13,7 @@ namespace WEBAPI
     {
         public static void Main(string[] args)
         {
-
-            //string conn ="Server=.;Database=LMS;Trusted_Connection=True;TrustServerCertificate=True";
-
+            //string conn = "Server=localhost;Database=LMS;User Id=sa;Password=murthy;TrustServerCertificate=True;MultipleActiveResultSets=True;";
             //string encrypted = AesEncryptionHelper.Encrypt(conn);
 
             //Console.WriteLine("Encrypted value:");
@@ -75,6 +73,7 @@ namespace WEBAPI
             builder.Services.AddScoped<ILoanRepository>(m => new LoanRepository(connectionString));
             builder.Services.AddScoped<IMenuRepository>(m => new MenuRepository(connectionString));
             builder.Services.AddScoped<IMenuPermissionRepository>(m => new MenuPermissionRepository(connectionString));
+            builder.Services.AddScoped<IPaymentRepository>(m => new PaymentRepository(connectionString));
 
 
             builder.Services.AddScoped<IEmailService, EmailService>();
@@ -118,12 +117,12 @@ namespace WEBAPI
             WebApplication app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
+            //if (app.Environment.IsDevelopment())
+            //{
                 app.MapOpenApi();
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            //}
 
             app.UseHttpsRedirection();
             app.UseCors("DefaultCorsPolicy");

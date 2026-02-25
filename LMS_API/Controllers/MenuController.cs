@@ -39,7 +39,7 @@ namespace LMS_API.Controllers
                 string message = _menuRepository.SaveMenu(menu);
                 return Ok(new { message });
             }
-            catch
+                catch
             {
                 return StatusCode(500, new { message = "Unable to save menu." });
             }
