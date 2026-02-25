@@ -40,7 +40,9 @@ namespace LMS.Controllers
                 return Json(new
                 {
                     success = false,
-                    errors = ModelState.Where(x => x.Value.Errors.Count > 0).ToDictionary(x => x.Key, x => x.Value.Errors.First().ErrorMessage)
+                    errors = ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .ToDictionary(x => x.Key, x => x.Value.Errors.First().ErrorMessage)
                 });
             }
 
@@ -48,7 +50,11 @@ namespace LMS.Controllers
             {
                 string result = API.Post("Category/SaveCategory", HttpContext.Session.GetString("Token"), model);
                 string? message = JObject.Parse(result)["message"]?.ToString();
-                return Json(new { success = true, message = message });
+
+                if (message == "Category already exists") 
+                    return Json(new { success = false, errors = new Dictionary<string, string> { { "CategoryName", message } } });
+
+                return Json(new { success = true, message });
             }
             catch (Exception ex)
             {
